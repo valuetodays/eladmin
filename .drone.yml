@@ -1,0 +1,88 @@
+# for gitee
+kind: pipeline
+type: docker
+name: eladmin-ci/cd
+
+workspace:
+  path: /drone/src
+
+clone:
+  depth: 1
+  disable: false
+
+steps:
+  - name: compile code
+    image: openjdk:21-jdk
+    environment:
+      KEY_A: value_a
+    volumes:
+      - name: maven_m2_dir
+        path: /root/.m2   # path in the container
+      - name: workbench_dir
+        path: /root/workbench_dir
+    commands:
+      # 获取environment的KEY_A不成功
+      - echo 1=${KEY_A} 2=$${KEY_A}
+      # use 内置变量 https://docs.drone.io/pipeline/environment/reference/
+      - echo ${DRONE_GIT_HTTP_URL} ${DRONE_COMMIT_BRANCH} ${DRONE_BUILD_LINK}
+      # echo 后面的字符串中不能有英文冒号，
+      - echo "url=${DRONE_GIT_HTTP_URL}, branch=${DRONE_COMMIT_BRANCH}, buildUrl=${DRONE_BUILD_LINK}"
+      - env
+      - chmod +x ./mvnw
+      #      - ./mvnw -v
+      - ./mvnw clean
+      - ./mvnw package install -B -U -Dmaven.test.skip=true -DskipUnitTest=true
+      - sh /drone/src/docs/scripts-for-drone-ci/ci-publish-api-web.sh
+
+  - name: call docker
+    image: docker:dind
+    volumes:
+      - name: dockersock
+        path: /var/run/
+      - name: workbench_dir
+        path: /root/workbench_dir
+    commands:
+      - docker info
+      - docker ps -a
+  - name: notify
+    # 本 images 由自己手工创建，搜索 centos7-with-tools 即可找到dockerfile
+    image: centos7-with-tools:centos7.6.1810
+    volumes:
+      - name: dockersock
+        path: /var/run/
+      - name: workbench_dir
+        path: /root/workbench_dir
+    commands:
+      - |
+        echo begin to notify
+        curl -X POST "http://go.valuetodays.cn/api/public/notify/anon/cdci.do" -H 'Content-Type: application/json; charset=utf-8' -d '{"content": "eladmin was restarted just now.", "repo": "eladmin"}'
+      - echo end
+  - name: restart application by docker-compose
+    image: docker/compose:1.23.1
+    volumes:
+      - name: dockersock
+        path: /var/run/
+      - name: workbench_dir
+        path: /root/workbench_dir
+    commands:
+      - sh /drone/src/docs/scripts-for-drone-ci/ci-restart-docker.sh
+
+trigger:
+  branch:
+    - master
+    - main
+  event:
+    - push
+    - custom
+
+volumes:
+  - name: maven_m2_dir
+    host:
+      path: /opt/maven-m2 # path in host machine
+  - name: workbench_dir
+    host:
+      path: /opt/workbench
+  - name: dockersock
+    host:
+      path: /var/run/
+

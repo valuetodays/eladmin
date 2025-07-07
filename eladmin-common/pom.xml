@@ -11,7 +11,7 @@
     </properties>
 
     <artifactId>eladmin-common</artifactId>
-    <name>公共模块</name>
+    <description>公共模块</description>
 
     <dependencies>
         <!--工具包-->

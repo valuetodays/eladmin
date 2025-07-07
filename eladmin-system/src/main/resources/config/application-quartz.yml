@@ -16,7 +16,7 @@ spring:
             threadCount: 5
           jobStore:
             # 可选，如果你不需要集群，可以去掉
-            isClustered: true
+            isClustered: false
             # 可选，集群检查间隔时间，可以根据需要调整
             clusterCheckinInterval: 10000
             # 必需，指定 JDBC 驱动代理类
