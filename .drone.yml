@@ -71,6 +71,7 @@ trigger:
   branch:
     - master
     - main
+    - dev
   event:
     - push
     - custom
