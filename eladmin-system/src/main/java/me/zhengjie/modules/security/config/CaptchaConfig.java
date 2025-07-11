@@ -15,10 +15,13 @@
  */
 package me.zhengjie.modules.security.config;
 
-import com.wf.captcha.*;
+import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.ChineseCaptcha;
+import com.wf.captcha.ChineseGifCaptcha;
+import com.wf.captcha.GifCaptcha;
+import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import lombok.Data;
-import lombok.Getter;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.config.enums.LoginCodeEnum;
 import me.zhengjie.utils.StringUtils;
@@ -40,7 +43,6 @@ public class CaptchaConfig {
     /**
      * 验证码配置
      */
-    @Getter
     private LoginCodeEnum codeType;
 
     /**
@@ -119,7 +121,9 @@ public class CaptchaConfig {
         @Override
         protected char[] alphas() {
             // 生成随机数字和运算符
-            int n1 = num(1, 10), n2 = num(1, 10);
+            int n1Temp = num(1, 10), n2Temp = num(1, 10);
+            int n1 = Math.max(n1Temp, n2Temp);
+            int n2 = Math.min(n1Temp, n2Temp);
             int opt = num(3);
 
             // 计算结果
