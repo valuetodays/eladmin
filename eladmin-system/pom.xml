@@ -33,6 +33,12 @@
         <!-- tools 模块包含了 common 和 logging 模块 -->
         <dependency>
             <groupId>me.zhengjie</groupId>
+            <artifactId>module-mybiz</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <!-- tools 模块包含了 common 和 logging 模块 -->
+        <dependency>
+            <groupId>me.zhengjie</groupId>
             <artifactId>eladmin-tools</artifactId>
             <version>2.7</version>
         </dependency>

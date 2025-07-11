@@ -13,9 +13,10 @@
         <module>eladmin-system</module>
         <module>eladmin-tools</module>
         <module>eladmin-generator</module>
+        <module>module-mybiz</module>
     </modules>
 
-    <name>ELADMIN 后台管理</name>
+    <description>ELADMIN 后台管理</description>
     <url>https://eladmin.vip</url>
 
     <parent>
