@@ -33,17 +33,6 @@ steps:
       - ./mvnw clean
       - ./mvnw package install -B -U -Dmaven.test.skip=true -DskipUnitTest=true
       - sh /drone/src/docs/scripts-for-drone-ci/ci-publish-api-web.sh
-
-  - name: call docker
-    image: docker:dind
-    volumes:
-      - name: dockersock
-        path: /var/run/
-      - name: workbench_dir
-        path: /root/workbench_dir
-    commands:
-      - docker info
-      - docker ps -a
   - name: notify
     # 本 images 由自己手工创建，搜索 centos7-with-tools 即可找到dockerfile
     image: centos7-with-tools:centos7.6.1810
@@ -58,13 +47,16 @@ steps:
         curl -X POST "http://go.valuetodays.cn/api/public/notify/anon/cdci.do" -H 'Content-Type: application/json; charset=utf-8' -d '{"content": "eladmin was restarted just now.", "repo": "eladmin"}'
       - echo end
   - name: restart application by docker-compose
-    image: docker/compose:1.23.1
+    image: docker:26.1.4-cli
     volumes:
       - name: dockersock
         path: /var/run/
       - name: workbench_dir
         path: /root/workbench_dir
     commands:
+      - docker info
+      - docker ps -a
+      - docker version --format '{{.Client.Version}} -> {{.Server.Version}}'
       - sh /drone/src/docs/scripts-for-drone-ci/ci-restart-docker.sh
 
 trigger:
