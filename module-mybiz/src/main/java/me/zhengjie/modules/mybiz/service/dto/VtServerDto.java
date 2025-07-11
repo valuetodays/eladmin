@@ -15,11 +15,11 @@
  */
 package me.zhengjie.modules.mybiz.service.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @author vt
@@ -34,13 +34,13 @@ public class VtServerDto implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "名称")
-    private Long name;
+    private String name;
 
     @ApiModelProperty(value = "绑定的端口，外网->内网")
     private String portBindings;
 
     @ApiModelProperty(value = "timezone状态：1启用、0禁用")
-    private Integer timeZoneEnabled;
+    private Boolean timeZoneEnabled;
 
     @ApiModelProperty(value = "域名")
     private String domain;

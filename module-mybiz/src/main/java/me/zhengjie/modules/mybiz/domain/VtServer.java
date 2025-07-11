@@ -15,13 +15,8 @@
  */
 package me.zhengjie.modules.mybiz.domain;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
+import java.io.Serializable;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,8 +25,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.sql.Timestamp;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * @author vt
@@ -51,9 +51,9 @@ public class VtServer implements Serializable {
     private Long id;
 
     @Column(name = "`name`", nullable = false)
-    @NotNull
+    @NotBlank
     @ApiModelProperty(value = "名称")
-    private Long name;
+    private String name;
 
     @Column(name = "`port_bindings`", nullable = false)
     @NotBlank
@@ -63,7 +63,7 @@ public class VtServer implements Serializable {
     @Column(name = "`time_zone_enabled`", nullable = false)
     @NotNull
     @ApiModelProperty(value = "timezone状态：1启用、0禁用")
-    private Integer timeZoneEnabled;
+    private Boolean timeZoneEnabled;
 
     @Column(name = "`domain`", nullable = false)
     @NotBlank
