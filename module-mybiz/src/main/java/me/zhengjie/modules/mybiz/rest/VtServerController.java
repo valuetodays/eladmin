@@ -15,6 +15,10 @@
  */
 package me.zhengjie.modules.mybiz.rest;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletResponse;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,10 +29,12 @@ import me.zhengjie.modules.mybiz.service.VtServerService;
 import me.zhengjie.modules.mybiz.service.dto.VtServerDto;
 import me.zhengjie.modules.mybiz.service.dto.VtServerQueryCriteria;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,9 +43,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author vt
@@ -73,6 +76,12 @@ public class VtServerController {
     @ApiOperation("新增VtServerController")
     @PreAuthorize("@el.check('vtServer:add')")
     public ResponseEntity<Object> createVtServer(@Validated @RequestBody VtServer resources) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        String username = currentUser.getUsername();
+        resources.setCreateBy(username);
+        resources.setUpdateBy(username);
+        resources.setCreateTime(LocalDateTime.now());
+        resources.setUpdateTime(LocalDateTime.now());
         vtServerService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

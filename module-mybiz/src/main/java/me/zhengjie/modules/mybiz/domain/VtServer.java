@@ -16,7 +16,7 @@
 package me.zhengjie.modules.mybiz.domain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -99,13 +99,13 @@ public class VtServer implements Serializable {
     @NotNull
     @CreationTimestamp
     @ApiModelProperty(value = "创建日期")
-    private Timestamp createTime;
+    private LocalDateTime createTime;
 
     @Column(name = "`update_time`", nullable = false)
     @NotNull
     @UpdateTimestamp
     @ApiModelProperty(value = "更新时间")
-    private Timestamp updateTime;
+    private LocalDateTime updateTime;
 
     public void copy(VtServer source) {
         BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));

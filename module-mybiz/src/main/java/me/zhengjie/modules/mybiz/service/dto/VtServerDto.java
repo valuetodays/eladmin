@@ -16,7 +16,7 @@
 package me.zhengjie.modules.mybiz.service.dto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -61,8 +61,8 @@ public class VtServerDto implements Serializable {
     private String updateBy;
 
     @ApiModelProperty(value = "创建日期")
-    private Timestamp createTime;
+    private LocalDateTime createTime;
 
     @ApiModelProperty(value = "更新时间")
-    private Timestamp updateTime;
+    private LocalDateTime updateTime;
 }
