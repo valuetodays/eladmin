@@ -34,14 +34,14 @@ steps:
       - ./mvnw package install -B -U -Dmaven.test.skip=true -DskipUnitTest=true
       - sh /drone/src/docs/scripts-for-drone-ci/ci-publish-api-web.sh
   - name: notify
-    # 本 images 由自己手工创建，搜索 centos7-with-tools 即可找到dockerfile
-    image: centos7-with-tools:centos7.6.1810
+    image: curlimages/curl:8.14.1
     volumes:
       - name: dockersock
         path: /var/run/
       - name: workbench_dir
         path: /root/workbench_dir
     commands:
+      - curl --version
       - |
         echo begin to notify
         curl -X POST "http://go.valuetodays.cn/api/public/notify/anon/cdci.do" -H 'Content-Type: application/json; charset=utf-8' -d '{"content": "eladmin was restarted just now.", "repo": "eladmin"}'
