@@ -11,7 +11,7 @@
             <#if column.queryType != 'BetWeen'>
         <label class="el-form-item-label"><#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if></label>
         <#if column.formType == 'Switch'>
-          <el-tooltip :content="'Switch value: ' + query.${column.changeColumnName}" placement="top">
+        <el-tooltip :content="'Switch value: ' + query.${column.changeColumnName}" placement="top">
           <el-switch
                   active-color="#13ce66"
                   active-text="启用"

@@ -63,7 +63,7 @@ public class VtServer implements Serializable {
     @Column(name = "`time_zone_enabled`", nullable = false)
     @NotNull
     @ApiModelProperty(value = "timezone状态：1启用、0禁用")
-    private Boolean timeZoneEnabled;
+    private Integer timeZoneEnabled;
 
     @Column(name = "`domain`", nullable = false)
     @NotBlank
@@ -73,7 +73,7 @@ public class VtServer implements Serializable {
     @Column(name = "`https_enabled`", nullable = false)
     @NotNull
     @ApiModelProperty(value = "https状态：1启用、0禁用")
-    private Boolean httpsEnabled;
+    private Integer httpsEnabled;
 
     @Column(name = "`image_name`", nullable = false)
     @NotBlank
@@ -83,7 +83,7 @@ public class VtServer implements Serializable {
     @Column(name = "`enabled`", nullable = false)
     @NotNull
     @ApiModelProperty(value = "状态：1启用、0禁用")
-    private Boolean enabled;
+    private Integer enabled;
 
     @Column(name = "`create_by`", nullable = false)
     @NotBlank

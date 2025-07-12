@@ -40,19 +40,19 @@ public class VtServerDto implements Serializable {
     private String portBindings;
 
     @ApiModelProperty(value = "timezone状态：1启用、0禁用")
-    private Boolean timeZoneEnabled;
+    private Integer timeZoneEnabled;
 
     @ApiModelProperty(value = "域名")
     private String domain;
 
     @ApiModelProperty(value = "https状态：1启用、0禁用")
-    private Boolean httpsEnabled;
+    private Integer httpsEnabled;
 
     @ApiModelProperty(value = "镜像地址")
     private String imageName;
 
     @ApiModelProperty(value = "状态：1启用、0禁用")
-    private Boolean enabled;
+    private Integer enabled;
 
     @ApiModelProperty(value = "创建者")
     private String createBy;
