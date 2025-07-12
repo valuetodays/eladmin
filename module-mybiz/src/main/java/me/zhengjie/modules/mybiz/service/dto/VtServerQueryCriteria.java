@@ -53,7 +53,7 @@ public class VtServerQueryCriteria {
      */
     @Query
     @ApiModelProperty(value = "https状态：1启用、0禁用")
-    private Boolean httpsEnabled;
+    private Integer httpsEnabled;
 
     /**
      * 模糊
@@ -67,5 +67,5 @@ public class VtServerQueryCriteria {
      */
     @Query
     @ApiModelProperty(value = "状态：1启用、0禁用")
-    private Boolean enabled;
+    private Integer enabled;
 }
