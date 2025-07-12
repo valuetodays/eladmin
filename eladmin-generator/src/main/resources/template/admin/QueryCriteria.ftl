@@ -16,9 +16,8 @@ import me.zhengjie.annotation.Query;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
-* @website https://eladmin.vip
 * @author ${author}
-* @date ${date}
+* @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @Data
 public class ${className}QueryCriteria{

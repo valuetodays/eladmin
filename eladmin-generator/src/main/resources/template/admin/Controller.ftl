@@ -18,9 +18,8 @@ import me.zhengjie.utils.PageResult;
 import ${package}.service.dto.${className}Dto;
 
 /**
-* @website https://eladmin.vip
 * @author ${author}
-* @date ${date}
+* @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @RestController
 @RequiredArgsConstructor

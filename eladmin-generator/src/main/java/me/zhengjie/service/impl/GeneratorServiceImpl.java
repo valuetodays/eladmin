@@ -45,6 +45,7 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     private EntityManager em;
 
     private final ColumnInfoRepository columnInfoRepository;
+
+    @Value("${generator.base-path}")
+    private String generatorBasePath;
 
     private final String CONFIG_MESSAGE = "请先配置生成器";
     @Override
@@ -177,7 +181,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             throw new BadRequestException(CONFIG_MESSAGE);
         }
         try {
-            GenUtil.generatorCode(columns, genConfig);
+            GenUtil.generatorCode(columns, genConfig, generatorBasePath);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new BadRequestException("生成失败，请手动处理已生成的文件");

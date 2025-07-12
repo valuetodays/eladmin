@@ -123,6 +123,7 @@ public class GenUtil {
             if (!genConfig.getCover() && FileUtil.exist(file)) {
                 continue;
             }
+            log.info("begin to genFile for download file={}", file);
             // 生成代码
             genFile(file, template, genMap);
         }
@@ -140,23 +141,21 @@ public class GenUtil {
             if (!genConfig.getCover() && FileUtil.exist(file)) {
                 continue;
             }
+            log.info("begin to genFile for download file={}", file);
             // 生成代码
             genFile(file, template, genMap);
         }
         return tempPath;
     }
 
-    public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig) throws IOException {
+    public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig, final String rootPath) throws IOException {
         Map<String, Object> genMap = getGenMap(columnInfos, genConfig);
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("admin/" + templateName + ".ftl");
-            String rootPath = System.getProperty("user.dir");
             String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(), rootPath);
-
-            assert filePath != null;
             File file = new File(filePath);
 
             // 如果非覆盖生成

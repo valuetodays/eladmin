@@ -41,10 +41,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
-* @website https://eladmin.vip
 * @description /
 * @author ${author}
-* @date ${date}
+* @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @Entity
 @Data

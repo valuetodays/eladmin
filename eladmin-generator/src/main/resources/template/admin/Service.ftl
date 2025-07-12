@@ -11,10 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import me.zhengjie.utils.PageResult;
 
 /**
-* @website https://eladmin.vip
 * @description 服务接口
 * @author ${author}
-* @date ${date}
+* @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 public interface ${className}Service {
 

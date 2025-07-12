@@ -15,10 +15,9 @@ import com.alibaba.fastjson2.serializer.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
-* @website https://eladmin.vip
 * @description /
 * @author ${author}
-* @date ${date}
+* @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @Data
 public class ${className}Dto implements Serializable {

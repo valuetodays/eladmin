@@ -40,10 +40,9 @@ import java.util.LinkedHashMap;
 import me.zhengjie.utils.PageResult;
 
 /**
-* @website https://eladmin.vip
 * @description 服务实现
 * @author ${author}
-* @date ${date}
+* @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @Service
 @RequiredArgsConstructor
