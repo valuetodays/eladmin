@@ -24,8 +24,7 @@
         </el-tooltip>
         <#else>
         <el-input v-model="query.${column.changeColumnName}" clearable placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-      </
-      #if>
+      </#if>
             </#if>
           </#list>
         </#if>
@@ -63,20 +62,20 @@
               <#else>
                 未设置字典，请手动设置 Radio
               </#if>
-<#elseif column.formType = 'Switch'>
-<#if (column.dictName)?? && (column.dictName)!="">
-<el-tooltip :content="'Switch value: ' + form.${column.changeColumnName}" placement="top">
-  <el-switch
-          active-color="#13ce66"
-          active-text="启用"
-          active-value="1"
-          inactive-color="#ff4949"
-          inactive-text="停用"
-          inactive-value="0"
-          v-model="form.${column.changeColumnName}">
-  </el-switch>
-</el-tooltip>
-</#if>
+            <#elseif column.formType = 'Switch'>
+                <#if (column.dictName)?? && (column.dictName)!="">
+                <el-tooltip :content="'Switch value: ' + form.${column.changeColumnName}" placement="top">
+                  <el-switch
+                          active-color="#13ce66"
+                          active-text="启用"
+                          active-value="1"
+                          inactive-color="#ff4949"
+                          inactive-text="停用"
+                          inactive-value="0"
+                          v-model="form.${column.changeColumnName}">
+                  </el-switch>
+                </el-tooltip>
+                </#if>
             <#elseif column.formType = 'Select'>
               <#if (column.dictName)?? && (column.dictName)!="">
             <el-select v-model="form.${column.changeColumnName}" filterable placeholder="请选择">
