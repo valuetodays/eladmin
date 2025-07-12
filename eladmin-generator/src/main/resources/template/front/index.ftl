@@ -11,17 +11,16 @@
             <#if column.queryType != 'BetWeen'>
         <label class="el-form-item-label"><#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if></label>
         <#if column.formType == 'Switch'>
-        <el-tooltip :content="'Switch value: ' + query.${column.changeColumnName}" placement="top">
-          <el-switch
-                  active-color="#13ce66"
-                  active-text="启用"
-                  active-value="1"
-                  inactive-color="#ff4949"
-                  inactive-text="停用"
-                  inactive-value="0"
-                  v-model="query.${column.changeColumnName}">
-          </el-switch>
-        </el-tooltip>
+        <el-select v-model="query.${column.changeColumnName}" clearable size="small"
+                placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>"
+                class="filter-item"
+                style="width: 90px"
+                @change="crud.toQuery">
+          <el-option v-for="item in dict.${column.dictName}"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.value" />
+        </el-select>
         <#else>
         <el-input v-model="query.${column.changeColumnName}" clearable placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
       </#if>
