@@ -15,19 +15,27 @@
  */
 package me.zhengjie.utils;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.template.*;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.domain.GenConfig;
-import me.zhengjie.domain.ColumnInfo;
-import org.springframework.util.ObjectUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.template.Template;
+import cn.hutool.extra.template.TemplateConfig;
+import cn.hutool.extra.template.TemplateEngine;
+import cn.hutool.extra.template.TemplateException;
+import cn.hutool.extra.template.TemplateUtil;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.domain.ColumnInfo;
+import me.zhengjie.domain.GenConfig;
+import me.zhengjie.reqresp.GenPreviewResp;
+import org.springframework.util.ObjectUtils;
 
 import static me.zhengjie.utils.FileUtil.SYS_TEM_DIR;
 
@@ -79,28 +87,21 @@ public class GenUtil {
         return templateNames;
     }
 
-    public static List<Map<String, Object>> preview(List<ColumnInfo> columns, GenConfig genConfig) {
+    public static List<GenPreviewResp> preview(List<ColumnInfo> columns, GenConfig genConfig) {
         Map<String, Object> genMap = getGenMap(columns, genConfig);
-        List<Map<String, Object>> genList = new ArrayList<>();
+        List<GenPreviewResp> genList = new ArrayList<>();
+        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 获取后端模版
         List<String> templates = getAdminTemplateNames();
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         for (String templateName : templates) {
-            Map<String, Object> map = new HashMap<>(1);
             Template template = engine.getTemplate("admin/" + templateName + ".ftl");
-            map.put("content", template.render(genMap));
-            map.put("name", templateName);
-            genList.add(map);
+            genList.add(GenPreviewResp.ofNameAndContent(templateName, template.render(genMap)));
         }
         // 获取前端模版
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
-            Map<String, Object> map = new HashMap<>(1);
             Template template = engine.getTemplate("front/" + templateName + ".ftl");
-            map.put(templateName, template.render(genMap));
-            map.put("content", template.render(genMap));
-            map.put("name", templateName);
-            genList.add(map);
+            genList.add(GenPreviewResp.ofNameAndContent(templateName, template.render(genMap)));
         }
         return genList;
     }
@@ -162,6 +163,7 @@ public class GenUtil {
             if (!genConfig.getCover() && FileUtil.exist(file)) {
                 continue;
             }
+            log.info("begin to genFile file={}", file);
             // 生成代码
             genFile(file, template, genMap);
         }
