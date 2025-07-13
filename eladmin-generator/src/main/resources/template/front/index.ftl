@@ -63,17 +63,17 @@
               </#if>
             <#elseif column.formType = 'Switch'>
                 <#if (column.dictName)?? && (column.dictName)!="">
-                <el-tooltip :content="'Switch value: ' + form.${column.changeColumnName}" placement="top">
-                  <el-switch
-                          active-color="#13ce66"
-                          active-text="启用"
-                          active-value="1"
-                          inactive-color="#ff4949"
-                          inactive-text="停用"
-                          inactive-value="0"
-                          v-model="form.${column.changeColumnName}">
-                  </el-switch>
-                </el-tooltip>
+            <el-tooltip :content="'Switch value: ' + form.${column.changeColumnName}" placement="top">
+              <el-switch
+                active-color="#13ce66"
+                active-text="启用"
+                :active-value="1"
+                inactive-color="#ff4949"
+                inactive-text="停用"
+                :inactive-value="0"
+                v-model="form.${column.changeColumnName}">
+              </el-switch>
+            </el-tooltip>
                 </#if>
             <#elseif column.formType = 'Select'>
               <#if (column.dictName)?? && (column.dictName)!="">
@@ -186,7 +186,10 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
-    }
+    },
+    [CRUD.HOOK.beforeToAdd]() {
+      return true
+    },
   }
 }
 </script>

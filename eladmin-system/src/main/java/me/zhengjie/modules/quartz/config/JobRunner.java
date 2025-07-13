@@ -15,7 +15,10 @@
  */
 package me.zhengjie.modules.quartz.config;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.modules.quartz.domain.QuartzJob;
 import me.zhengjie.modules.quartz.repository.QuartzJobRepository;
 import me.zhengjie.modules.quartz.utils.QuartzManage;
 import org.slf4j.Logger;
@@ -43,8 +46,8 @@ public class JobRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments applicationArguments) {
         // todo disable temply
-//        List<QuartzJob> quartzJobs = quartzJobRepository.findByIsPauseIsFalse();
-//        quartzJobs.forEach(quartzManage::addJob);
+        List<QuartzJob> quartzJobs = quartzJobRepository.findByIsPauseIsFalse();
+        quartzJobs.forEach(quartzManage::addJob);
         log.info("Timing task injection complete");
     }
 }
