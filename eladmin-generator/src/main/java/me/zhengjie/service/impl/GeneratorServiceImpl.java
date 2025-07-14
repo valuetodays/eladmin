@@ -37,6 +37,8 @@ import me.zhengjie.domain.vo.TableInfo;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.repository.ColumnInfoRepository;
 import me.zhengjie.reqresp.GenPreviewResp;
+import me.zhengjie.service.DatabaseTableInfoGather;
+import me.zhengjie.service.DatabaseTableInfoGatherFactory;
 import me.zhengjie.service.GeneratorService;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.GenUtil;
@@ -68,49 +70,22 @@ public class GeneratorServiceImpl implements GeneratorService {
     private String generatorBasePath;
 
     private final String CONFIG_MESSAGE = "请先配置生成器";
+
+    private DatabaseTableInfoGatherFactory.DbType dbType = DatabaseTableInfoGatherFactory.DbType.MYSQL;
+
     @Override
     public Object getTables() {
-        // 使用预编译防止sql注入
-        String sqlMysql = "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables " +
-                "where table_schema = (select database()) " +
-                "order by create_time desc";
-        String sqlPgSql = "SELECT \n"
-                          + "    c.relname AS table_name,\n"
-                          + "    obj_description(c.oid) AS table_comment\n"
-                          + "FROM \n"
-                          + "    pg_class c\n"
-                          + "JOIN \n"
-                          + "    pg_namespace n ON n.oid = c.relnamespace\n"
-                          + "WHERE \n"
-                          + "    c.relkind = 'r' \n"
-                          + "    AND n.nspname = 'public'  -- 你可以改成其他 schema\n"
-                          + "ORDER BY \n"
-                          + "    c.oid DESC\n";
-        Query query = em.createNativeQuery(sqlMysql);
+        DatabaseTableInfoGather choose = DatabaseTableInfoGatherFactory.choose(dbType);
+        String sqlForTables = choose.getSqlForTables();
+        Query query = em.createNativeQuery(sqlForTables);
         return query.getResultList();
     }
 
     @Override
     public PageResult<TableInfo> getTables(String name, int[] startEnd) {
-        // 使用预编译防止sql注入
-        String sqlMySql = "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables " +
-                "where table_schema = (select database()) " +
-                "and table_name like :table order by create_time desc";
-        String sqlPgSql = "SELECT \n"
-                          + "    c.relname AS table_name,\n"
-                          + "    null as create_time, null as engine, null as table_collation, "
-                          + "    obj_description(c.oid) AS table_comment\n"
-                          + "FROM \n"
-                          + "    pg_class c\n"
-                          + "JOIN \n"
-                          + "    pg_namespace n ON n.oid = c.relnamespace\n"
-                          + "WHERE \n"
-                          + "    c.relkind = 'r' \n"
-                          + "    AND n.nspname = 'public' "
-                          + "    AND c.relname like :table "
-                          + "ORDER BY \n"
-                          + "    c.oid DESC\n";
-        Query query = em.createNativeQuery(sqlMySql);
+        DatabaseTableInfoGather choose = DatabaseTableInfoGatherFactory.choose(dbType);
+        String sqlForTablesForQuery = choose.getSqlForTablesForQuery();
+        Query query = em.createNativeQuery(sqlForTablesForQuery);
         query.setFirstResult(startEnd[0]);
         query.setMaxResults(startEnd[1] - startEnd[0]);
         query.setParameter("table", StringUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
@@ -120,7 +95,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             Object[] arr = (Object[]) obj;
             tableInfos.add(new TableInfo(arr[0], arr[1], arr[2], arr[3], ObjectUtil.isNotEmpty(arr[4]) ? arr[4] : "-"));
         }
-        String countSql = "select count(1) from (" + sqlPgSql + ") tmp";
+        String countSql = "select count(1) from (" + sqlForTablesForQuery + ") tmp";
         Query queryCount = em.createNativeQuery(countSql);
         queryCount.setParameter("table", StringUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
         BigInteger totalElements = (BigInteger) queryCount.getSingleResult();
@@ -140,10 +115,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public List<ColumnInfo> query(String tableName) {
-        // 使用预编译防止sql注入
-        String sql = "select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns " +
-                "where table_name = ? and table_schema = (select database()) order by ordinal_position";
-        Query query = em.createNativeQuery(sql);
+        DatabaseTableInfoGather choose = DatabaseTableInfoGatherFactory.choose(dbType);
+        String sqlForColumns = choose.getSqlForColumns(tableName);
+        Query query = em.createNativeQuery(sqlForColumns);
         query.setParameter(1, tableName);
         List result = query.getResultList();
         List<ColumnInfo> columnInfos = new ArrayList<>();
