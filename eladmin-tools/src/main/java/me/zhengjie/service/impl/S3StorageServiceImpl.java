@@ -15,8 +15,20 @@
 */
 package me.zhengjie.service.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.config.AmzS3Config;
@@ -25,22 +37,28 @@ import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.repository.S3StorageRepository;
 import me.zhengjie.service.S3StorageService;
 import me.zhengjie.service.dto.S3StorageQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.StringUtils;
 import org.apache.commons.io.IOUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException;
+import software.amazon.awssdk.services.s3.model.BucketCannedACL;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
 
 /**
 * @description 服务实现
@@ -48,13 +66,16 @@ import java.util.*;
 * @date 2025-06-25
 **/
 @Slf4j
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class S3StorageServiceImpl implements S3StorageService {
 
-    private final S3Client s3Client;
-    private final AmzS3Config amzS3Config;
-    private final S3StorageRepository s3StorageRepository;
+    @Inject
+    S3Client s3Client;
+    @Inject
+    AmzS3Config amzS3Config;
+    @Inject
+    S3StorageRepository s3StorageRepository;
 
     @Override
     public S3Storage getById(Long id) {
@@ -62,7 +83,7 @@ public class S3StorageServiceImpl implements S3StorageService {
     }
 
     @Override
-    public PageResult<S3Storage> queryAll(S3StorageQueryCriteria criteria, Pageable pageable){
+    public PageResult<S3Storage> queryAll(S3StorageQueryCriteria criteria, Page pageable) {
         Page<S3Storage> page = s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
                 -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page);
@@ -75,7 +96,7 @@ public class S3StorageServiceImpl implements S3StorageService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void deleteAll(List<Long> ids) {
         // 检查桶是否存在
         String bucketName = amzS3Config.getDefaultBucket();

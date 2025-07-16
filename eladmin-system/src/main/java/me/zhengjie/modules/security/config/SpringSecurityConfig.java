@@ -1,22 +1,14 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.security.config;
 
+import java.util.Map;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
-import me.zhengjie.modules.security.security.*;
+import me.zhengjie.modules.security.security.JwtAccessDeniedHandler;
+import me.zhengjie.modules.security.security.JwtAuthenticationEntryPoint;
+import me.zhengjie.modules.security.security.TokenConfigurer;
+import me.zhengjie.modules.security.security.TokenProvider;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.utils.AnonTagUtils;
 import me.zhengjie.utils.enums.RequestMethodEnum;
@@ -32,7 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.CorsFilter;
-import java.util.*;
 
 /**
  * @author Zheng Jie
@@ -42,13 +33,20 @@ import java.util.*;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SpringSecurityConfig {
 
-    private final TokenProvider tokenProvider;
-    private final CorsFilter corsFilter;
-    private final JwtAuthenticationEntryPoint authenticationErrorHandler;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final ApplicationContext applicationContext;
-    private final SecurityProperties properties;
-    private final OnlineUserService onlineUserService;
+    @Inject
+    TokenProvider tokenProvider;
+    @Inject
+    CorsFilter corsFilter;
+    @Inject
+    JwtAuthenticationEntryPoint authenticationErrorHandler;
+    @Inject
+    JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    @Inject
+    ApplicationContext applicationContext;
+    @Inject
+    SecurityProperties properties;
+    @Inject
+    OnlineUserService onlineUserService;
 
     @Bean
     GrantedAuthorityDefaults grantedAuthorityDefaults() {

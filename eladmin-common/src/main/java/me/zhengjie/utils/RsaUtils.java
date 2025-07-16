@@ -1,13 +1,19 @@
 package me.zhengjie.utils;
 
-import org.apache.commons.codec.binary.Base64;
-import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import javax.crypto.Cipher;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * @author https://www.cnblogs.com/nihaorz/p/10690643.html
@@ -178,8 +184,10 @@ public class RsaUtils {
      */
     public static class RsaKeyPair {
 
-        private final String publicKey;
-        private final String privateKey;
+        @Inject
+        String publicKey;
+        @Inject
+        String privateKey;
 
         public RsaKeyPair(String publicKey, String privateKey) {
             this.publicKey = publicKey;

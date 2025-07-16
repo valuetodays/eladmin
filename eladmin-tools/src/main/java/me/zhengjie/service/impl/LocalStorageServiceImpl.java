@@ -1,58 +1,52 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
-import lombok.RequiredArgsConstructor;
-import me.zhengjie.config.properties.FileProperties;
-import me.zhengjie.domain.LocalStorage;
-import me.zhengjie.service.dto.LocalStorageDto;
-import me.zhengjie.service.dto.LocalStorageQueryCriteria;
-import me.zhengjie.service.mapstruct.LocalStorageMapper;
-import me.zhengjie.exception.BadRequestException;
-import me.zhengjie.utils.*;
-import me.zhengjie.repository.LocalStorageRepository;
-import me.zhengjie.service.LocalStorageService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import cn.hutool.core.util.ObjectUtil;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import me.zhengjie.config.properties.FileProperties;
+import me.zhengjie.domain.LocalStorage;
+import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.repository.LocalStorageRepository;
+import me.zhengjie.service.LocalStorageService;
+import me.zhengjie.service.dto.LocalStorageDto;
+import me.zhengjie.service.dto.LocalStorageQueryCriteria;
+import me.zhengjie.service.mapstruct.LocalStorageMapper;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.ValidationUtil;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletResponse;
+
 
 /**
 * @author Zheng Jie
 * @date 2019-09-05
 */
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class LocalStorageServiceImpl implements LocalStorageService {
 
-    private final LocalStorageRepository localStorageRepository;
-    private final LocalStorageMapper localStorageMapper;
-    private final FileProperties properties;
+    @Inject
+    LocalStorageRepository localStorageRepository;
+    @Inject
+    LocalStorageMapper localStorageMapper;
+    @Inject
+    FileProperties properties;
 
     @Override
-    public PageResult<LocalStorageDto> queryAll(LocalStorageQueryCriteria criteria, Pageable pageable){
+    public PageResult<LocalStorageDto> queryAll(LocalStorageQueryCriteria criteria, Page pageable) {
         Page<LocalStorage> page = localStorageRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(localStorageMapper::toDto));
     }
@@ -70,7 +64,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public LocalStorage create(String name, MultipartFile multipartFile) {
         FileUtil.checkSize(properties.getMaxSize(), multipartFile.getSize());
         String suffix = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
@@ -97,7 +91,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void update(LocalStorage resources) {
         LocalStorage localStorage = localStorageRepository.findById(resources.getId()).orElseGet(LocalStorage::new);
         ValidationUtil.isNull( localStorage.getId(),"LocalStorage","id",resources.getId());
@@ -106,7 +100,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void deleteAll(Long[] ids) {
         for (Long id : ids) {
             LocalStorage storage = localStorageRepository.findById(id).orElseGet(LocalStorage::new);

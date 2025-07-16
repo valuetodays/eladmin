@@ -1,51 +1,41 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.GenConfig;
 import me.zhengjie.service.GenConfigService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Zheng Jie
  * @date 2019-01-14
  */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@RequestMapping("/api/genConfig")
-@Api(tags = "系统：代码生成器配置管理")
+@Path("/api/genConfig")
+@Tag(name = "系统：代码生成器配置管理")
 public class GenConfigController {
 
-    private final GenConfigService genConfigService;
+    @Inject
+    GenConfigService genConfigService;
 
-    @ApiOperation("查询")
-    @GetMapping(value = "/{tableName}")
-    public ResponseEntity<GenConfig> queryGenConfig(@PathVariable String tableName){
+    @Operation(summary = "查询")
+    @GET
+    @Path(value = "/{tableName}")
+    public ResponseEntity<GenConfig> queryGenConfig(@PathParam String tableName) {
         return new ResponseEntity<>(genConfigService.find(tableName), HttpStatus.OK);
     }
 
-    @PutMapping
-    @ApiOperation("修改")
-    public ResponseEntity<Object> updateGenConfig(@Validated @RequestBody GenConfig genConfig){
+    @PUT
+    @Path("")
+    @Operation(summary = "修改")
+    public Object updateGenConfig(@Valid GenConfig genConfig) {
         return new ResponseEntity<>(genConfigService.update(genConfig.getTableName(), genConfig),HttpStatus.OK);
     }
 }

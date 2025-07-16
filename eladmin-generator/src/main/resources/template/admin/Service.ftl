@@ -3,11 +3,11 @@ package ${package}.service;
 import ${package}.domain.${className};
 import ${package}.service.dto.${className}Dto;
 import ${package}.service.dto.${className}QueryCriteria;
-import org.springframework.data.domain.Pageable;
+import io.quarkus.panache.common.Page;
 import java.util.Map;
 import java.util.List;
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
+
 import me.zhengjie.utils.PageResult;
 
 /**
@@ -23,7 +23,7 @@ public interface ${className}Service {
     * @param pageable 分页参数
     * @return Map<String,Object>
     */
-    PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Pageable pageable);
+PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable);
 
     /**
     * 查询所有数据不分页

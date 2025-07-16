@@ -1,24 +1,9 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.mybiz.service.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -30,39 +15,39 @@ import lombok.Data;
 @Data
 public class VtServerDto implements Serializable {
 
-    @ApiModelProperty(value = "ID")
+    @Schema(description = "ID")
     private Long id;
 
-    @ApiModelProperty(value = "名称")
+    @Schema(description = "名称")
     private String name;
 
-    @ApiModelProperty(value = "绑定的端口，外网->内网")
+    @Schema(description = "绑定的端口，外网->内网")
     private String portBindings;
 
-    @ApiModelProperty(value = "timezone状态：1启用、0禁用")
+    @Schema(description = "timezone状态：1启用、0禁用")
     private Integer timeZoneEnabled;
 
-    @ApiModelProperty(value = "域名")
+    @Schema(description = "域名")
     private String domain;
 
-    @ApiModelProperty(value = "https状态：1启用、0禁用")
+    @Schema(description = "https状态：1启用、0禁用")
     private Integer httpsEnabled;
 
-    @ApiModelProperty(value = "镜像地址")
+    @Schema(description = "镜像地址")
     private String imageName;
 
-    @ApiModelProperty(value = "状态：1启用、0禁用")
+    @Schema(description = "状态：1启用、0禁用")
     private Integer enabled;
 
-    @ApiModelProperty(value = "创建者")
+    @Schema(description = "创建者")
     private String createBy;
 
-    @ApiModelProperty(value = "更新者")
+    @Schema(description = "更新者")
     private String updateBy;
 
-    @ApiModelProperty(value = "创建日期")
+    @Schema(description = "创建日期")
     private LocalDateTime createTime;
 
-    @ApiModelProperty(value = "更新时间")
+    @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 }

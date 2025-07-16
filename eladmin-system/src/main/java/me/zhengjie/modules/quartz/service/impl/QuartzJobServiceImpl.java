@@ -1,22 +1,19 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.quartz.service.impl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.quartz.domain.QuartzJob;
@@ -26,35 +23,39 @@ import me.zhengjie.modules.quartz.repository.QuartzLogRepository;
 import me.zhengjie.modules.quartz.service.QuartzJobService;
 import me.zhengjie.modules.quartz.service.dto.JobQueryCriteria;
 import me.zhengjie.modules.quartz.utils.QuartzManage;
-import me.zhengjie.utils.*;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.ValidationUtil;
 import org.quartz.CronExpression;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * @author Zheng Jie
  * @date 2019-01-07
  */
 @RequiredArgsConstructor
-@Service(value = "quartzJobService")
+@ApplicationScoped(value = "quartzJobService")
 public class QuartzJobServiceImpl implements QuartzJobService {
 
-    private final QuartzJobRepository quartzJobRepository;
-    private final QuartzLogRepository quartzLogRepository;
-    private final QuartzManage quartzManage;
-    private final RedisUtils redisUtils;
+    @Inject
+    QuartzJobRepository quartzJobRepository;
+    @Inject
+    QuartzLogRepository quartzLogRepository;
+    @Inject
+    QuartzManage quartzManage;
+    @Inject
+    RedisUtils redisUtils;
 
     @Override
-    public PageResult<QuartzJob> queryAll(JobQueryCriteria criteria, Pageable pageable){
+    public PageResult<QuartzJob> queryAll(JobQueryCriteria criteria, Page pageable) {
         return PageUtil.toPage(quartzJobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable));
     }
 
     @Override
-    public PageResult<QuartzLog> queryAllLog(JobQueryCriteria criteria, Pageable pageable){
+    public PageResult<QuartzLog> queryAllLog(JobQueryCriteria criteria, Page pageable) {
         return PageUtil.toPage(quartzLogRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable));
     }
 
@@ -76,7 +77,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void create(QuartzJob resources) {
         if (!CronExpression.isValidExpression(resources.getCronExpression())){
             throw new BadRequestException("cron表达式格式错误");
@@ -86,7 +87,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void update(QuartzJob resources) {
         if (!CronExpression.isValidExpression(resources.getCronExpression())){
             throw new BadRequestException("cron表达式格式错误");
@@ -120,7 +121,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void delete(Set<Long> ids) {
         for (Long id : ids) {
             QuartzJob quartzJob = findById(id);
@@ -130,7 +131,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void executionSubJob(String[] tasks) throws InterruptedException {
         for (String id : tasks) {
             if (StrUtil.isBlank(id)) {

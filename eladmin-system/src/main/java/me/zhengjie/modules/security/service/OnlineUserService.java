@@ -1,48 +1,46 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.security.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletRequest;
+
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.security.security.TokenProvider;
-import me.zhengjie.utils.PageResult;
 import me.zhengjie.modules.security.config.SecurityProperties;
+import me.zhengjie.modules.security.security.TokenProvider;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
-import me.zhengjie.utils.*;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import me.zhengjie.utils.EncryptUtils;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.StringUtils;
 
 /**
  * @author Zheng Jie
  * @date 2019年10月26日21:56:27
  */
-@Service
+@ApplicationScoped
 @Slf4j
 @AllArgsConstructor
 public class OnlineUserService {
 
-    private final SecurityProperties properties;
-    private final TokenProvider tokenProvider;
-    private final RedisUtils redisUtils;
+    @Inject
+    SecurityProperties properties;
+    @Inject
+    TokenProvider tokenProvider;
+    @Inject
+    RedisUtils redisUtils;
 
     /**
      * 保存在线用户信息
@@ -72,7 +70,7 @@ public class OnlineUserService {
      * @param pageable /
      * @return /
      */
-    public PageResult<OnlineUserDto> getAll(String username, Pageable pageable){
+    public PageResult<OnlineUserDto> getAll(String username, Page pageable) {
         List<OnlineUserDto> onlineUserDtos = getAll(username);
         return PageUtil.toPage(
                 PageUtil.paging(pageable.getPageNumber(),pageable.getPageSize(), onlineUserDtos),

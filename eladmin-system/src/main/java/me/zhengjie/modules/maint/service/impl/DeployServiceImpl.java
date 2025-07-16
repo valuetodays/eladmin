@@ -1,22 +1,20 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.maint.service.impl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
@@ -38,37 +36,41 @@ import me.zhengjie.modules.maint.util.ScpClientUtil;
 import me.zhengjie.modules.maint.websocket.MsgType;
 import me.zhengjie.modules.maint.websocket.SocketMsg;
 import me.zhengjie.modules.maint.websocket.WebSocketServer;
-import me.zhengjie.utils.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.utils.ValidationUtil;
 
 /**
  * @author zhanghouying
  * @date 2019-08-24
  */
 @Slf4j
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class DeployServiceImpl implements DeployService {
 
-	private final String FILE_SEPARATOR = "/";
-	private final DeployRepository deployRepository;
-	private final DeployMapper deployMapper;
-	private final ServerDeployService serverDeployService;
-	private final DeployHistoryService deployHistoryService;
+    @Inject
+    String FILE_SEPARATOR = "/";
+    @Inject
+    DeployRepository deployRepository;
+    @Inject
+    DeployMapper deployMapper;
+    @Inject
+    ServerDeployService serverDeployService;
+    @Inject
+    DeployHistoryService deployHistoryService;
 	/**
 	 * 循环次数
 	 */
-	private final Integer count = 30;
+    @Inject
+    Integer count = 30;
 
 
 	@Override
-	public PageResult<DeployDto> queryAll(DeployQueryCriteria criteria, Pageable pageable) {
+    public PageResult<DeployDto> queryAll(DeployQueryCriteria criteria, Page pageable) {
 		Page<Deploy> page = deployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
 		return PageUtil.toPage(page.map(deployMapper::toDto));
 	}
@@ -86,13 +88,13 @@ public class DeployServiceImpl implements DeployService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
 	public void create(Deploy resources) {
 		deployRepository.save(resources);
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
 	public void update(Deploy resources) {
 		Deploy deploy = deployRepository.findById(resources.getId()).orElseGet(Deploy::new);
 		ValidationUtil.isNull(deploy.getId(), "Deploy", "id", resources.getId());
@@ -101,7 +103,7 @@ public class DeployServiceImpl implements DeployService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
 	public void delete(Set<Long> ids) {
 		for (Long id : ids) {
 			deployRepository.deleteById(id);

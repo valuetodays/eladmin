@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@RequestMapping(method = RequestMethod.GET)
+@Path(method = RequestMethod.GET)
 public @interface AnonymousGetMapping {
 
     /**

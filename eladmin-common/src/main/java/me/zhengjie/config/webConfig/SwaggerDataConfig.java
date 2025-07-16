@@ -1,5 +1,7 @@
 package me.zhengjie.config.webConfig;
 
+import java.util.List;
+
 import cn.hutool.core.collection.CollUtil;
 import com.fasterxml.classmate.TypeResolver;
 import io.swagger.annotations.ApiModel;
@@ -8,11 +10,8 @@ import lombok.Data;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.data.domain.Pageable;
 import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.schema.AlternateTypeRuleConvention;
-
-import java.util.List;
 
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 

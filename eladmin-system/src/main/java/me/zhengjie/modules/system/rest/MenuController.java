@@ -1,85 +1,87 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.system.rest;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import cn.hutool.core.collection.CollectionUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.vo.MenuVo;
 import me.zhengjie.modules.system.service.MenuService;
-import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.MenuDto;
 import me.zhengjie.modules.system.service.dto.MenuQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.MenuMapper;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.SecurityUtils;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
  * @date 2018-12-03
  */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Api(tags = "系统：菜单管理")
-@RequestMapping("/api/menus")
+@Tag(name = "系统：菜单管理")
+@Path("/api/menus")
 public class MenuController {
 
-    private final MenuService menuService;
-    private final MenuMapper menuMapper;
+    @Inject
+    MenuService menuService;
+    @Inject
+    MenuMapper menuMapper;
     private static final String ENTITY_NAME = "menu";
 
-    @ApiOperation("导出菜单数据")
-    @GetMapping(value = "/download")
+    @Operation(summary = "导出菜单数据")
+    @GET
+    @Path(value = "/download")
     @PreAuthorize("@el.check('menu:list')")
     public void exportMenu(HttpServletResponse response, MenuQueryCriteria criteria) throws Exception {
         menuService.download(menuService.queryAll(criteria, false), response);
     }
 
-    @GetMapping(value = "/build")
-    @ApiOperation("获取前端所需菜单")
+    @GET
+    @Path(value = "/build")
+    @Operation(summary = "获取前端所需菜单")
     public ResponseEntity<List<MenuVo>> buildMenus(){
         List<MenuDto> menuDtoList = menuService.findByUser(SecurityUtils.getCurrentUserId());
         List<MenuDto> menus = menuService.buildTree(menuDtoList);
         return new ResponseEntity<>(menuService.buildMenus(menus),HttpStatus.OK);
     }
 
-    @ApiOperation("返回全部的菜单")
-    @GetMapping(value = "/lazy")
+    @Operation(summary = "返回全部的菜单")
+    @GET
+    @Path(value = "/lazy")
     @PreAuthorize("@el.check('menu:list','roles:list')")
     public ResponseEntity<List<MenuDto>> queryAllMenu(@RequestParam Long pid){
         return new ResponseEntity<>(menuService.getMenus(pid),HttpStatus.OK);
     }
 
-    @ApiOperation("根据菜单ID返回所有子节点ID，包含自身ID")
-    @GetMapping(value = "/child")
+    @Operation(summary = "根据菜单ID返回所有子节点ID，包含自身ID")
+    @GET
+    @Path(value = "/child")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public ResponseEntity<Object> childMenu(@RequestParam Long id){
+    public Object childMenu(@RequestParam Long id) {
         Set<Menu> menuSet = new HashSet<>();
         List<MenuDto> menuList = menuService.getMenus(id);
         menuSet.add(menuService.findOne(id));
@@ -88,18 +90,20 @@ public class MenuController {
         return new ResponseEntity<>(ids,HttpStatus.OK);
     }
 
-    @GetMapping
-    @ApiOperation("查询菜单")
+    @GET
+    @Path
+    @Operation(summary = "查询菜单")
     @PreAuthorize("@el.check('menu:list')")
     public ResponseEntity<PageResult<MenuDto>> queryMenu(MenuQueryCriteria criteria) throws Exception {
         List<MenuDto> menuDtoList = menuService.queryAll(criteria, true);
         return new ResponseEntity<>(PageUtil.toPage(menuDtoList, menuDtoList.size()),HttpStatus.OK);
     }
 
-    @ApiOperation("查询菜单:根据ID获取同级与上级数据")
-    @PostMapping("/superior")
+    @Operation(summary = "查询菜单:根据ID获取同级与上级数据")
+    @POST
+    @Path("/superior")
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<List<MenuDto>> getMenuSuperior(@RequestBody List<Long> ids) {
+    public ResponseEntity<List<MenuDto>> getMenuSuperior(List<Long> ids) {
         Set<MenuDto> menuDtos = new LinkedHashSet<>();
         if(CollectionUtil.isNotEmpty(ids)){
             for (Long id : ids) {
@@ -120,31 +124,34 @@ public class MenuController {
     }
 
     @Log("新增菜单")
-    @ApiOperation("新增菜单")
-    @PostMapping
+    @Operation(summary = "新增菜单")
+    @POST
+    @Path("")
     @PreAuthorize("@el.check('menu:add')")
-    public ResponseEntity<Object> createMenu(@Validated @RequestBody Menu resources){
+    public Object createMenu(@Valid Menu resources) {
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
         menuService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return 1;
     }
 
     @Log("修改菜单")
-    @ApiOperation("修改菜单")
-    @PutMapping
+    @Operation(summary = "修改菜单")
+    @PUT
+    @Path("")
     @PreAuthorize("@el.check('menu:edit')")
-    public ResponseEntity<Object> updateMenu(@Validated(Menu.Update.class) @RequestBody Menu resources){
+    public Object updateMenu(@Validated(Menu.Update.class) Menu resources) {
         menuService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return 1;
     }
 
     @Log("删除菜单")
-    @ApiOperation("删除菜单")
-    @DeleteMapping
+    @Operation(summary = "删除菜单")
+    @DELETE
+    @Path("")
     @PreAuthorize("@el.check('menu:del')")
-    public ResponseEntity<Object> deleteMenu(@RequestBody Set<Long> ids){
+    public Object deleteMenu(Set<Long> ids) {
         Set<Menu> menuSet = new HashSet<>();
         for (Long id : ids) {
             List<MenuDto> menuList = menuService.getMenus(id);
@@ -152,6 +159,6 @@ public class MenuController {
             menuSet = menuService.getChildMenus(menuMapper.toEntity(menuList), menuSet);
         }
         menuService.delete(menuSet);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 }

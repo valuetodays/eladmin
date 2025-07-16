@@ -1,26 +1,6 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.maint.util;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.util.StringUtils;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.maint.domain.enums.DataTypeEnum;
-import me.zhengjie.utils.CloseUtil;
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +11,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.modules.maint.domain.enums.DataTypeEnum;
+import me.zhengjie.utils.CloseUtil;
 
 /**
  * @author /

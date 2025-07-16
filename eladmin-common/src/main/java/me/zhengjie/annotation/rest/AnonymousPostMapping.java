@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@RequestMapping(method = RequestMethod.POST)
+@Path(method = RequestMethod.POST)
 public @interface AnonymousPostMapping {
 
     /**

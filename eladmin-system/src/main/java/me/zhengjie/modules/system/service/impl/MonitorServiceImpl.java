@@ -1,48 +1,43 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.system.service.impl;
+
+import java.lang.management.ManagementFactory;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import cn.hutool.core.date.BetweenFormatter.Level;
 import cn.hutool.core.date.DateUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.system.service.MonitorService;
 import me.zhengjie.utils.ElConstant;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.StringUtils;
-import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
-import oshi.hardware.*;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.VirtualMemory;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 import oshi.util.Util;
-import java.lang.management.ManagementFactory;
-import java.text.DecimalFormat;
-import java.util.*;
 
 /**
 * @author Zheng Jie
 * @date 2020-05-02
 */
 @Slf4j
-@Service
+@ApplicationScoped
 public class MonitorServiceImpl implements MonitorService {
 
-    private final DecimalFormat df = new DecimalFormat("0.00");
+    @Inject
+    DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
     public Map<String,Object> getServers(){

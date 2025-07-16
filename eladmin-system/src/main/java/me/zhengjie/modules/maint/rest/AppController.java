@@ -1,22 +1,19 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.maint.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.Set;
+
+import io.quarkus.panache.common.Page;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.maint.domain.App;
@@ -24,66 +21,70 @@ import me.zhengjie.modules.maint.service.AppService;
 import me.zhengjie.modules.maint.service.dto.AppDto;
 import me.zhengjie.modules.maint.service.dto.AppQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import org.springframework.data.domain.Pageable;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author zhanghouying
 * @date 2019-08-24
 */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Api(tags = "运维：应用管理")
-@RequestMapping("/api/app")
+@Tag(name = "运维：应用管理")
+@Path("/api/app")
 public class AppController {
 
-    private final AppService appService;
+    @Inject
+    AppService appService;
 
-    @ApiOperation("导出应用数据")
-    @GetMapping(value = "/download")
+    @Operation(summary = "导出应用数据")
+    @GET
+    @Path(value = "/download")
     @PreAuthorize("@el.check('app:list')")
     public void exportApp(HttpServletResponse response, AppQueryCriteria criteria) throws IOException {
         appService.download(appService.queryAll(criteria), response);
     }
 
-    @ApiOperation(value = "查询应用")
-    @GetMapping
+    @Operation(summary = "查询应用")
+    @GET
+    @Path("")
     @PreAuthorize("@el.check('app:list')")
-    public ResponseEntity<PageResult<AppDto>> queryApp(AppQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<PageResult<AppDto>> queryApp(AppQueryCriteria criteria, Page pageable) {
         return new ResponseEntity<>(appService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
     @Log("新增应用")
-    @ApiOperation(value = "新增应用")
-    @PostMapping
+    @Operation(summary = "新增应用")
+    @POST
+    @Path("")
     @PreAuthorize("@el.check('app:add')")
-    public ResponseEntity<Object> createApp(@Validated @RequestBody App resources){
+    public Object createApp(@Valid App resources) {
         appService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return 1;
     }
 
     @Log("修改应用")
-    @ApiOperation(value = "修改应用")
-    @PutMapping
+    @Operation(summary = "修改应用")
+    @PUT
+    @Path("")
     @PreAuthorize("@el.check('app:edit')")
-    public ResponseEntity<Object> updateApp(@Validated @RequestBody App resources){
+    public Object updateApp(@Valid App resources) {
         appService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return 1;
     }
 
     @Log("删除应用")
-    @ApiOperation(value = "删除应用")
-    @DeleteMapping
+    @Operation(summary = "删除应用")
+    @DELETE
+    @Path("")
     @PreAuthorize("@el.check('app:del')")
-    public ResponseEntity<Object> deleteApp(@RequestBody Set<Long> ids){
+    public Object deleteApp(Set<Long> ids) {
         appService.delete(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 }

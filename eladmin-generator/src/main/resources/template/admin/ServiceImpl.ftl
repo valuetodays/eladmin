@@ -18,8 +18,8 @@ import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}Dto;
 import ${package}.service.dto.${className}QueryCriteria;
 import ${package}.service.mapstruct.${className}Mapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 <#if !auto && pkColumnType = 'Long'>
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
@@ -28,13 +28,13 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.IdUtil;
 </#if>
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import io.quarkus.panache.common.Page;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import me.zhengjie.utils.PageResult;
@@ -44,15 +44,15 @@ import me.zhengjie.utils.PageResult;
 * @author ${author}
 * @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class ${className}ServiceImpl implements ${className}Service {
 
-    private final ${className}Repository ${changeClassName}Repository;
-    private final ${className}Mapper ${changeClassName}Mapper;
+@Inject ${className}Repository ${changeClassName}Repository;
+@Inject ${className}Mapper ${changeClassName}Mapper;
 
     @Override
-    public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Pageable pageable){
+public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable){
         Page<${className}> page = ${changeClassName}Repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(${changeClassName}Mapper::toDto));
     }
@@ -71,7 +71,7 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackOn = Exception.class)
     public void create(${className} resources) {
 <#if !auto && pkColumnType = 'Long'>
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
@@ -93,7 +93,7 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackOn = Exception.class)
     public void update(${className} resources) {
         ${className} ${changeClassName} = ${changeClassName}Repository.findById(resources.get${pkCapitalColName}()).orElseGet(${className}::new);
         ValidationUtil.isNull( ${changeClassName}.get${pkCapitalColName}(),"${className}","id",resources.get${pkCapitalColName}());

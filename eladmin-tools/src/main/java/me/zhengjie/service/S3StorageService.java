@@ -15,15 +15,15 @@
 */
 package me.zhengjie.service;
 
-import me.zhengjie.domain.S3Storage;
-import me.zhengjie.service.dto.S3StorageQueryCriteria;
-import me.zhengjie.utils.PageResult;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import io.quarkus.panache.common.Page;
+import me.zhengjie.domain.S3Storage;
+import me.zhengjie.service.dto.S3StorageQueryCriteria;
+import me.zhengjie.utils.PageResult;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
 * @description 服务接口
@@ -38,7 +38,7 @@ public interface S3StorageService {
     * @param pageable 分页参数
     * @return PageResult
     */
-    PageResult<S3Storage> queryAll(S3StorageQueryCriteria criteria, Pageable pageable);
+    PageResult<S3Storage> queryAll(S3StorageQueryCriteria criteria, Page pageable);
 
     /**
     * 查询所有数据不分页

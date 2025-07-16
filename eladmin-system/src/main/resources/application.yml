@@ -1,0 +1,76 @@
+quarkus:
+  application:
+    name: api3-web
+  profile: dev
+  http:
+    # 不配置host，只能 localhost 访问
+    # 因为 前端页面是在另一个服务器上（使用vscode + remote development），要访问本服务
+    host: 0.0.0.0
+    port: 20003
+    root-path: "/api3"
+    limits:
+      max-body-size: 12M
+  # https://quarkus.io/guides/datasource
+  datasource:
+    db-kind: postgresql
+    #    db-kind: other
+    #    db-version: 8.0.27
+    username: postgres
+    password: z1l78fkSMgq8o0
+    jdbc:
+      driver: com.p6spy.engine.spy.P6SpyDriver
+      url: jdbc:p6spy:postgresql://aliyuntest:5432/db_example
+      #      url: jdbc:p6spy:mysql://aliyun-test:3306/eblog?useUnicode=true&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+      max-size: 5
+      min-size: 1
+  # https://quarkus.io/guides/hibernate-orm
+  hibernate-orm:
+    # https://docs.jboss.org/hibernate/orm/6.6/dialect/dialect.html
+    #    dialect: MySQL
+    #    dialect: cn.valuetodays.api3.web.extend.NoEscapeMySQLDialect
+    schema-management:
+      strategy: none
+    packages: cn.valuetodays
+    database:
+      #      generation: none
+      version-check:
+        enabled: false
+    sql-load-script: no-file
+    log:
+      # the printed sql is containing ?
+      sql: false
+    validate-in-dev: false
+    validation:
+      mode: none
+  package:
+    jar:
+      type: UBER_JAR
+    runner-suffix: -runner
+  thread-pool:
+    max-threads: 200
+    core-threads: 20
+    queue-size: 1000
+  redis:
+    hosts: redis://localhost:6379
+    password: 'abc123'
+    timeout: 10s
+    database: 0
+  log:
+    debug: true
+    level: INFO
+    #    handlers: ["console", "file"]
+    console:
+      enable: true
+    file:
+      enable: true
+      path: /root/workbench/logs/valuetodays-api3-by-quarkus/valuetodays-api3-by-quarkus.log
+      rotation:
+        #        rotate-on-boot: true # 是否按服务启动滚动
+        max-file-size: 10M
+        max-backup-index: 15
+        file-suffix: .yyyy-MM-dd
+  smallrye-openapi:
+    enable: true
+nats:
+  server: nats://aliyun-test:4222
+

@@ -1,29 +1,15 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-package me.zhengjie.modules.maint.util;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import com.google.common.collect.Maps;
-import me.zhengjie.utils.StringUtils;
+package me.zhengjie.modules.maint.util;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SCPClient;
+import com.google.common.collect.Maps;
+import me.zhengjie.utils.StringUtils;
 
 /**
  * 远程执行linux命令
@@ -32,12 +18,15 @@ import java.util.logging.Logger;
  */
 public class ScpClientUtil {
 
-	private final String ip;
-	private final int port;
-	private final String username;
-	private final String password;
-
-	static private final Map<String,ScpClientUtil> instance = Maps.newHashMap();
+    static @Inject Map<String, ScpClientUtil> instance = Maps.newHashMap();
+    @Inject
+    String ip;
+    @Inject
+    int port;
+    @Inject
+    String username;
+    @Inject
+    String password;
 
 	static synchronized public ScpClientUtil getInstance(String ip, int port, String username, String password) {
 		instance.computeIfAbsent(ip, i -> new ScpClientUtil(i, port, username, password));

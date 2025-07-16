@@ -1,18 +1,4 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.service.impl;
 
 import java.io.File;
@@ -25,11 +11,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ZipUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.GenConfig;
@@ -50,13 +36,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Zheng Jie
  * @date 2019-01-02
  */
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 @SuppressWarnings({"unchecked","all"})
 public class GeneratorServiceImpl implements GeneratorService {
@@ -64,12 +49,14 @@ public class GeneratorServiceImpl implements GeneratorService {
     @PersistenceContext
     private EntityManager em;
 
-    private final ColumnInfoRepository columnInfoRepository;
+    @Inject
+    ColumnInfoRepository columnInfoRepository;
 
     @Value("${generator.base-path}")
     private String generatorBasePath;
 
-    private final String CONFIG_MESSAGE = "请先配置生成器";
+    @Inject
+    String CONFIG_MESSAGE = "请先配置生成器";
 
     private DatabaseTableInfoGatherFactory.DbType dbType = DatabaseTableInfoGatherFactory.DbType.MYSQL;
 
@@ -188,7 +175,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public ResponseEntity<Object> preview(GenConfig genConfig, List<ColumnInfo> columns) {
+    public Object preview(GenConfig genConfig, List<ColumnInfo> columns) {
         if (genConfig.getId() == null) {
             throw new BadRequestException(CONFIG_MESSAGE);
         }

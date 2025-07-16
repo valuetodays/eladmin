@@ -28,9 +28,9 @@ public class ${className}QueryCriteria{
     /** 精确 */
     @Query
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
 </#if>
@@ -38,9 +38,9 @@ public class ${className}QueryCriteria{
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE)
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
 </#if>
@@ -48,9 +48,9 @@ public class ${className}QueryCriteria{
     /** 不等于 */
     @Query(type = Query.Type.NOT_EQUAL)
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
 </#if>
@@ -58,9 +58,9 @@ public class ${className}QueryCriteria{
     /** 不为空 */
     @Query(type = Query.Type.NOT_NULL)
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
 </#if>
@@ -68,9 +68,9 @@ public class ${className}QueryCriteria{
     /** 大于等于 */
     @Query(type = Query.Type.GREATER_THAN)
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
 </#if>
@@ -78,9 +78,9 @@ public class ${className}QueryCriteria{
     /** 小于等于 */
     @Query(type = Query.Type.LESS_THAN)
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
 </#if>

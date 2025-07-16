@@ -1,133 +1,130 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.system.rest;
 
-import cn.hutool.core.lang.Dict;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
-import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.system.domain.Role;
-import me.zhengjie.exception.BadRequestException;
-import me.zhengjie.modules.system.service.RoleService;
-import me.zhengjie.modules.system.service.dto.RoleDto;
-import me.zhengjie.modules.system.service.dto.RoleQueryCriteria;
-import me.zhengjie.modules.system.service.dto.RoleSmallDto;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SecurityUtils;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.lang.Dict;
+import io.quarkus.panache.common.Page;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import me.zhengjie.annotation.Log;
+import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.modules.system.domain.Role;
+import me.zhengjie.modules.system.service.RoleService;
+import me.zhengjie.modules.system.service.dto.RoleDto;
+import me.zhengjie.modules.system.service.dto.RoleQueryCriteria;
+import me.zhengjie.modules.system.service.dto.RoleSmallDto;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.SecurityUtils;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 /**
  * @author Zheng Jie
  * @date 2018-12-03
  */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Api(tags = "系统：角色管理")
-@RequestMapping("/api/roles")
+@Tag(name = "系统：角色管理")
+@Path("/api/roles")
 public class RoleController {
 
-    private final RoleService roleService;
+    @Inject
+    RoleService roleService;
 
     private static final String ENTITY_NAME = "role";
 
-    @ApiOperation("获取单个role")
-    @GetMapping(value = "/{id}")
+    @Operation(summary = "获取单个role")
+    @GET
+    @Path(value = "/{id}")
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<RoleDto> findRoleById(@PathVariable Long id){
+    public ResponseEntity<RoleDto> findRoleById(@PathParam Long id) {
         return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
     }
 
-    @ApiOperation("导出角色数据")
-    @GetMapping(value = "/download")
+    @Operation(summary = "导出角色数据")
+    @GET
+    @Path(value = "/download")
     @PreAuthorize("@el.check('role:list')")
     public void exportRole(HttpServletResponse response, RoleQueryCriteria criteria) throws IOException {
         roleService.download(roleService.queryAll(criteria), response);
     }
 
-    @ApiOperation("返回全部的角色")
-    @GetMapping(value = "/all")
+    @Operation(summary = "返回全部的角色")
+    @GET
+    @Path(value = "/all")
     @PreAuthorize("@el.check('roles:list','user:add','user:edit')")
     public ResponseEntity<List<RoleDto>> queryAllRole(){
         return new ResponseEntity<>(roleService.queryAll(),HttpStatus.OK);
     }
 
-    @ApiOperation("查询角色")
-    @GetMapping
+    @Operation(summary = "查询角色")
+    @GET
+    @Path
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<PageResult<RoleDto>> queryRole(RoleQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<PageResult<RoleDto>> queryRole(RoleQueryCriteria criteria, Page pageable) {
         return new ResponseEntity<>(roleService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
-    @ApiOperation("获取用户级别")
-    @GetMapping(value = "/level")
-    public ResponseEntity<Object> getRoleLevel(){
+    @Operation(summary = "获取用户级别")
+    @GET
+    @Path(value = "/level")
+    public Object getRoleLevel() {
         return new ResponseEntity<>(Dict.create().set("level", getLevels(null)),HttpStatus.OK);
     }
 
     @Log("新增角色")
-    @ApiOperation("新增角色")
-    @PostMapping
+    @Operation(summary = "新增角色")
+    @POST
+    @Path("")
     @PreAuthorize("@el.check('roles:add')")
-    public ResponseEntity<Object> createRole(@Validated @RequestBody Role resources){
+    public Object createRole(@Valid Role resources) {
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
         getLevels(resources.getLevel());
         roleService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return 1;
     }
 
     @Log("修改角色")
-    @ApiOperation("修改角色")
-    @PutMapping
+    @Operation(summary = "修改角色")
+    @PUT
+    @Path("")
     @PreAuthorize("@el.check('roles:edit')")
-    public ResponseEntity<Object> updateRole(@Validated(Role.Update.class) @RequestBody Role resources){
+    public Object updateRole(@Validated(Role.Update.class) Role resources) {
         getLevels(resources.getLevel());
         roleService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return 1;
     }
 
     @Log("修改角色菜单")
-    @ApiOperation("修改角色菜单")
-    @PutMapping(value = "/menu")
+    @Operation(summary = "修改角色菜单")
+    @PUT
+    @Path("")(value ="/menu")
     @PreAuthorize("@el.check('roles:edit')")
-    public ResponseEntity<Object> updateRoleMenu(@RequestBody Role resources){
+    public Object updateRoleMenu(Role resources) {
         RoleDto role = roleService.findById(resources.getId());
         getLevels(role.getLevel());
         roleService.updateMenu(resources,role);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return 1;
     }
 
     @Log("删除角色")
-    @ApiOperation("删除角色")
-    @DeleteMapping
+    @Operation(summary = "删除角色")
+    @DELETE
+    @Path("")
     @PreAuthorize("@el.check('roles:del')")
-    public ResponseEntity<Object> deleteRole(@RequestBody Set<Long> ids){
+    public Object deleteRole(Set<Long> ids) {
         for (Long id : ids) {
             RoleDto role = roleService.findById(id);
             getLevels(role.getLevel());
@@ -135,7 +132,7 @@ public class RoleController {
         // 验证是否被用户关联
         roleService.verification(ids);
         roleService.delete(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 
     /**

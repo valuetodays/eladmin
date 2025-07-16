@@ -1,70 +1,61 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.security.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.Set;
+
+import io.quarkus.panache.common.Page;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
 import me.zhengjie.utils.EncryptUtils;
 import me.zhengjie.utils.PageResult;
-import org.springframework.data.domain.Pageable;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
  */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@RequestMapping("/auth/online")
-@Api(tags = "系统：在线用户管理")
+@Path("/auth/online")
+@Tag(name = "系统：在线用户管理")
 public class OnlineController {
 
-    private final OnlineUserService onlineUserService;
+    @Inject
+    OnlineUserService onlineUserService;
 
-    @ApiOperation("查询在线用户")
-    @GetMapping
+    @Operation(summary = "查询在线用户")
+    @GET
+    @Path
     @PreAuthorize("@el.check()")
-    public ResponseEntity<PageResult<OnlineUserDto>> queryOnlineUser(String username, Pageable pageable){
+    public ResponseEntity<PageResult<OnlineUserDto>> queryOnlineUser(String username, Page pageable) {
         return new ResponseEntity<>(onlineUserService.getAll(username, pageable),HttpStatus.OK);
     }
 
-    @ApiOperation("导出数据")
-    @GetMapping(value = "/download")
+    @Operation(summary = "导出数据")
+    @GET
+    @Path(value = "/download")
     @PreAuthorize("@el.check()")
     public void exportOnlineUser(HttpServletResponse response, String username) throws IOException {
         onlineUserService.download(onlineUserService.getAll(username), response);
     }
 
-    @ApiOperation("踢出用户")
-    @DeleteMapping
+    @Operation(summary = "踢出用户")
+    @DELETE
+    @Path("")
     @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> deleteOnlineUser(@RequestBody Set<String> keys) throws Exception {
+    public Object deleteOnlineUser(Set<String> keys) throws Exception {
         for (String token : keys) {
             // 解密Key
             token = EncryptUtils.desDecrypt(token);
             onlineUserService.logout(token);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 }

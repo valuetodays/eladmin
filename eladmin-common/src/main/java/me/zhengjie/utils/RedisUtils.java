@@ -1,51 +1,31 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.utils;
 
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.*;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import cn.hutool.core.util.StrUtil;
+import io.quarkus.redis.datasource.RedisDataSource;
+import jakarta.enterprise.context.ApplicationScoped;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author /
  */
-@Component
+@ApplicationScoped
 @SuppressWarnings({"all"})
+@Slf4j
 public class RedisUtils {
-    private static final Logger log = LoggerFactory.getLogger(RedisUtils.class);
-
-    private RedisTemplate<Object, Object> redisTemplate;
-
-    public RedisUtils(RedisTemplate<Object, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-        this.redisTemplate.setKeySerializer(new StringRedisSerializer());
-        this.redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-    }
+    private RedisDataSource redisTemplate;
 
     /**
      * 指定缓存失效时间
@@ -56,7 +36,7 @@ public class RedisUtils {
     public boolean expire(String key, long time) {
         try {
             if (time > 0) {
-                redisTemplate.expire(key, time, TimeUnit.SECONDS);
+                redisTemplate.key(String.class).expire(key, Duration.ofMillis(time));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -90,8 +70,8 @@ public class RedisUtils {
      * @param key 键 不能为null
      * @return 时间(秒) 返回0代表为永久有效
      */
-    public long getExpire(Object key) {
-        return redisTemplate.getExpire(key, TimeUnit.SECONDS);
+    public long getExpire(String key) {
+        return redisTemplate.key().ttl(key);
     }
 
     /**
@@ -178,19 +158,14 @@ public class RedisUtils {
     public void del(String... keys) {
         if (keys != null && keys.length > 0) {
             if (keys.length == 1) {
-                boolean result = redisTemplate.delete(keys[0]);
+                boolean result = redisTemplate.key(String.class).del(keys[0]) > 0;
                 log.debug("--------------------------------------------");
                 log.debug(new StringBuilder("删除缓存：").append(keys[0]).append("，结果：").append(result).toString());
                 log.debug("--------------------------------------------");
             } else {
-                Set<Object> keySet = new HashSet<>();
-                for (String key : keys) {
-                    if (redisTemplate.hasKey(key))
-                        keySet.add(key);
-                }
-                long count = redisTemplate.delete(keySet);
+                long count = redisTemplate.key(String.class).del(keys);
                 log.debug("--------------------------------------------");
-                log.debug("成功删除缓存：" + keySet.toString());
+                log.debug("成功删除缓存：" + StringUtils.joinWith(",", keys));
                 log.debug("缓存删除数量：" + count + "个");
                 log.debug("--------------------------------------------");
             }

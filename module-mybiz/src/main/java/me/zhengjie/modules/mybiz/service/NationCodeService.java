@@ -2,13 +2,12 @@ package me.zhengjie.modules.mybiz.service;
 
 import java.io.IOException;
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 
+import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.mybiz.domain.NationCode;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeDto;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import org.springframework.data.domain.Pageable;
 
 /**
 * @description 服务接口
@@ -23,7 +22,7 @@ public interface NationCodeService {
     * @param pageable 分页参数
     * @return Map<String,Object>
     */
-    PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Pageable pageable);
+    PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Page pageable);
 
     /**
     * 查询所有数据不分页

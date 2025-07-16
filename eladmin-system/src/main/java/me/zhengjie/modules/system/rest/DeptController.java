@@ -1,24 +1,30 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.system.rest;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import cn.hutool.core.collection.CollectionUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
@@ -27,48 +33,52 @@ import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
 * @author Zheng Jie
 * @date 2019-03-25
 */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Api(tags = "系统：部门管理")
-@RequestMapping("/api/dept")
-public class DeptController {
+@Tag(name = "系统：部门管理")
+@Path("/api/dept")
+public class DeptController extends BaseController {
 
-    private final DeptService deptService;
+    @Inject
+    DeptService deptService;
     private static final String ENTITY_NAME = "dept";
 
-    @ApiOperation("导出部门数据")
-    @GetMapping(value = "/download")
+    @Operation(summary = "导出部门数据")
+    @GET
+    @Path(value = "/download")
     @PreAuthorize("@el.check('dept:list')")
-    public void exportDept(HttpServletResponse response, DeptQueryCriteria criteria) throws Exception {
-        deptService.download(deptService.queryAll(criteria, false), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportDept(DeptQueryCriteria criteria) throws Exception {
+        List<DeptDto> deptDtos = deptService.queryAll(criteria, false);
+        File file = deptService.download(deptDtos);
+
+        return super.download(file);
     }
 
-    @ApiOperation("查询部门")
-    @GetMapping
+    @Operation(summary = "查询部门")
+    @GET
+    @Path("")
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<PageResult<DeptDto>> queryDept(DeptQueryCriteria criteria) throws Exception {
+    public PageResult<DeptDto> queryDept(DeptQueryCriteria criteria) throws Exception {
         List<DeptDto> depts = deptService.queryAll(criteria, true);
-        return new ResponseEntity<>(PageUtil.toPage(depts, depts.size()),HttpStatus.OK);
+        return PageUtil.toPage(depts, depts.size());
     }
 
-    @ApiOperation("查询部门:根据ID获取同级与上级数据")
-    @PostMapping("/superior")
+    @Operation(summary = "查询部门:根据ID获取同级与上级数据")
+    @POST
+    @Path("/superior")
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> getDeptSuperior(@RequestBody List<Long> ids,
-                                                  @RequestParam(defaultValue = "false") Boolean exclude) {
+    public Object getDeptSuperior(List<Long> ids,
+                                  @QueryParam("exclude") @DefaultValue("false") Boolean exclude) {
         Set<DeptDto> deptSet  = new LinkedHashSet<>();
         for (Long id : ids) {
             DeptDto deptDto = deptService.findById(id);
@@ -84,35 +94,38 @@ public class DeptController {
             }
             deptSet.addAll(depts);
         }
-        return new ResponseEntity<>(deptService.buildTree(new ArrayList<>(deptSet)),HttpStatus.OK);
+        return deptService.buildTree(new ArrayList<>(deptSet));
     }
 
     @Log("新增部门")
-    @ApiOperation("新增部门")
-    @PostMapping
+    @Operation(summary = "新增部门")
+    @POST
+    @Path("")
     @PreAuthorize("@el.check('dept:add')")
-    public ResponseEntity<Object> createDept(@Validated @RequestBody Dept resources){
+    public Object createDept(@Valid Dept resources) {
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
         deptService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return "1";
     }
 
     @Log("修改部门")
-    @ApiOperation("修改部门")
-    @PutMapping
+    @Operation(summary = "修改部门")
+    @PUT
+    @Path("")
     @PreAuthorize("@el.check('dept:edit')")
-    public ResponseEntity<Object> updateDept(@Validated(Dept.Update.class) @RequestBody Dept resources){
+    public Object updateDept(/*@Validated(Dept.Update.class) */ Dept resources) {
         deptService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return 1;
     }
 
     @Log("删除部门")
-    @ApiOperation("删除部门")
-    @DeleteMapping
+    @Operation(summary = "删除部门")
+    @DELETE
+    @Path("")
     @PreAuthorize("@el.check('dept:del')")
-    public ResponseEntity<Object> deleteDept(@RequestBody Set<Long> ids){
+    public Object deleteDept(Set<Long> ids) {
         Set<DeptDto> deptDtos = new HashSet<>();
         for (Long id : ids) {
             List<Dept> deptList = deptService.findByPid(id);
@@ -124,6 +137,6 @@ public class DeptController {
         // 验证是否被角色或用户关联
         deptService.verification(deptDtos);
         deptService.delete(deptDtos);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 }

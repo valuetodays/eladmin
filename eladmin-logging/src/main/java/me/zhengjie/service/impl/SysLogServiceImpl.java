@@ -1,25 +1,24 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.service.impl;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.repository.LogRepository;
@@ -28,38 +27,36 @@ import me.zhengjie.service.dto.SysLogQueryCriteria;
 import me.zhengjie.service.dto.SysLogSmallDto;
 import me.zhengjie.service.mapstruct.LogErrorMapper;
 import me.zhengjie.service.mapstruct.LogSmallMapper;
-import me.zhengjie.utils.*;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.ValidationUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.*;
 
 /**
  * @author Zheng Jie
  * @date 2018-11-24
  */
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class SysLogServiceImpl implements SysLogService {
 
-    private final LogRepository logRepository;
-    private final LogErrorMapper logErrorMapper;
-    private final LogSmallMapper logSmallMapper;
+    @Inject
+    LogRepository logRepository;
+    @Inject
+    LogErrorMapper logErrorMapper;
+    @Inject
+    LogSmallMapper logSmallMapper;
     // 定义敏感字段常量数组
     private static final String[] SENSITIVE_KEYS = {"password"};
 
     @Override
-    public Object queryAll(SysLogQueryCriteria criteria, Pageable pageable) {
+    public Object queryAll(SysLogQueryCriteria criteria, Page pageable) {
         Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
         String status = "ERROR";
         if (status.equals(criteria.getLogType())) {
@@ -74,13 +71,13 @@ public class SysLogServiceImpl implements SysLogService {
     }
 
     @Override
-    public PageResult<SysLogSmallDto> queryAllByUser(SysLogQueryCriteria criteria, Pageable pageable) {
+    public PageResult<SysLogSmallDto> queryAllByUser(SysLogQueryCriteria criteria, Page pageable) {
         Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
         return PageUtil.toPage(page.map(logSmallMapper::toDto));
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void save(String username, String browser, String ip, ProceedingJoinPoint joinPoint, SysLog sysLog) {
         if (sysLog == null) {
             throw new IllegalArgumentException("Log 不能为 null!");
@@ -188,13 +185,13 @@ public class SysLogServiceImpl implements SysLogService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void delAllByError() {
         logRepository.deleteByLogType("ERROR");
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void delAllByInfo() {
         logRepository.deleteByLogType("INFO");
     }

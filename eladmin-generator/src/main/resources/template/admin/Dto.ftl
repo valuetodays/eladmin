@@ -25,9 +25,9 @@ public class ${className}Dto implements Serializable {
     <#list columns as column>
 
     <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
+@Schema(description = "${column.remark}")
     <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+@Schema(description = "${column.changeColumnName}")
     </#if>
     <#if column.columnKey = 'PRI'>
     <#if !auto && pkColumnType = 'Long'>

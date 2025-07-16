@@ -1,23 +1,25 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.system.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dict;
@@ -25,79 +27,83 @@ import me.zhengjie.modules.system.service.DictService;
 import me.zhengjie.modules.system.service.dto.DictDto;
 import me.zhengjie.modules.system.service.dto.DictQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 /**
 * @author Zheng Jie
 * @date 2019-04-10
 */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Api(tags = "系统：字典管理")
-@RequestMapping("/api/dict")
-public class DictController {
+@Tag(name = "系统：字典管理")
+@Path("/api/dict")
+public class DictController extends BaseController {
 
-    private final DictService dictService;
+    @Inject
+    DictService dictService;
     private static final String ENTITY_NAME = "dict";
 
-    @ApiOperation("导出字典数据")
-    @GetMapping(value = "/download")
+    @Operation(summary = "导出字典数据")
+    @GET
+    @Path(value = "/download")
     @PreAuthorize("@el.check('dict:list')")
-    public void exportDict(HttpServletResponse response, DictQueryCriteria criteria) throws IOException {
-        dictService.download(dictService.queryAll(criteria), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportDict(DictQueryCriteria criteria) throws IOException {
+        List<DictDto> queryAll = dictService.queryAll(criteria);
+        File file = dictService.download(queryAll);
+
+        return super.download(file);
     }
 
-    @ApiOperation("查询字典")
-    @GetMapping(value = "/all")
+    @Operation(summary = "查询字典")
+    @GET
+    @Path(value = "/all")
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<List<DictDto>> queryAllDict(){
-        return new ResponseEntity<>(dictService.queryAll(new DictQueryCriteria()),HttpStatus.OK);
+    public List<DictDto> queryAllDict() {
+        return dictService.queryAll(new DictQueryCriteria());
     }
 
-    @ApiOperation("查询字典")
-    @GetMapping
+    @Operation(summary = "查询字典")
+    @GET
+    @Path("")
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<PageResult<DictDto>> queryDict(DictQueryCriteria resources, Pageable pageable){
-        return new ResponseEntity<>(dictService.queryAll(resources,pageable),HttpStatus.OK);
+    public PageResult<DictDto> queryDict(DictQueryCriteria resources, Page pageable) {
+        return dictService.queryAll(resources, pageable);
     }
 
     @Log("新增字典")
-    @ApiOperation("新增字典")
-    @PostMapping
+    @Operation(summary = "新增字典")
+    @POST
+    @Path("")
     @PreAuthorize("@el.check('dict:add')")
-    public ResponseEntity<Object> createDict(@Validated @RequestBody Dict resources){
+    public Object createDict(@Valid Dict resources) {
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
         dictService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return 1;
     }
 
     @Log("修改字典")
-    @ApiOperation("修改字典")
-    @PutMapping
+    @Operation(summary = "修改字典")
+    @PUT
+    @Path("")
     @PreAuthorize("@el.check('dict:edit')")
-    public ResponseEntity<Object> updateDict(@Validated(Dict.Update.class) @RequestBody Dict resources){
+    public Object updateDict(/*@Validated(Dict.Update.class)  */Dict resources) {
         dictService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return 1;
     }
 
     @Log("删除字典")
-    @ApiOperation("删除字典")
-    @DeleteMapping
+    @Operation(summary = "删除字典")
+    @DELETE
+    @Path("")
     @PreAuthorize("@el.check('dict:del')")
-    public ResponseEntity<Object> deleteDict(@RequestBody Set<Long> ids){
+    public Object deleteDict(Set<Long> ids) {
         dictService.delete(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 }

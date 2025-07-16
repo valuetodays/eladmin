@@ -1,30 +1,16 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.domain.vo.EmailVo;
 import me.zhengjie.domain.EmailConfig;
+import me.zhengjie.domain.vo.EmailVo;
 import me.zhengjie.service.EmailService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,32 +18,37 @@ import org.springframework.web.bind.annotation.*;
  * @author 郑杰
  * @date 2018/09/28 6:55:53
  */
-@RestController
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@RequestMapping("api/email")
-@Api(tags = "工具：邮件管理")
+@Path("api/email")
+@Tag(name = "工具：邮件管理")
 public class EmailController {
 
-    private final EmailService emailService;
+    @Inject
+    EmailService emailService;
 
-    @GetMapping
+    @GET
+    @Path
     public ResponseEntity<EmailConfig> queryEmailConfig(){
         return new ResponseEntity<>(emailService.find(),HttpStatus.OK);
     }
 
     @Log("配置邮件")
-    @PutMapping
-    @ApiOperation("配置邮件")
-    public ResponseEntity<Object> updateEmailConfig(@Validated @RequestBody EmailConfig emailConfig) throws Exception {
+    @PUT
+    @Path("")
+    @Operation(summary = "配置邮件")
+    public Object updateEmailConfig(@Valid EmailConfig emailConfig) throws Exception {
         emailService.config(emailConfig,emailService.find());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 
     @Log("发送邮件")
-    @PostMapping
-    @ApiOperation("发送邮件")
-    public ResponseEntity<Object> sendEmail(@Validated @RequestBody EmailVo emailVo){
+    @POST
+    @Path("")
+    @Operation(summary = "发送邮件")
+    public Object sendEmail(@Valid EmailVo emailVo) {
         emailService.send(emailVo,emailService.find());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return 1;
     }
 }

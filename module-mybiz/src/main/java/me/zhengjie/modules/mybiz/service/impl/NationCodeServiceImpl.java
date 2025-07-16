@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.mybiz.domain.NationCode;
 import me.zhengjie.modules.mybiz.repository.NationCodeRepository;
@@ -19,25 +21,23 @@ import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.ValidationUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
 * @description 服务实现
 * @author vt
 * @since 2025-07-14 22:15
 **/
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class NationCodeServiceImpl implements NationCodeService {
 
-    private final NationCodeRepository nationCodeRepository;
-    private final NationCodeMapper nationCodeMapper;
+    @Inject
+    NationCodeRepository nationCodeRepository;
+    @Inject
+    NationCodeMapper nationCodeMapper;
 
     @Override
-    public PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Pageable pageable){
+    public PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Page pageable) {
         Page<NationCode> page = nationCodeRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(nationCodeMapper::toDto));
     }
@@ -56,13 +56,13 @@ public class NationCodeServiceImpl implements NationCodeService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void create(NationCode resources) {
         nationCodeRepository.save(resources);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void update(NationCode resources) {
         NationCode nationCode = nationCodeRepository.findById(resources.getId()).orElseGet(NationCode::new);
         ValidationUtil.isNull( nationCode.getId(),"NationCode","id",resources.getId());

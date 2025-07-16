@@ -1,29 +1,15 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.security.service.dto;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.alibaba.fastjson2.annotation.JSONField;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -33,14 +19,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JwtUserDto implements UserDetails {
 
-    @ApiModelProperty(value = "用户")
-    private final UserDto user;
+    @Schema(description = "用户")
+    @Inject
+    UserDto user;
 
-    @ApiModelProperty(value = "数据权限")
-    private final List<Long> dataScopes;
+    @Schema(description = "数据权限")
+    @Inject
+    List<Long> dataScopes;
 
-    @ApiModelProperty(value = "角色权限")
-    private final List<AuthorityDto> authorities;
+    @Schema(description = "角色权限")
+    @Inject
+    List<AuthorityDto> authorities;
 
     public Set<String> getRoles() {
         return authorities.stream().map(AuthorityDto::getAuthority).collect(Collectors.toSet());

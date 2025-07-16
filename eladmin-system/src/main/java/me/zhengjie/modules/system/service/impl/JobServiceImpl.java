@@ -1,56 +1,55 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.system.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import me.zhengjie.utils.PageResult;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.modules.system.domain.Job;
-import me.zhengjie.modules.system.repository.UserRepository;
-import me.zhengjie.modules.system.service.dto.JobQueryCriteria;
-import me.zhengjie.utils.*;
 import me.zhengjie.modules.system.repository.JobRepository;
+import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.JobService;
 import me.zhengjie.modules.system.service.dto.JobDto;
+import me.zhengjie.modules.system.service.dto.JobQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.JobMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import me.zhengjie.utils.CacheKey;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.ValidationUtil;
 
 /**
 * @author Zheng Jie
 * @date 2019-03-29
 */
-@Service
+@ApplicationScoped
 @RequiredArgsConstructor
 public class JobServiceImpl implements JobService {
 
-    private final JobRepository jobRepository;
-    private final JobMapper jobMapper;
-    private final RedisUtils redisUtils;
-    private final UserRepository userRepository;
+    @Inject
+    JobRepository jobRepository;
+    @Inject
+    JobMapper jobMapper;
+    @Inject
+    RedisUtils redisUtils;
+    @Inject
+    UserRepository userRepository;
 
     @Override
-    public PageResult<JobDto> queryAll(JobQueryCriteria criteria, Pageable pageable) {
+    public PageResult<JobDto> queryAll(JobQueryCriteria criteria, Page pageable) {
         Page<Job> page = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(jobMapper::toDto).getContent(),page.getTotalElements());
     }
@@ -74,7 +73,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void create(Job resources) {
         Job job = jobRepository.findByName(resources.getName());
         if(job != null){
@@ -84,9 +83,9 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void update(Job resources) {
-        Job job = jobRepository.findById(resources.getId()).orElseGet(Job::new);
+        Job job = jobRepository.findById(resources.getId());
         Job old = jobRepository.findByName(resources.getName());
         if(old != null && !old.getId().equals(resources.getId())){
             throw new EntityExistException(Job.class,"name",resources.getName());
@@ -99,7 +98,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void delete(Set<Long> ids) {
         jobRepository.deleteAllByIdIn(ids);
         // 删除缓存
@@ -107,7 +106,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public void download(List<JobDto> jobDtos, HttpServletResponse response) throws IOException {
+    public File download(List<JobDto> jobDtos) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (JobDto jobDTO : jobDtos) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -116,7 +115,7 @@ public class JobServiceImpl implements JobService {
             map.put("创建日期", jobDTO.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 
     @Override

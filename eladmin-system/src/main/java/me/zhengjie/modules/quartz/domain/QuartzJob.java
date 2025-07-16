@@ -1,25 +1,7 @@
-/*
- *  Copyright 2019-2025 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+
 package me.zhengjie.modules.quartz.domain;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +11,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+import me.zhengjie.base.BaseEntity;
 
 /**
  * @author Zheng Jie
@@ -50,44 +35,44 @@ public class QuartzJob extends BaseEntity implements Serializable {
     private Long id;
 
     @Transient
-    @ApiModelProperty(value = "用于子任务唯一标识", hidden = true)
+    @Schema(description = "用于子任务唯一标识", hidden = true)
     private String uuid;
 
-    @ApiModelProperty(value = "定时器名称")
+    @Schema(description = "定时器名称")
     private String jobName;
 
     @NotBlank
-    @ApiModelProperty(value = "Bean名称")
+    @Schema(description = "Bean名称")
     private String beanName;
 
     @NotBlank
-    @ApiModelProperty(value = "方法名称")
+    @Schema(description = "方法名称")
     private String methodName;
 
-    @ApiModelProperty(value = "参数")
+    @Schema(description = "参数")
     private String params;
 
     @NotBlank
-    @ApiModelProperty(value = "cron表达式")
+    @Schema(description = "cron表达式")
     private String cronExpression;
 
-    @ApiModelProperty(value = "状态，暂时或启动")
+    @Schema(description = "状态，暂时或启动")
     @Column(name = "is_pause")
     private Boolean isPause;
 
-    @ApiModelProperty(value = "负责人")
+    @Schema(description = "负责人")
     private String personInCharge;
 
-    @ApiModelProperty(value = "报警邮箱")
+    @Schema(description = "报警邮箱")
     private String email;
 
-    @ApiModelProperty(value = "子任务")
+    @Schema(description = "子任务")
     private String subTask;
 
-    @ApiModelProperty(value = "失败后暂停")
+    @Schema(description = "失败后暂停")
     private Boolean pauseAfterFailure;
 
     @NotBlank
-    @ApiModelProperty(value = "备注")
+    @Schema(description = "备注")
     private String description;
 }
