@@ -15,14 +15,9 @@
  */
 package me.zhengjie.rest;
 
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import me.zhengjie.annotation.rest.AnonymousAccess;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.vo.TableInfo;
 import me.zhengjie.exception.BadRequestException;
@@ -41,6 +36,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -98,7 +97,6 @@ public class GeneratorController {
 
     @ApiOperation("生成代码")
     @PostMapping(value = "/{tableName}/{type}")
-    @AnonymousAccess
     public ResponseEntity<Object> generatorCode(@PathVariable String tableName, @PathVariable Integer type, HttpServletRequest request, HttpServletResponse response){
         if(!generatorEnabled && type == 0){
             throw new BadRequestException("此环境不允许生成代码，请选择预览或者下载查看！");

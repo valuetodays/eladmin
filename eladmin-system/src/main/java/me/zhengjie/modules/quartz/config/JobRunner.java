@@ -15,8 +15,6 @@
  */
 package me.zhengjie.modules.quartz.config;
 
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.quartz.domain.QuartzJob;
 import me.zhengjie.modules.quartz.repository.QuartzJobRepository;
@@ -26,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -46,7 +46,7 @@ public class JobRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments applicationArguments) {
         // todo disable temply
-        List<QuartzJob> quartzJobs = quartzJobRepository.findByIsPauseIsFalse();
+        List<QuartzJob> quartzJobs = quartzJobRepository.findByIsPauseFalse();
         quartzJobs.forEach(quartzManage::addJob);
         log.info("Timing task injection complete");
     }
