@@ -1,8 +1,5 @@
 package me.zhengjie.modules.mybiz.rest;
 
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,10 +10,12 @@ import me.zhengjie.modules.mybiz.service.NationCodeService;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeDto;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeQueryCriteria;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +24,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
 * @author vt
@@ -57,6 +60,12 @@ public class NationCodeController {
     @ApiOperation("新增国家编码")
     @PreAuthorize("@el.check('nationCode:add')")
     public ResponseEntity<Object> createNationCode(@Validated @RequestBody NationCode resources){
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        String username = currentUser.getUsername();
+        resources.setCreateBy(username);
+        resources.setUpdateBy(username);
+        resources.setCreateTime(LocalDateTime.now());
+        resources.setUpdateTime(LocalDateTime.now());
         nationCodeService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
