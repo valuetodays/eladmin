@@ -7,7 +7,7 @@ spring:
       #      url: jdbc:p6spy:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/db_eladmin?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
       #      username: ${DB_USER:root}
 #      password: ${DB_PWD:123456}
-      url: jdbc:p6spy:postgresql://${DB_HOST:aliyun-tmp}:${DB_PORT:5432}/db_eladmin
+      url: jdbc:p6spy:postgresql://${DB_HOST:aliyun-tmp}:${DB_PORT:5432}/db_pg_eladmin
       username: ${DB_USER:postgres}
       password: ${DB_PWD:123456}
       # 初始连接数，建议设置为与最小空闲连接数相同
