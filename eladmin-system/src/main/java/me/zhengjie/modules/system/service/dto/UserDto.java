@@ -1,13 +1,14 @@
 package me.zhengjie.modules.system.service.dto;
 
-import com.alibaba.fastjson2.annotation.JSONField;
-import lombok.Getter;
-import lombok.Setter;
-import me.zhengjie.base.BaseDTO;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import me.zhengjie.base.BaseDTO;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie
@@ -60,7 +61,7 @@ public class UserDto extends BaseDTO implements Serializable {
     private Boolean enabled;
 
     @Schema(description = "管理员")
-    @JSONField(serialize = false)
+    @JsonIgnore
     private Boolean isAdmin = false;
 
     @Schema(description = "密码重置时间")

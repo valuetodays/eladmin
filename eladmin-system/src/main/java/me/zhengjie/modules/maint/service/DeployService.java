@@ -1,15 +1,16 @@
 package me.zhengjie.modules.maint.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.maint.domain.Deploy;
 import me.zhengjie.modules.maint.domain.DeployHistory;
 import me.zhengjie.modules.maint.service.dto.DeployDto;
 import me.zhengjie.modules.maint.service.dto.DeployQueryCriteria;
 import me.zhengjie.utils.PageResult;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -94,8 +95,7 @@ public interface DeployService {
     /**
      * 导出数据
      * @param queryAll /
-     * @param response /
      * @throws IOException /
      */
-    void download(List<DeployDto> queryAll, HttpServletResponse response) throws IOException;
+    File download(List<DeployDto> queryAll) throws IOException;
 }

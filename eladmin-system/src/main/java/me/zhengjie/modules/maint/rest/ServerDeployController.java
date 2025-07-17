@@ -1,8 +1,23 @@
 package me.zhengjie.modules.maint.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.maint.domain.ServerDeploy;
 import me.zhengjie.modules.maint.service.ServerDeployService;
@@ -11,13 +26,7 @@ import me.zhengjie.modules.maint.service.dto.ServerDeployQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -28,7 +37,7 @@ import java.util.Set;
 @Tag(name = "运维：服务器管理")
 @RequiredArgsConstructor
 @Path("/api/serverDeploy")
-public class ServerDeployController {
+public class ServerDeployController extends BaseController {
 
     @Inject
     ServerDeployService serverDeployService;
@@ -37,16 +46,17 @@ public class ServerDeployController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('serverDeploy:list')")
-    public void exportServerDeploy(HttpServletResponse response, ServerDeployQueryCriteria criteria) throws IOException {
-        serverDeployService.download(serverDeployService.queryAll(criteria), response);
+    public Response exportServerDeploy(ServerDeployQueryCriteria criteria) throws IOException {
+        File file = serverDeployService.download(serverDeployService.queryAll(criteria));
+        return super.download(file);
     }
 
     @Operation(summary = "查询服务器")
     @GET
-    @Path
+    @Path("")
     @PreAuthorize("@el.check('serverDeploy:list')")
-    public ResponseEntity<PageResult<ServerDeployDto>> queryServerDeploy(ServerDeployQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(serverDeployService.queryAll(criteria,pageable),HttpStatus.OK);
+    public PageResult<ServerDeployDto> queryServerDeploy(ServerDeployQueryCriteria criteria, Page pageable) {
+        return serverDeployService.queryAll(criteria, pageable);
     }
 
     @Log("新增服务器")
@@ -85,6 +95,6 @@ public class ServerDeployController {
     @Path("/testConnect")
     @PreAuthorize("@el.check('serverDeploy:add')")
     public Object testConnectServerDeploy(@Valid ServerDeploy resources) {
-        return new ResponseEntity<>(serverDeployService.testConnect(resources),HttpStatus.CREATED);
+        return serverDeployService.testConnect(resources);
     }
 }

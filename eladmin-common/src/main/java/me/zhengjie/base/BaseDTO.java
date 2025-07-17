@@ -1,21 +1,17 @@
 package me.zhengjie.base;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.sql.Timestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie
  * @since 2019年10月24日20:48:53
  */
-@Getter
-@Setter
+@Data
 public class BaseDTO  implements Serializable {
 
     @Schema(description = "创建人")
@@ -33,18 +29,4 @@ public class BaseDTO  implements Serializable {
     private Timestamp updateTime;
 
 
-    @Override
-    public String toString() {
-        ToStringBuilder builder = new ToStringBuilder(this);
-        Field[] fields = this.getClass().getDeclaredFields();
-        try {
-            for (Field f : fields) {
-                f.setAccessible(true);
-                builder.append(f.getName(), f.get(this)).append("\n");
-            }
-        } catch (Exception e) {
-            builder.append("toString builder encounter an error");
-        }
-        return builder.toString();
-    }
 }

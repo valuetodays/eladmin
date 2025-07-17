@@ -1,5 +1,8 @@
 package me.zhengjie.modules.maint.rest;
 
+import java.io.IOException;
+import java.util.Set;
+
 import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -21,13 +24,7 @@ import me.zhengjie.modules.maint.service.dto.AppQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -55,8 +52,8 @@ public class AppController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('app:list')")
-    public ResponseEntity<PageResult<AppDto>> queryApp(AppQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(appService.queryAll(criteria,pageable),HttpStatus.OK);
+    public PageResult<AppDto> queryApp(AppQueryCriteria criteria, Page pageable) {
+        return appService.queryAll(criteria, pageable);
     }
 
     @Log("新增应用")

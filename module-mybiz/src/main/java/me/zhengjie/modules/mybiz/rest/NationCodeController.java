@@ -43,7 +43,7 @@ public class NationCodeController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('nationCode:list')")
-    public void exportNationCode(HttpServletResponse response, NationCodeQueryCriteria criteria) throws IOException {
+    public void exportNationCode(NationCodeQueryCriteria criteria) throws IOException {
         nationCodeService.download(nationCodeService.queryAll(criteria), response);
     }
 

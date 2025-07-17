@@ -1,6 +1,9 @@
 package me.zhengjie.modules.system.rest;
 
-import io.quarkus.panache.common.Page;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -24,10 +27,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
 * @author Zheng Jie
  * @since 2019-04-10
@@ -45,9 +44,8 @@ public class DictDetailController {
     @Operation(summary = "查询字典详情")
     @GET
     @Path("")
-    public PageResult<DictDetailDto> queryDictDetail(DictDetailQueryCriteria criteria,
-                                                     Page pageable) {
-        return dictDetailService.queryAll(criteria, pageable);
+    public PageResult<DictDetailDto> queryDictDetail(DictDetailQueryCriteria criteria) {
+        return dictDetailService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Operation(summary = "查询多个字典详情")

@@ -1,6 +1,9 @@
 package me.zhengjie.modules.security.service;
 
+import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
@@ -10,9 +13,6 @@ import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.modules.system.service.dto.UserDto;
-import org.springframework.security.core.userdetails.UserDetailsService;
-
-import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -20,8 +20,8 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-@ApplicationScoped("userDetailsService")
-public class UserDetailsServiceImpl implements UserDetailsService {
+@ApplicationScoped
+public class UserDetailsServiceImpl {
     @Inject
     UserService userService;
     @Inject
@@ -31,7 +31,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Inject
     UserCacheManager userCacheManager;
 
-    @Override
     public JwtUserDto loadUserByUsername(String username) {
         JwtUserDto jwtUserDto = userCacheManager.getUserCache(username);
         if(jwtUserDto == null){

@@ -8,4 +8,4 @@
 - 配置跨域 corsFilter()
 - ResponseEntity不应该出现在controller之外
 - 升级版本到3.0
-- 
+- 不要使用@Getter/@Setter，直接使用@Data

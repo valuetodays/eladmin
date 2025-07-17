@@ -62,5 +62,5 @@ public interface NationCodeService {
     * @param response /
     * @throws IOException /
     */
-    void download(List<NationCodeDto> all, HttpServletResponse response) throws IOException;
+    void download(List<NationCodeDto> all) throws IOException;
 }

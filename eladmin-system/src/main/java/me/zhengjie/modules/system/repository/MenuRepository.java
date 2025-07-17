@@ -1,14 +1,14 @@
 package me.zhengjie.modules.system.repository;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Menu;
-
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -59,10 +59,10 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
      * @param type 类型
      * @return /
      */
-    @Query(value = "SELECT m.* FROM sys_menu m, sys_roles_menus r WHERE " +
-            "m.menu_id = r.menu_id AND r.role_id IN ?1 AND type != ?2 order by m.menu_sort asc",nativeQuery = true)
+//    @Query(value = "SELECT m.* FROM sys_menu m, sys_roles_menus r WHERE " +
+//            "m.menu_id = r.menu_id AND r.role_id IN ?1 AND type != ?2 order by m.menu_sort asc",nativeQuery = true)
     public LinkedHashSet<Menu> findByRoleIdsAndTypeNot(Set<Long> roleIds, int type) {
-
+        return null;
     }
 
     /**

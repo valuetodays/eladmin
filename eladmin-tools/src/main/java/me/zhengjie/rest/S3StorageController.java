@@ -1,6 +1,11 @@
 package me.zhengjie.rest;
 
-import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -23,12 +28,6 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * amz S3 协议云存储管理
@@ -62,8 +61,8 @@ public class S3StorageController extends BaseController {
     @Path("")
     @Operation(summary = "查询文件")
     @PreAuthorize("@el.check('storage:list')")
-    public PageResult<S3Storage> queryS3Storage(S3StorageQueryCriteria criteria, Page pageable) {
-        return s3StorageService.queryAll(criteria, pageable);
+    public PageResult<S3Storage> queryS3Storage(S3StorageQueryCriteria criteria) {
+        return s3StorageService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @POST

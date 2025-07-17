@@ -1,5 +1,18 @@
 package me.zhengjie.modules.system.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,22 +38,8 @@ import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -223,7 +222,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public Map<String, String> updateAvatar(File multipartFile, String originalFilename) {
+    public Map<String, String> updateAvatar(File multipartFile, String originalFilename, Long userId) {
         // 文件大小验证
         FileUtil.checkSize(properties.getAvatarMaxSize(), multipartFile.length());
         // 验证文件上传的格式
@@ -232,7 +231,7 @@ public class UserServiceImpl implements UserService {
         if(fileType != null && !image.contains(fileType)){
             throw new BadRequestException("文件格式错误！, 仅支持 " + image +" 格式");
         }
-        User user = userRepository.findByUsername(SecurityUtils.getCurrentUsername());
+        User user = userRepository.findById(userId);
         String oldPath = user.getAvatarPath();
         // fixme: 上传文件到目录下
         File file = FileUtil.upload(multipartFile, originalFilename, properties.getPath().getAvatar());

@@ -1,13 +1,14 @@
 package me.zhengjie.modules.system.service.dto;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie

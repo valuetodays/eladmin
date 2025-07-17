@@ -1,7 +1,20 @@
 package me.zhengjie.modules.maint.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.maint.service.DeployHistoryService;
 import me.zhengjie.modules.maint.service.dto.DeployHistoryDto;
@@ -9,13 +22,7 @@ import me.zhengjie.modules.maint.service.dto.DeployHistoryQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -26,7 +33,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Tag(name = "运维：部署历史管理")
 @Path("/api/deployHistory")
-public class DeployHistoryController {
+public class DeployHistoryController extends BaseController {
 
     @Inject
     DeployHistoryService deployhistoryService;
@@ -35,16 +42,17 @@ public class DeployHistoryController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('deployHistory:list')")
-    public void exportDeployHistory(HttpServletResponse response, DeployHistoryQueryCriteria criteria) throws IOException {
-        deployhistoryService.download(deployhistoryService.queryAll(criteria), response);
+    public Response exportDeployHistory(DeployHistoryQueryCriteria criteria) throws IOException {
+        File file = deployhistoryService.download(deployhistoryService.queryAll(criteria));
+        return super.download(file);
     }
 
     @Operation(summary = "查询部署历史")
     @GET
-    @Path
+    @Path("")
     @PreAuthorize("@el.check('deployHistory:list')")
-    public ResponseEntity<PageResult<DeployHistoryDto>> queryDeployHistory(DeployHistoryQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(deployhistoryService.queryAll(criteria,pageable),HttpStatus.OK);
+    public PageResult<DeployHistoryDto> queryDeployHistory(DeployHistoryQueryCriteria criteria, Page pageable) {
+        return deployhistoryService.queryAll(criteria, pageable);
     }
 
     @Log("删除DeployHistory")
@@ -52,7 +60,7 @@ public class DeployHistoryController {
     @DELETE
     @Path("")
     @PreAuthorize("@el.check('deployHistory:del')")
-    public Object deleteDeployHistory(Set<String> ids) {
+    public Object deleteDeployHistory(Set<Long> ids) {
         deployhistoryService.delete(ids);
         return 1;
     }

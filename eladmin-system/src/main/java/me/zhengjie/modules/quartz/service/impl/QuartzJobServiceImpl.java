@@ -1,5 +1,14 @@
 package me.zhengjie.modules.quartz.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.quarkus.panache.common.Page;
@@ -14,21 +23,11 @@ import me.zhengjie.modules.quartz.repository.QuartzJobRepository;
 import me.zhengjie.modules.quartz.repository.QuartzLogRepository;
 import me.zhengjie.modules.quartz.service.QuartzJobService;
 import me.zhengjie.modules.quartz.service.dto.JobQueryCriteria;
-import me.zhengjie.modules.quartz.utils.QuartzManage;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -42,8 +41,8 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     QuartzJobRepository quartzJobRepository;
     @Inject
     QuartzLogRepository quartzLogRepository;
-    @Inject
-    QuartzManage quartzManage;
+    //    @Inject
+//    QuartzManage quartzManage;
     @Inject
     RedisUtils redisUtils;
 
@@ -85,7 +84,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
 //            throw new BadRequestException("cron表达式格式错误");
 //        }
         resources = quartzJobRepository.save(resources);
-        quartzManage.addJob(resources);
+//        quartzManage.addJob(resources);
     }
 
     @Override
@@ -101,17 +100,17 @@ public class QuartzJobServiceImpl implements QuartzJobService {
             }
         }
         resources = quartzJobRepository.save(resources);
-        quartzManage.updateJobCron(resources);
+//        quartzManage.updateJobCron(resources);
     }
 
     @Override
     public void updateIsPause(QuartzJob quartzJob) {
         // 置换暂停状态
         if (quartzJob.getIsPause()) {
-            quartzManage.resumeJob(quartzJob);
+//            quartzManage.resumeJob(quartzJob);
             quartzJob.setIsPause(false);
         } else {
-            quartzManage.pauseJob(quartzJob);
+//            quartzManage.pauseJob(quartzJob);
             quartzJob.setIsPause(true);
         }
         quartzJobRepository.save(quartzJob);
@@ -119,7 +118,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
 
     @Override
     public void execution(QuartzJob quartzJob) {
-        quartzManage.runJobNow(quartzJob);
+//        quartzManage.runJobNow(quartzJob);
     }
 
     @Override
@@ -127,7 +126,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     public void delete(Set<Long> ids) {
         for (Long id : ids) {
             QuartzJob quartzJob = findById(id);
-            quartzManage.deleteJob(quartzJob);
+//            quartzManage.deleteJob(quartzJob);
             quartzJobRepository.delete(quartzJob);
         }
     }

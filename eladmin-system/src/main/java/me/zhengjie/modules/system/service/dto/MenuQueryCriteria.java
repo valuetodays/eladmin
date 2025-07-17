@@ -1,10 +1,11 @@
 package me.zhengjie.modules.system.service.dto;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-
 import java.sql.Timestamp;
 import java.util.List;
+
+import lombok.Data;
+import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie

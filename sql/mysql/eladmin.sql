@@ -146,7 +146,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `mnt_deploy_history`;
 CREATE TABLE `mnt_deploy_history` (
-  `history_id` varchar(50) NOT NULL COMMENT 'ID',
+  `history_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `app_name` varchar(255) NOT NULL COMMENT '应用名称',
   `deploy_date` datetime NOT NULL COMMENT '部署日期',
   `deploy_user` varchar(50) NOT NULL COMMENT '部署用户',

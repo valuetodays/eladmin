@@ -1,14 +1,14 @@
 package me.zhengjie.modules.maint.util;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import com.google.common.collect.Maps;
-import me.zhengjie.utils.StringUtils;
-
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SCPClient;
+import me.zhengjie.utils.StringUtils;
 
 /**
  * 远程执行linux命令
@@ -17,14 +17,11 @@ import java.util.logging.Logger;
  */
 public class ScpClientUtil {
 
-    static @Inject Map<String, ScpClientUtil> instance = Maps.newHashMap();
-    @Inject
+    static final Map<String, ScpClientUtil> instance = new HashMap<>();
+
     String ip;
-    @Inject
     int port;
-    @Inject
     String username;
-    @Inject
     String password;
 
 	static synchronized public ScpClientUtil getInstance(String ip, int port, String username, String password) {

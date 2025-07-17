@@ -122,7 +122,7 @@ public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, 
     }
 
     @Override
-    public void download(List<${className}Dto> all, HttpServletResponse response) throws IOException {
+public void download(List<${className}Dto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (${className}Dto ${changeClassName} : all) {
             Map<String,Object> map = new LinkedHashMap<>();

@@ -1,14 +1,5 @@
 package me.zhengjie.utils;
 
-import cn.hutool.core.util.StrUtil;
-import cn.vt.util.JsonUtils;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.redisson.api.RedissonClient;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +11,15 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.util.StrUtil;
+import cn.vt.util.JsonUtils;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RedissonClient;
+
 /**
  * @author /
  */
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RedisUtils {
     @Inject
-    RedissonClient redisTemplate;
+    RedissonClient redissonClient;
 
     /**
      * 指定缓存失效时间
@@ -39,7 +39,7 @@ public class RedisUtils {
     public boolean expire(String key, long time) {
         try {
             if (time > 0) {
-                redisTemplate.getBucket(key).expire(Duration.ofMillis(time));
+                redissonClient.getBucket(key).expire(Duration.ofMillis(time));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -58,7 +58,7 @@ public class RedisUtils {
     public boolean expire(String key, long time, TimeUnit timeUnit) {
         try {
             if (time > 0) {
-                redisTemplate.getBucket(key).expire(time, timeUnit);
+                redissonClient.getBucket(key).expire(time, timeUnit);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -74,7 +74,7 @@ public class RedisUtils {
      * @return 时间(秒) 返回0代表为永久有效
      */
     public long getExpire(String key) {
-        return redisTemplate.getBucket(key).remainTimeToLive();
+        return redissonClient.getBucket(key).remainTimeToLive();
     }
 
     /**
@@ -85,7 +85,7 @@ public class RedisUtils {
      */
     public List<String> scan(String pattern) {
         List<String> result = new ArrayList<>();
-        Iterable<String> keys = redisTemplate.getKeys().getKeysByPattern(pattern, 1000);
+        Iterable<String> keys = redissonClient.getKeys().getKeysByPattern(pattern, 1000);
         for (String key : keys) {
             result.add(key);
         }
@@ -101,7 +101,7 @@ public class RedisUtils {
      */
     public boolean hasKey(String key) {
         try {
-            boolean exists = redisTemplate.getKeys().countExists("yourKey") > 0;
+            boolean exists = redissonClient.getKeys().countExists("yourKey") > 0;
             return exists;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -117,12 +117,12 @@ public class RedisUtils {
     public void del(String... keys) {
         if (keys != null && keys.length > 0) {
             if (keys.length == 1) {
-                boolean result = redisTemplate.getBucket(keys[0]).delete();
+                boolean result = redissonClient.getBucket(keys[0]).delete();
                 log.debug("--------------------------------------------");
                 log.debug(new StringBuilder("删除缓存：").append(keys[0]).append("，结果：").append(result).toString());
                 log.debug("--------------------------------------------");
             } else {
-                long count = redisTemplate.getKeys().delete(keys);
+                long count = redissonClient.getKeys().delete(keys);
                 log.debug("--------------------------------------------");
                 log.debug("成功删除缓存：" + StringUtils.joinWith(",", keys));
                 log.debug("缓存删除数量：" + count + "个");
@@ -137,13 +137,13 @@ public class RedisUtils {
      */
     public void scanDel(String pattern){
         while (true) {
-            Iterable<String> keys = redisTemplate.getKeys().getKeysByPattern(pattern, 1000);
+            Iterable<String> keys = redissonClient.getKeys().getKeysByPattern(pattern, 1000);
             Iterator<String> iterator = keys.iterator();
             if (!iterator.hasNext()) {
                 return;
             }
             for (String key : keys) {
-                redisTemplate.getKeys().delete(key);
+                redissonClient.getKeys().delete(key);
             }
         }
     }
@@ -157,7 +157,7 @@ public class RedisUtils {
      * @return 值
      */
     public Object get(String key) {
-        return key == null ? null : redisTemplate.getBucket(key).get();
+        return key == null ? null : redissonClient.getBucket(key).get();
     }
 
     /**
@@ -167,7 +167,7 @@ public class RedisUtils {
      * @return 值
      */
     public <T> T get(String key, Class<T> clazz) {
-        Object value = key == null ? null : redisTemplate.getBucket(key).get();
+        Object value = key == null ? null : redissonClient.getBucket(key).get();
         if (value == null) {
             return null;
         }
@@ -189,7 +189,7 @@ public class RedisUtils {
      * @return 值
      */
     public <T> List<T> getList(String key, Class<T> clazz) {
-        Object value = key == null ? null : redisTemplate.getList(key).get();
+        Object value = key == null ? null : redissonClient.getList(key).get();
         if (value == null) {
             return null;
         }
@@ -214,7 +214,7 @@ public class RedisUtils {
         if(StrUtil.isBlank(key)){
             return null;
         }
-        Object value = redisTemplate.getBucket(key).get();
+        Object value = redissonClient.getBucket(key).get();
         if (value == null) {
             return null;
         } else {
@@ -229,7 +229,7 @@ public class RedisUtils {
      * @return
      */
     public List<Object> multiGet(List<String> keys) {
-        Map<String, Object> values = redisTemplate.getBuckets().get(keys.toArray(String[]::new));
+        Map<String, Object> values = redissonClient.getBuckets().get(keys.toArray(String[]::new));
         if (MapUtils.isEmpty(values)) {
             return List.of();
         }
@@ -247,7 +247,7 @@ public class RedisUtils {
         int attempt = 0;
         while (attempt < 3) {
             try {
-                redisTemplate.getBucket(key).set(value);
+                redissonClient.getBucket(key).set(value);
                 return true;
             } catch (Exception e) {
                 attempt++;
@@ -268,7 +268,7 @@ public class RedisUtils {
     public boolean set(String key, Object value, long time) {
         try {
             if (time > 0) {
-                redisTemplate.getBucket(key).set(value, time, TimeUnit.SECONDS);
+                redissonClient.getBucket(key).set(value, time, TimeUnit.SECONDS);
             } else {
                 set(key, value);
             }
@@ -291,7 +291,7 @@ public class RedisUtils {
     public boolean set(String key, Object value, long time, TimeUnit timeUnit) {
         try {
             if (time > 0) {
-                redisTemplate.getBucket(key).set(value, time, timeUnit);
+                redissonClient.getBucket(key).set(value, time, timeUnit);
             } else {
                 set(key, value);
             }
@@ -312,7 +312,7 @@ public class RedisUtils {
      * @return 值
      */
     public Object hget(String key, String item) {
-        return redisTemplate.getMap(key).get(item);
+        return redissonClient.getMap(key).get(item);
     }
 
     /**
@@ -322,7 +322,7 @@ public class RedisUtils {
      * @return 对应的多个键值
      */
     public Map<Object, Object> hmget(String key) {
-        return redisTemplate.getMap(key).readAllMap();
+        return redissonClient.getMap(key).readAllMap();
 
     }
 
@@ -335,7 +335,7 @@ public class RedisUtils {
      */
     public boolean hmset(String key, Map<String, Object> map) {
         try {
-            redisTemplate.getMap(key).putAll(map);
+            redissonClient.getMap(key).putAll(map);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -353,7 +353,7 @@ public class RedisUtils {
      */
     public boolean hmset(String key, Map<String, Object> map, long time) {
         try {
-            redisTemplate.getMap(key).putAll(map);
+            redissonClient.getMap(key).putAll(map);
             if (time > 0) {
                 expire(key, time);
             }
@@ -374,7 +374,7 @@ public class RedisUtils {
      */
     public boolean hset(String key, String item, Object value) {
         try {
-            redisTemplate.getMap(key).put(item, value);
+            redissonClient.getMap(key).put(item, value);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -393,7 +393,7 @@ public class RedisUtils {
      */
     public boolean hset(String key, String item, Object value, long time) {
         try {
-            redisTemplate.getMap(key).put(item, value);
+            redissonClient.getMap(key).put(item, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -411,7 +411,7 @@ public class RedisUtils {
      * @param item 项 可以使多个 不能为null
      */
     public void hdel(String key, Object... item) {
-        redisTemplate.getMap(key).fastRemove(item);
+        redissonClient.getMap(key).fastRemove(item);
     }
 
     /**
@@ -422,7 +422,7 @@ public class RedisUtils {
      * @return true 存在 false不存在
      */
     public boolean hHasKey(String key, String item) {
-        return redisTemplate.getMap(key).containsKey(item);
+        return redissonClient.getMap(key).containsKey(item);
     }
 
     /**
@@ -434,7 +434,7 @@ public class RedisUtils {
      * @return
      */
     public double hincr(String key, String item, double by) {
-        Object o = redisTemplate.getMap(key).addAndGet(item, by);
+        Object o = redissonClient.getMap(key).addAndGet(item, by);
         return o instanceof Long ? (Long) o : Long.valueOf(o.toString());
     }
 
@@ -460,7 +460,7 @@ public class RedisUtils {
      */
     public Set<Object> sGet(String key) {
         try {
-            return redisTemplate.getSet(key).readAll();
+            return redissonClient.getSet(key).readAll();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
@@ -476,7 +476,7 @@ public class RedisUtils {
      */
     public boolean sHasKey(String key, Object value) {
         try {
-            return redisTemplate.getSet(key).contains(value);
+            return redissonClient.getSet(key).contains(value);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return false;
@@ -491,7 +491,7 @@ public class RedisUtils {
      */
     public long sSet(String key, Object... values) {
         try {
-            redisTemplate.getSet(key).add(values);
+            redissonClient.getSet(key).add(values);
             return 1;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -509,7 +509,7 @@ public class RedisUtils {
      */
     public long sSetAndTime(String key, long time, Object... values) {
         try {
-            redisTemplate.getSet(key).add(values);
+            redissonClient.getSet(key).add(values);
             if (time > 0) {
                 expire(key, time);
             }
@@ -528,7 +528,7 @@ public class RedisUtils {
      */
     public long sGetSetSize(String key) {
         try {
-            return redisTemplate.getSet(key).size();
+            return redissonClient.getSet(key).size();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return 0;
@@ -544,7 +544,7 @@ public class RedisUtils {
      */
     public long setRemove(String key, Object... values) {
         try {
-            redisTemplate.getSet(key).removeAll(Arrays.asList(values));
+            redissonClient.getSet(key).removeAll(Arrays.asList(values));
             return 1;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -564,7 +564,7 @@ public class RedisUtils {
      */
     public List<Object> lGet(String key, int start, int end) {
         try {
-            return redisTemplate.getList(key).range(start, end);
+            return redissonClient.getList(key).range(start, end);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
@@ -579,7 +579,7 @@ public class RedisUtils {
      */
     public long lGetListSize(String key) {
         try {
-            return redisTemplate.getList(key).size();
+            return redissonClient.getList(key).size();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return 0;
@@ -595,7 +595,7 @@ public class RedisUtils {
      */
     public Object lGetIndex(String key, int index) {
         try {
-            return redisTemplate.getList(key).get(index);
+            return redissonClient.getList(key).get(index);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
@@ -611,7 +611,7 @@ public class RedisUtils {
      */
     public boolean lSet(String key, Object value) {
         try {
-            redisTemplate.getList(key).addLast(value);
+            redissonClient.getList(key).addLast(value);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -629,7 +629,7 @@ public class RedisUtils {
      */
     public boolean lSet(String key, Object value, long time) {
         try {
-            redisTemplate.getList(key).addLast(value);
+            redissonClient.getList(key).addLast(value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -649,7 +649,7 @@ public class RedisUtils {
      */
     public boolean lSet(String key, List<Object> value) {
         try {
-            redisTemplate.getList(key).addAll(value);
+            redissonClient.getList(key).addAll(value);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -667,7 +667,7 @@ public class RedisUtils {
      */
     public boolean lSet(String key, List<Object> value, long time) {
         try {
-            redisTemplate.getList(key).addAll(value);
+            redissonClient.getList(key).addAll(value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -688,7 +688,7 @@ public class RedisUtils {
      */
     public boolean lUpdateIndex(String key, int index, Object value) {
         try {
-            redisTemplate.getList(key).set(index, value);
+            redissonClient.getList(key).set(index, value);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -706,7 +706,7 @@ public class RedisUtils {
      */
     public long lRemove(String key, int count, Object value) {
         try {
-            redisTemplate.getList(key).remove(value, count);
+            redissonClient.getList(key).remove(value, count);
             return 1;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -723,7 +723,7 @@ public class RedisUtils {
         for (Long id : ids) {
             keys.add(new StringBuffer(prefix).append(id).toString());
         }
-        long count = redisTemplate.getKeys().delete(keys.toArray(String[]::new));
+        long count = redissonClient.getKeys().delete(keys.toArray(String[]::new));
     }
 
     // ============================incr=============================
@@ -743,7 +743,7 @@ public class RedisUtils {
      * @return
      */
     public Long increment(String key, Long delta) {
-        return redisTemplate.getAtomicLong(key).addAndGet(delta);
+        return redissonClient.getAtomicLong(key).addAndGet(delta);
     }
 
     /**

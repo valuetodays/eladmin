@@ -40,7 +40,7 @@ public class VtServerController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('vtServer:list')")
-    public void exportVtServer(HttpServletResponse response, VtServerQueryCriteria criteria) throws IOException {
+    public void exportVtServer(VtServerQueryCriteria criteria) throws IOException {
         vtServerService.download(vtServerService.queryAll(criteria), response);
     }
 

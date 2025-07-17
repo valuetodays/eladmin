@@ -1,9 +1,10 @@
 package me.zhengjie.modules.system.domain.vo;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * 构建前端路由时用到

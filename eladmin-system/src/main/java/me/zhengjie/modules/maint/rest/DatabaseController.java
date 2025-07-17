@@ -1,29 +1,34 @@
 package me.zhengjie.modules.maint.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
+import cn.vt.exception.AssertUtils;
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.maint.domain.Database;
 import me.zhengjie.modules.maint.service.DatabaseService;
 import me.zhengjie.modules.maint.service.dto.DatabaseDto;
 import me.zhengjie.modules.maint.service.dto.DatabaseQueryCriteria;
-import me.zhengjie.modules.maint.util.SqlUtils;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -34,10 +39,9 @@ import java.util.Set;
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
 @Path("/api/database")
-public class DatabaseController {
+public class DatabaseController extends BaseController {
 
-	@Inject
-	String fileSavePath = FileUtil.getTmpDirPath() + "/";
+    private final String fileSavePath = FileUtil.getTmpDirPath() + "/";
 	@Inject
 	DatabaseService databaseService;
 
@@ -45,16 +49,18 @@ public class DatabaseController {
 	@GET
 	@Path(value = "/download")
 	@PreAuthorize("@el.check('database:list')")
-	public void exportDatabase(HttpServletResponse response, DatabaseQueryCriteria criteria) throws IOException {
-		databaseService.download(databaseService.queryAll(criteria), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportDatabase(DatabaseQueryCriteria criteria) throws IOException {
+        File file = databaseService.download(databaseService.queryAll(criteria));
+        return super.download(file);
 	}
 
 	@Operation(summary = "查询数据库")
 	@GET
-	@Path
+    @Path("")
 	@PreAuthorize("@el.check('database:list')")
-	public ResponseEntity<PageResult<DatabaseDto>> queryDatabase(DatabaseQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(databaseService.queryAll(criteria,pageable),HttpStatus.OK);
+    public PageResult<DatabaseDto> queryDatabase(DatabaseQueryCriteria criteria, Page pageable) {
+        return databaseService.queryAll(criteria, pageable);
     }
 
     @Log("新增数据库")
@@ -93,7 +99,7 @@ public class DatabaseController {
 	@Path("/testConnect")
 	@PreAuthorize("@el.check('database:testConnect')")
 	public Object testConnect(@Valid Database resources) {
-		return new ResponseEntity<>(databaseService.testConnection(resources),HttpStatus.CREATED);
+        return databaseService.testConnection(resources);
 	}
 
 	@Log("执行SQL脚本")
@@ -101,8 +107,8 @@ public class DatabaseController {
 	@POST
 	@Path(value = "/upload")
 	@PreAuthorize("@el.check('database:add')")
-	public Object uploadDatabase(MultipartFile file, HttpServletRequest request) throws Exception {
-		String id = request.getParameter("id");
+    public Object uploadDatabase(/*MultipartFile file, HttpServletRequest request*/) throws Exception {
+		/*String id = request.getParameter("id");
 		DatabaseDto database = databaseService.findById(id);
 		String fileName;
 		if(database != null){
@@ -114,6 +120,7 @@ public class DatabaseController {
 			return new ResponseEntity<>(result,HttpStatus.OK);
 		}else{
 			throw new BadRequestException("Database not exist");
-		}
+		}*/
+        throw AssertUtils.create("temply comment");
 	}
 }

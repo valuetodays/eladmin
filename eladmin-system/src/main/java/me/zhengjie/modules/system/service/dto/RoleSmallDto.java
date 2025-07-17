@@ -1,8 +1,9 @@
 package me.zhengjie.modules.system.service.dto;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie

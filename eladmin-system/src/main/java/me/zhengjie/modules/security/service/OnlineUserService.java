@@ -1,21 +1,5 @@
 package me.zhengjie.modules.security.service;
 
-import io.quarkus.panache.common.Page;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.security.config.SecurityProperties;
-import me.zhengjie.modules.security.security.TokenProvider;
-import me.zhengjie.modules.security.service.dto.JwtUserDto;
-import me.zhengjie.modules.security.service.dto.OnlineUserDto;
-import me.zhengjie.utils.EncryptUtils;
-import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +10,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.modules.security.security.TokenProvider;
+import me.zhengjie.modules.security.service.dto.JwtUserDto;
+import me.zhengjie.modules.security.service.dto.OnlineUserDto;
+import me.zhengjie.utils.EncryptUtils;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.StringUtils;
+
 /**
  * @author Zheng Jie
  * @since 2019年10月26日21:56:27
@@ -35,8 +34,8 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class OnlineUserService {
 
-    @Inject
-    SecurityProperties properties;
+    //    @Inject
+//    SecurityProperties properties;
     @Inject
     TokenProvider tokenProvider;
     @Inject
@@ -63,7 +62,7 @@ public class OnlineUserService {
             log.error(e.getMessage(),e);
         }
         String loginKey = tokenProvider.loginKey(token);
-        redisUtils.set(loginKey, onlineUserDto, properties.getTokenValidityInSeconds(), TimeUnit.MILLISECONDS);
+        redisUtils.set(loginKey, onlineUserDto, 4, TimeUnit.HOURS);
     }
 
     /**
@@ -86,7 +85,7 @@ public class OnlineUserService {
      * @return /
      */
     public List<OnlineUserDto> getAll(String username){
-        String loginKey = properties.getOnlineKey() +
+        String loginKey = "online_token:" +
                 (StringUtils.isBlank(username) ? "" : "*" + username);
         List<String> keys = redisUtils.scan(loginKey + "*");
         Collections.reverse(keys);
@@ -141,7 +140,7 @@ public class OnlineUserService {
      * @param username /
      */
     public void kickOutForUsername(String username) {
-        String loginKey = properties.getOnlineKey() + username + "*";
+        String loginKey = "online_token:" + username + "*";
         redisUtils.scanDel(loginKey);
     }
 }

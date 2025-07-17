@@ -1,27 +1,26 @@
 package me.zhengjie.modules.security.service;
 
 import cn.hutool.core.util.RandomUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import me.zhengjie.modules.security.config.LoginProperties;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 
-import javax.annotation.Resource;
 
 /**
  * @author Zheng Jie
  * @description 用户缓存管理
  * @since 2022-05-26
  **/
-@Component
+@ApplicationScoped
 public class UserCacheManager {
 
-    @Resource
-    private RedisUtils redisUtils;
-    @Value("${login.user-cache.idle-time}")
-    private long idleTime;
+    @Inject
+    RedisUtils redisUtils;
+    // fixme   @Value("${login.user-cache.idle-time}")
+    private long idleTime = 9999;
 
     /**
      * 返回用户缓存
@@ -42,7 +41,7 @@ public class UserCacheManager {
      *  添加缓存到Redis
      * @param userName 用户名
      */
-    @Async
+//    @Async
     public void addUserCache(String userName, JwtUserDto user) {
         // 转小写
         userName = StringUtils.lowerCase(userName);
@@ -58,7 +57,7 @@ public class UserCacheManager {
      * 用户信息变更时
      * @param userName 用户名
      */
-    @Async
+//    @Async
     public void cleanUserCache(String userName) {
         // 转小写
         userName = StringUtils.lowerCase(userName);

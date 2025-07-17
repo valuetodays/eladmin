@@ -79,7 +79,7 @@ public class VtServerServiceImpl implements VtServerService {
     }
 
     @Override
-    public void download(List<VtServerDto> all, HttpServletResponse response) throws IOException {
+    public void download(List<VtServerDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (VtServerDto vtServer : all) {
             Map<String, Object> map = new LinkedHashMap<>();

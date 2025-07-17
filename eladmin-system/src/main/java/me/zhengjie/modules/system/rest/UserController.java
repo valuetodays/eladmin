@@ -1,5 +1,12 @@
 package me.zhengjie.modules.system.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import cn.hutool.core.collection.CollectionUtil;
 import cn.vt.encrypt.BCryptUtils;
 import io.quarkus.panache.common.Page;
@@ -33,7 +40,6 @@ import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RsaUtils;
-import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.enums.CodeEnum;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -41,13 +47,6 @@ import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -92,7 +91,7 @@ public class UserController extends BaseController {
             criteria.getDeptIds().addAll(deptService.getDeptChildren(data));
         }
         // 数据权限
-        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtils.getCurrentUsername()));
+        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(getCurrentAccount().getEmail()));
         // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
         if (!CollectionUtils.isEmpty(criteria.getDeptIds()) && !CollectionUtils.isEmpty(dataScopes)){
             // 取交集
@@ -137,7 +136,7 @@ public class UserController extends BaseController {
     @PUT
     @Path("center")
     public Object centerUser(/*@Validated(User.Update.class) */User resources) {
-        if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
+        if (!resources.getId().equals(getCurrentAccountId())) {
             throw new BadRequestException("不能修改他人资料");
         }
         userService.updateCenter(resources);
@@ -151,7 +150,7 @@ public class UserController extends BaseController {
     @PreAuthorize("@el.check('user:del')")
     public Object deleteUser(Set<Long> ids) {
         for (Long id : ids) {
-            Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+            Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
             Integer optLevel =  Collections.min(roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
             if (currentLevel > optLevel) {
                 throw new BadRequestException("角色权限不足，不能删除：" + userService.findById(id).getUsername());
@@ -167,7 +166,7 @@ public class UserController extends BaseController {
     public Object updateUserPass(UserPassVo passVo) throws Exception {
         String oldPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
         String newPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
-        UserDto user = userService.findByName(SecurityUtils.getCurrentUsername());
+        UserDto user = userService.findByName(getCurrentAccount().getEmail());
         if (!BCryptUtils.checkpw(oldPass, user.getPassword())) {
             throw new BadRequestException("修改失败，旧密码错误");
         }
@@ -193,7 +192,7 @@ public class UserController extends BaseController {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Object updateUserAvatar(/*@RequestParam */MultipartFormDataInput dataInput) {
         File avatar = getFileFormItem(dataInput, "avatar");
-        return userService.updateAvatar(avatar, avatar.getName());
+        return userService.updateAvatar(avatar, avatar.getName(), getCurrentAccountId());
     }
 
     @Log("修改邮箱")
@@ -202,7 +201,7 @@ public class UserController extends BaseController {
     @Path(value = "/updateEmail/{code}")
     public Object updateUserEmail(@PathParam("code") String code, User user) throws Exception {
         String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,user.getPassword());
-        UserDto userDto = userService.findByName(SecurityUtils.getCurrentUsername());
+        UserDto userDto = userService.findByName(getCurrentAccount().getEmail());
         if (!BCryptUtils.checkpw(password, userDto.getPassword())) {
             throw new BadRequestException("密码错误");
         }
@@ -216,7 +215,7 @@ public class UserController extends BaseController {
      * @param resources /
      */
     private void checkLevel(User resources) {
-        Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+        Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
         Integer optLevel = roleService.findByRoles(resources.getRoles());
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");

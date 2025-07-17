@@ -1,5 +1,13 @@
 package me.zhengjie.modules.maint.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,17 +22,7 @@ import me.zhengjie.modules.maint.service.dto.AppQueryCriteria;
 import me.zhengjie.modules.maint.service.mapstruct.AppMapper;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -41,18 +39,20 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public PageResult<AppDto> queryAll(AppQueryCriteria criteria, Page pageable) {
-        Page<App> page = appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page.map(appMapper::toDto));
+// fixme        Page<App> page = appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+// fixme         return PageUtil.toPage(page.map(appMapper::toDto));
+        return null;
     }
 
     @Override
     public List<AppDto> queryAll(AppQueryCriteria criteria){
-        return appMapper.toDto(appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        // fixme      return appMapper.toDto(appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        return null;
     }
 
     @Override
     public AppDto findById(Long id) {
-        App app = appRepository.findById(id).orElseGet(App::new);
+        App app = appRepository.findById(id);
         ValidationUtil.isNull(app.getId(),"App","id",id);
         return appMapper.toDto(app);
     }
@@ -78,7 +78,7 @@ public class AppServiceImpl implements AppService {
             throw new IllegalArgumentException("非法的应用名称，请勿包含[; | &]等特殊字符");
         }
         verification(resources);
-        App app = appRepository.findById(resources.getId()).orElseGet(App::new);
+        App app = appRepository.findById(resources.getId());
         ValidationUtil.isNull(app.getId(),"App","id",resources.getId());
         app.copy(resources);
         appRepository.save(app);

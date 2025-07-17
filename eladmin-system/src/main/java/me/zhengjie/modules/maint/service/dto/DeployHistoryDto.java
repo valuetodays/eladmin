@@ -1,9 +1,10 @@
 package me.zhengjie.modules.maint.service.dto;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
+
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @author zhanghouying

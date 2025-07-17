@@ -1,62 +1,47 @@
 package me.zhengjie.modules.security.security;
 
+import java.util.Date;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.IdUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.security.config.SecurityProperties;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * @author /
  */
 @Slf4j
-@Component
-public class TokenProvider implements InitializingBean {
-
-    private Key signingKey;
-    private JwtParser jwtParser;
+@ApplicationScoped
+public class TokenProvider {
+    @Context
+    HttpHeaders headers;
     @Inject
     RedisUtils redisUtils;
-    @Inject
-    SecurityProperties properties;
     public static final String AUTHORITIES_UUID_KEY = "uid";
     public static final String AUTHORITIES_UID_KEY = "userId";
-
-    public TokenProvider(SecurityProperties properties, RedisUtils redisUtils) {
-        this.properties = properties;
-        this.redisUtils = redisUtils;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        // 解码Base64密钥并创建签名密钥
-        byte[] keyBytes = Decoders.BASE64.decode(properties.getBase64Secret());
-        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
-        // 初始化 JwtParser
-        jwtParser = Jwts.parserBuilder()
-                .setSigningKey(signingKey) // 使用预生成的签名密钥
-                .build();
-    }
+    /**
+     * 依据Token 获取鉴权信息
+     *
+     * @param token /
+     * @return /
+     */
+// fixme    Authentication getAuthentication(String token) {
+//        Claims claims = getClaims(token);
+//        User principal = new User(claims.getSubject(), "******", new ArrayList<>());
+//        return new UsernamePasswordAuthenticationToken(principal, token, new ArrayList<>());
+//    }
+    //# token 续期检查时间范围（默认30分钟，单位毫秒），在token即将过期的一段时间内用户操作了，则给用户的token续期
+    long detect = 1800000L;
+    //  # 续期时间范围，默认1小时，单位毫秒
+    long renew = 3600000L;
 
     /**
      * 创建Token 设置永不过期，
@@ -66,39 +51,8 @@ public class TokenProvider implements InitializingBean {
      * @return /
      */
     public String createToken(JwtUserDto user) {
-        // 设置参数
-        Map<String, Object> claims = new HashMap<>(6);
-        // 设置用户ID
-        claims.put(AUTHORITIES_UID_KEY, user.getUser().getId());
-        // 设置UUID，确保每次Token不一样
-        claims.put(AUTHORITIES_UUID_KEY, IdUtil.simpleUUID());
-        // 直接调用 Jwts.builder() 创建新实例
-        return Jwts.builder()
-                // 设置自定义 Claims
-                .setClaims(claims)
-                // 设置主题
-                .setSubject(user.getUsername())
-                // 使用预生成的签名密钥和算法签名
-                .signWith(signingKey, SignatureAlgorithm.HS512)
-                .compact();
-    }
-
-    /**
-     * 依据Token 获取鉴权信息
-     *
-     * @param token /
-     * @return /
-     */
-    Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-        User principal = new User(claims.getSubject(), "******", new ArrayList<>());
-        return new UsernamePasswordAuthenticationToken(principal, token, new ArrayList<>());
-    }
-
-    public Claims getClaims(String token) {
-        return jwtParser
-                .parseClaimsJws(token)
-                .getBody();
+        String r = RandomStringUtils.secureStrong().nextAlphanumeric(8);
+        return UUID.randomUUID().toString().replace("-", "") + "-" + r;
     }
 
     /**
@@ -112,18 +66,15 @@ public class TokenProvider implements InitializingBean {
         // 判断当前时间与过期时间的时间差
         long differ = expireDate.getTime() - System.currentTimeMillis();
         // 如果在续期检查的范围内，则续期
-        if (differ <= properties.getDetect()) {
-            long renew = time + properties.getRenew();
-            redisUtils.expire(loginKey, renew, TimeUnit.MILLISECONDS);
+        if (differ <= detect) {
+            long renewVal = time + renew;
+            redisUtils.expire(loginKey, renewVal, TimeUnit.MILLISECONDS);
         }
     }
 
-    public String getToken(HttpServletRequest request) {
-        final String requestHeader = request.getHeader(properties.getHeader());
-        if (requestHeader != null && requestHeader.startsWith(properties.getTokenStartWith())) {
-            return requestHeader.substring(7);
-        }
-        return null;
+    public String getToken() {
+        String aaa = headers.getHeaderString("aaa");
+        return aaa;
     }
 
     /**
@@ -132,8 +83,7 @@ public class TokenProvider implements InitializingBean {
      * @return key
      */
     public String loginKey(String token) {
-        Claims claims = getClaims(token);
-        return properties.getOnlineKey() + claims.getSubject() + ":" + getId(token);
+        return "online_token:" + getId(token);
     }
 
     /**
@@ -142,7 +92,6 @@ public class TokenProvider implements InitializingBean {
      * @return /
      */
     public String getId(String token) {
-        Claims claims = getClaims(token);
-        return claims.get(AUTHORITIES_UUID_KEY).toString();
+        return token;
     }
 }

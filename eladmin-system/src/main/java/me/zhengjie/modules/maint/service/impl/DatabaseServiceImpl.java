@@ -1,5 +1,13 @@
 package me.zhengjie.modules.maint.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import cn.hutool.core.util.IdUtil;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,16 +24,7 @@ import me.zhengjie.modules.maint.service.mapstruct.DatabaseMapper;
 import me.zhengjie.modules.maint.util.SqlUtils;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.ValidationUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -43,18 +42,20 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public PageResult<DatabaseDto> queryAll(DatabaseQueryCriteria criteria, Page pageable) {
-        Page<Database> page = databaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page.map(databaseMapper::toDto));
+        // fixme        Page<Database> page = databaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        // fixme     return PageUtil.toPage(page.map(databaseMapper::toDto));
+        return null;
     }
 
     @Override
     public List<DatabaseDto> queryAll(DatabaseQueryCriteria criteria){
-        return databaseMapper.toDto(databaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        // fixme      return databaseMapper.toDto(databaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        return null;
     }
 
     @Override
     public DatabaseDto findById(String id) {
-        Database database = databaseRepository.findById(id).orElseGet(Database::new);
+        Database database = databaseRepository.findById(id);
         ValidationUtil.isNull(database.getId(),"Database","id",id);
         return databaseMapper.toDto(database);
     }
@@ -63,16 +64,16 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Transactional(rollbackOn = Exception.class)
     public void create(Database resources) {
         resources.setId(IdUtil.simpleUUID());
-        databaseRepository.save(resources);
+        databaseRepository.persist(resources);
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(Database resources) {
-        Database database = databaseRepository.findById(resources.getId()).orElseGet(Database::new);
+        Database database = databaseRepository.findById(resources.getId());
         ValidationUtil.isNull(database.getId(),"Database","id",resources.getId());
         database.copy(resources);
-        databaseRepository.save(database);
+        databaseRepository.persist(database);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public void download(List<DatabaseDto> queryAll, HttpServletResponse response) throws IOException {
+    public File download(List<DatabaseDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (DatabaseDto databaseDto : queryAll) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -104,6 +105,6 @@ public class DatabaseServiceImpl implements DatabaseService {
             map.put("创建日期", databaseDto.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 }

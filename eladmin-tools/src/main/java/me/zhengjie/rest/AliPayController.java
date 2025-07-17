@@ -77,7 +77,7 @@ public class AliPayController {
 
     @AnonymousGetMapping("/return")
     @Operation(summary = "支付之后跳转的链接")
-    public String returnPage(/*HttpServletRequest request, HttpServletResponse response*/) {
+    public String returnPage(/*HttpServletRequest request*/) {
         AlipayConfig alipay = alipayService.find();
 //        response.setContentType("text/html;charset=" + alipay.getCharset());
         //内容验签，防止黑客篡改参数

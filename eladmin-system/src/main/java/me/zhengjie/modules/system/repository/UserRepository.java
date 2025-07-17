@@ -1,13 +1,13 @@
 package me.zhengjie.modules.system.repository;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.User;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -71,10 +71,10 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param roleId /
      * @return /
      */
-    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r WHERE" +
-            " u.user_id = r.user_id AND r.role_id = ?1", nativeQuery = true)
+//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r WHERE" +
+//            " u.user_id = r.user_id AND r.role_id = ?1", nativeQuery = true)
     public List<User> findByRoleId(Long roleId) {
-
+        return null;
     }
 
     /**
@@ -82,10 +82,10 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param deptId /
      * @return /
      */
-    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE " +
-            "u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = ?1 group by u.user_id", nativeQuery = true)
+//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE " +
+//            "u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = ?1 group by u.user_id", nativeQuery = true)
     public List<User> findByRoleDeptId(Long deptId) {
-
+        return null;
     }
 
     /**
@@ -93,10 +93,10 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param id 菜单ID
      * @return /
      */
-    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE\n" +
-            "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = ?1 group by u.user_id", nativeQuery = true)
+//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE\n" +
+//            "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = ?1 group by u.user_id", nativeQuery = true)
     public List<User> findByMenuId(Long id) {
-
+        return null;
     }
 
 
@@ -105,9 +105,9 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param ids /
      * @return /
      */
-    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_jobs j WHERE u.user_id = j.user_id AND j.job_id IN ?1", nativeQuery = true)
+//    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_jobs j WHERE u.user_id = j.user_id AND j.job_id IN ?1", nativeQuery = true)
     public int countByJobs(Set<Long> ids) {
-
+        return -1;
     }
 
     /**
@@ -115,9 +115,9 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param deptIds /
      * @return /
      */
-    @Query(value = "SELECT count(1) FROM sys_user u WHERE u.dept_id IN ?1", nativeQuery = true)
+//    @Query(value = "SELECT count(1) FROM sys_user u WHERE u.dept_id IN ?1", nativeQuery = true)
     public int countByDepts(Set<Long> deptIds) {
-
+        return -1;
     }
 
     /**
@@ -125,10 +125,10 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param ids /
      * @return /
      */
-    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_roles r WHERE " +
-            "u.user_id = r.user_id AND r.role_id in ?1", nativeQuery = true)
+//    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_roles r WHERE " +
+//            "u.user_id = r.user_id AND r.role_id in ?1", nativeQuery = true)
     public int countByRoles(Set<Long> ids) {
-
+        return -1;
     }
 
     /**

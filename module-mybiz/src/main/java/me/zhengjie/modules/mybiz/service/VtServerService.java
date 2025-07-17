@@ -70,5 +70,5 @@ public interface VtServerService {
      * @param response /
      * @throws IOException /
      */
-    void download(List<VtServerDto> all, HttpServletResponse response) throws IOException;
+    void download(List<VtServerDto> all) throws IOException;
 }

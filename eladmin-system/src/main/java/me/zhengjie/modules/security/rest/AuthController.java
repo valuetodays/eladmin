@@ -1,24 +1,31 @@
 package me.zhengjie.modules.security.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import cn.hutool.core.util.IdUtil;
+import cn.vt.auth.AuthUser;
 import cn.vt.encrypt.BCryptUtils;
 import com.wf.captcha.base.Captcha;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.annotation.rest.AnonymousDeleteMapping;
 import me.zhengjie.annotation.rest.AnonymousGetMapping;
 import me.zhengjie.annotation.rest.AnonymousPostMapping;
 import me.zhengjie.config.properties.RsaProperties;
 import me.zhengjie.exception.BadRequestException;
-import me.zhengjie.modules.security.config.CaptchaConfig;
+import me.zhengjie.modules.security.config.CaptchaConfigProperty;
+import me.zhengjie.modules.security.config.CaptchaFactory;
 import me.zhengjie.modules.security.config.LoginProperties;
-import me.zhengjie.modules.security.config.SecurityProperties;
 import me.zhengjie.modules.security.config.enums.LoginCodeEnum;
 import me.zhengjie.modules.security.security.TokenProvider;
 import me.zhengjie.modules.security.service.OnlineUserService;
@@ -27,21 +34,9 @@ import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.RsaUtils;
-import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Zheng Jie
@@ -54,9 +49,9 @@ import java.util.concurrent.TimeUnit;
 @Path("/auth")
 @RequiredArgsConstructor
 @Tag(name = "系统：系统授权接口")
-public class AuthController {
-    @Inject
-    SecurityProperties properties;
+public class AuthController extends BaseController {
+    //    @Inject
+//    SecurityProperties properties;
     @Inject
     RedisUtils redisUtils;
     @Inject
@@ -66,14 +61,16 @@ public class AuthController {
     @Inject
     LoginProperties loginProperties;
     @Inject
-    CaptchaConfig captchaConfig;
+    CaptchaFactory captchaFactory;
+    @Inject
+    CaptchaConfigProperty captchaConfigProperty;
     @Inject
     UserDetailsServiceImpl userDetailsService;
 
     @Log("用户登录")
     @Operation(summary = "登录授权")
     @AnonymousPostMapping(value = "/login")
-    public Object login(@Valid AuthUserDto authUser, HttpServletRequest request) throws Exception {
+    public Object login(@Valid AuthUserDto authUser) throws Exception {
         // 密码解密
         String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
         // 查询验证码
@@ -92,58 +89,58 @@ public class AuthController {
         if (!BCryptUtils.checkpw(password, jwtUser.getPassword())) {
             throw new BadRequestException("登录密码错误");
         }
-        Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // fixme:
+        putLoginAccount(null);
         // 生成令牌
         String token = tokenProvider.createToken(jwtUser);
         // 返回 token 与 用户信息
         Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
-            put("token", properties.getTokenStartWith() + token);
+            put("token", token);
             put("user", jwtUser);
         }};
-        if (loginProperties.isSingleLogin()) {
+        if (loginProperties.singleLogin()) {
             // 踢掉之前已经登录的token
             onlineUserService.kickOutForUsername(authUser.getUsername());
         }
         // 保存在线信息
-        onlineUserService.save(jwtUser, token, request);
+        onlineUserService.save(jwtUser, token);
         // 返回登录信息
-        return ResponseEntity.ok(authInfo);
+        return authInfo;
     }
 
     @Operation(summary = "获取用户信息")
     @GET
     @Path(value = "/info")
-    public ResponseEntity<UserDetails> getUserInfo() {
-        JwtUserDto jwtUser = (JwtUserDto) SecurityUtils.getCurrentUser();
-        return ResponseEntity.ok(jwtUser);
+    public AuthUser getUserInfo() {
+        AuthUser currentAccount = getCurrentAccount();
+        return currentAccount;
     }
 
     @Operation(summary = "获取验证码")
     @AnonymousGetMapping(value = "/code")
     public Object getCode() {
         // 获取运算的结果
-        Captcha captcha = captchaConfig.getCaptcha();
-        String uuid = properties.getCodeKey() + IdUtil.simpleUUID();
+        Captcha captcha = captchaFactory.getCaptcha();
+        String uuid = "captcha_code:" + IdUtil.simpleUUID();
         //当验证码类型为 arithmetic时且长度 >= 2 时，captcha.text()的结果有几率为浮点型
         String captchaValue = captcha.text();
         if (captcha.getCharType() - 1 == LoginCodeEnum.ARITHMETIC.ordinal() && captchaValue.contains(".")) {
             captchaValue = captchaValue.split("\\.")[0];
         }
         // 保存
-        redisUtils.set(uuid, captchaValue, captchaConfig.getExpiration(), TimeUnit.MINUTES);
+        redisUtils.set(uuid, captchaValue, captchaConfigProperty.expiration(), TimeUnit.MINUTES);
         // 验证码信息
         Map<String, Object> imgResult = new HashMap<String, Object>(2) {{
             put("img", captcha.toBase64());
             put("uuid", uuid);
         }};
-        return ResponseEntity.ok(imgResult);
+        return imgResult;
     }
 
     @Operation(summary = "退出登录")
-    @AnonymousDeleteMapping(value = "/logout")
-    public Object logout(HttpServletRequest request) {
-        onlineUserService.logout(tokenProvider.getToken(request));
+    @AnonymousPostMapping(value = "/logout")
+    public Object logout() {
+        onlineUserService.logout(tokenProvider.getToken());
         return 1;
     }
 }

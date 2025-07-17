@@ -34,7 +34,7 @@ public class ${className}Controller {
 @GET
 @Path(value = "/download")
     @PreAuthorize("@el.check('${changeClassName}:list')")
-    public void export${className}(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
+public void export${className}(${className}QueryCriteria criteria) throws IOException {
         ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria), response);
     }
 

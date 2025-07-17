@@ -78,7 +78,7 @@ public class NationCodeServiceImpl implements NationCodeService {
     }
 
     @Override
-    public void download(List<NationCodeDto> all, HttpServletResponse response) throws IOException {
+    public void download(List<NationCodeDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (NationCodeDto nationCode : all) {
             Map<String,Object> map = new LinkedHashMap<>();

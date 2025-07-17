@@ -1,16 +1,16 @@
 package me.zhengjie.modules.system.service;
 
-import io.quarkus.panache.common.Page;
-import me.zhengjie.modules.system.domain.User;
-import me.zhengjie.modules.system.service.dto.UserDto;
-import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
-import me.zhengjie.utils.PageResult;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import io.quarkus.panache.common.Page;
+import me.zhengjie.modules.system.domain.User;
+import me.zhengjie.modules.system.service.dto.UserDto;
+import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
+import me.zhengjie.utils.PageResult;
 
 /**
  * @author Zheng Jie
@@ -67,10 +67,12 @@ public interface UserService {
 
     /**
      * 修改头像
-     * @param file 文件
+     *
+     * @param file             文件
+     * @param currentAccountId
      * @return /
      */
-    Map<String, String> updateAvatar(File file, String originalFilename);
+    Map<String, String> updateAvatar(File file, String originalFilename, Long currentAccountId);
 
     /**
      * 修改邮箱

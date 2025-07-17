@@ -1,6 +1,13 @@
 package me.zhengjie;
 
-import cn.valuetodays.quarkus.commons.base.BaseCrudController;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+
+import cn.vt.auth.AuthUser;
 import cn.vt.exception.CommonException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -10,20 +17,13 @@ import org.jboss.resteasy.reactive.server.multipart.FileItem;
 import org.jboss.resteasy.reactive.server.multipart.FormValue;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * .
  *
  * @author lei.liu
  * @since 2025-07-16
  */
-public abstract class BaseController extends BaseCrudController {
+public abstract class BaseController /*extends BaseCrudController */ {
     protected Response download(File file) {
         //response为HttpServletResponse对象
         String contentType = ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
@@ -58,5 +58,17 @@ public abstract class BaseController extends BaseCrudController {
         FileItem fileItem = formValue.getFileItem();
         java.nio.file.Path file = fileItem.getFile();
         return file.toFile();
+    }
+
+    protected AuthUser getCurrentAccount() {
+        return null;
+    }
+
+    protected Long getCurrentAccountId() {
+        return Long.valueOf(getCurrentAccount().getUserId());
+    }
+
+    protected void putLoginAccount(AuthUser authUser) {
+
     }
 }

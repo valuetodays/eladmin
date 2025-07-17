@@ -1,13 +1,5 @@
 package me.zhengjie.utils;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.poi.excel.BigExcelWriter;
-import cn.hutool.poi.excel.ExcelUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.exception.BadRequestException;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +13,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.exception.BadRequestException;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 /**
  * File工具类，扩展 hutool 工具包
@@ -302,7 +302,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
      */
 
     /*
-    public static void downloadFile(HttpServletRequest request, HttpServletResponse response, File file, boolean deleteOnExit) {
+    public static void downloadFile(HttpServletRequest request, File file, boolean deleteOnExit) {
         response.setCharacterEncoding(request.getCharacterEncoding());
         response.setContentType("application/octet-stream");
         FileInputStream fis = null;

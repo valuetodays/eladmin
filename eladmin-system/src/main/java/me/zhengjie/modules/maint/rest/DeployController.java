@@ -1,7 +1,20 @@
 package me.zhengjie.modules.maint.rest;
 
+import java.io.IOException;
+import java.util.Set;
+
+import cn.vt.exception.AssertUtils;
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.Log;
@@ -14,18 +27,7 @@ import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -39,8 +41,7 @@ import java.util.Set;
 @Path("/api/deploy")
 public class DeployController {
 
-	@Inject
-	String fileSavePath = FileUtil.getTmpDirPath() + "/";
+    private final String fileSavePath = FileUtil.getTmpDirPath() + "/";
 	@Inject
 	DeployService deployService;
 
@@ -49,16 +50,16 @@ public class DeployController {
 	@GET
 	@Path(value = "/download")
 	@PreAuthorize("@el.check('database:list')")
-	public void exportDeployData(HttpServletResponse response, DeployQueryCriteria criteria) throws IOException {
-		deployService.download(deployService.queryAll(criteria), response);
+    public void exportDeployData(DeployQueryCriteria criteria) throws IOException {
+        deployService.download(deployService.queryAll(criteria));
 	}
 
 	@Operation(summary = "查询部署")
 	@GET
-	@Path
+    @Path("")
 	@PreAuthorize("@el.check('deploy:list')")
-	public ResponseEntity<PageResult<DeployDto>> queryDeployData(DeployQueryCriteria criteria, Page pageable) {
-		return new ResponseEntity<>(deployService.queryAll(criteria,pageable),HttpStatus.OK);
+    public PageResult<DeployDto> queryDeployData(DeployQueryCriteria criteria, Page pageable) {
+        return deployService.queryAll(criteria, pageable);
     }
 
     @Log("新增部署")
@@ -96,8 +97,8 @@ public class DeployController {
 	@POST
 	@Path(value = "/upload")
 	@PreAuthorize("@el.check('deploy:edit')")
-	public Object uploadDeploy(MultipartFile file, HttpServletRequest request) throws Exception {
-		Long id = Long.valueOf(request.getParameter("id"));
+    public Object uploadDeploy(/*MultipartFile file, HttpServletRequest request*/) throws Exception {
+		/*Long id = Long.valueOf(request.getParameter("id"));
 		String fileName = "";
 		if(file != null){
 			fileName = FileUtil.verifyFilename(file.getOriginalFilename());
@@ -112,7 +113,8 @@ public class DeployController {
 		Map<String,Object> map = new HashMap<>(2);
 		map.put("error",0);
 		map.put("id",fileName);
-		return new ResponseEntity<>(map,HttpStatus.OK);
+		return new ResponseEntity<>(map,HttpStatus.OK);*/
+        throw AssertUtils.create("temply comment");
 	}
 
 	@Log("系统还原")
@@ -122,7 +124,7 @@ public class DeployController {
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object serverReduction(@Valid DeployHistory resources) {
 		String result = deployService.serverReduction(resources);
-		return new ResponseEntity<>(result,HttpStatus.OK);
+        return result;
 	}
 
 	@Log("服务运行状态")
@@ -132,7 +134,7 @@ public class DeployController {
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object serverStatus(@Valid Deploy resources) {
 		String result = deployService.serverStatus(resources);
-		return new ResponseEntity<>(result,HttpStatus.OK);
+        return result;
 	}
 
 	@Log("启动服务")
@@ -142,7 +144,7 @@ public class DeployController {
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object startServer(@Valid Deploy resources) {
 		String result = deployService.startServer(resources);
-		return new ResponseEntity<>(result,HttpStatus.OK);
+        return result;
 	}
 
 	@Log("停止服务")
@@ -152,6 +154,6 @@ public class DeployController {
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object stopServer(@Valid Deploy resources) {
 		String result = deployService.stopServer(resources);
-		return new ResponseEntity<>(result,HttpStatus.OK);
+        return result;
 	}
 }

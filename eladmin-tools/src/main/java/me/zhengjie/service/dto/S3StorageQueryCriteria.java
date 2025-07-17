@@ -15,19 +15,22 @@
  */
 package me.zhengjie.service.dto;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.sql.Timestamp;
 import java.util.List;
+
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @author Zheng Jie
  * @since 2025-06-25
 **/
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class S3StorageQueryCriteria {
+public class S3StorageQueryCriteria extends PageIO {
 
     @Query(type =  Query.Type.INNER_LIKE)
     @Schema(description = "文件名称")

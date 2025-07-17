@@ -1,5 +1,13 @@
 package me.zhengjie.modules.system.rest;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import cn.hutool.core.collection.CollectionUtil;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -24,18 +32,9 @@ import me.zhengjie.modules.system.service.dto.MenuQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.MenuMapper;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.SecurityUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -68,7 +67,7 @@ public class MenuController extends BaseController {
     @Path(value = "/build")
     @Operation(summary = "获取前端所需菜单")
     public List<MenuVo> buildMenus() {
-        List<MenuDto> menuDtoList = menuService.findByUser(SecurityUtils.getCurrentUserId());
+        List<MenuDto> menuDtoList = menuService.findByUser(getCurrentAccountId());
         List<MenuDto> menus = menuService.buildTree(menuDtoList);
         return menuService.buildMenus(menus);
     }

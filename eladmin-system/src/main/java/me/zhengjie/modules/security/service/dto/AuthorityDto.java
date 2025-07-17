@@ -1,9 +1,12 @@
 package me.zhengjie.modules.security.service.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+//import org.springframework.security.core.GrantedAuthority;
 
 /**
  * 避免序列化问题
@@ -13,7 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorityDto implements GrantedAuthority {
+public class AuthorityDto implements Serializable {
 
     @Schema(description = "角色名")
     private String authority;

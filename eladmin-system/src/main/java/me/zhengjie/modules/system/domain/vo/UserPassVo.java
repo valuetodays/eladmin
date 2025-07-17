@@ -1,6 +1,7 @@
 package me.zhengjie.modules.system.domain.vo;
 
 import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * 修改密码的 Vo 类

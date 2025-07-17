@@ -1,9 +1,20 @@
 package me.zhengjie.modules.maint.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,23 +35,10 @@ import me.zhengjie.modules.maint.service.mapstruct.DeployMapper;
 import me.zhengjie.modules.maint.util.ExecuteShellUtil;
 import me.zhengjie.modules.maint.util.ScpClientUtil;
 import me.zhengjie.modules.maint.websocket.MsgType;
-import me.zhengjie.modules.maint.websocket.SocketMsg;
-import me.zhengjie.modules.maint.websocket.WebSocketServer;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.ValidationUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author zhanghouying
@@ -51,8 +49,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DeployServiceImpl implements DeployService {
 
-    @Inject
-    String FILE_SEPARATOR = "/";
+	private final String FILE_SEPARATOR = "/";
     @Inject
     DeployRepository deployRepository;
     @Inject
@@ -64,24 +61,26 @@ public class DeployServiceImpl implements DeployService {
 	/**
 	 * 循环次数
 	 */
-    @Inject
-    Integer count = 30;
-
+	private final Integer count = 30;
+	@Inject
+	SecurityUtils securityUtils;
 
 	@Override
     public PageResult<DeployDto> queryAll(DeployQueryCriteria criteria, Page pageable) {
-		Page<Deploy> page = deployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-		return PageUtil.toPage(page.map(deployMapper::toDto));
+//fixme		Page<Deploy> page = deployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+//		return PageUtil.toPage(page.map(deployMapper::toDto));
+		return null;
 	}
 
 	@Override
 	public List<DeployDto> queryAll(DeployQueryCriteria criteria) {
-		return deployMapper.toDto(deployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
+//fixme		return deployMapper.toDto(deployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
+		return null;
 	}
 
 	@Override
 	public DeployDto findById(Long id) {
-		Deploy deploy = deployRepository.findById(id).orElseGet(Deploy::new);
+		Deploy deploy = deployRepository.findById(id);
 		ValidationUtil.isNull(deploy.getId(), "Deploy", "id", id);
 		return deployMapper.toDto(deploy);
 	}
@@ -95,7 +94,7 @@ public class DeployServiceImpl implements DeployService {
 	@Override
     @Transactional(rollbackOn = Exception.class)
 	public void update(Deploy resources) {
-		Deploy deploy = deployRepository.findById(resources.getId()).orElseGet(Deploy::new);
+		Deploy deploy = deployRepository.findById(resources.getId());
 		ValidationUtil.isNull(deploy.getId(), "Deploy", "id", resources.getId());
 		deploy.copy(resources);
 		deployRepository.save(deploy);
@@ -204,7 +203,7 @@ public class DeployServiceImpl implements DeployService {
 		//还原信息入库
 		DeployHistory deployHistory = new DeployHistory();
 		deployHistory.setAppName(appName);
-		deployHistory.setDeployUser(SecurityUtils.getCurrentUsername());
+		deployHistory.setDeployUser(securityUtils.getCurrentUsername());
 		deployHistory.setIp(ip);
 		deployHistory.setDeployId(id);
 		deployHistoryService.create(deployHistory);
@@ -235,11 +234,12 @@ public class DeployServiceImpl implements DeployService {
 	}
 
 	private void sendMsg(String msg, MsgType msgType) {
-		try {
-			WebSocketServer.sendInfo(new SocketMsg(msg, msgType), "deploy");
-		} catch (IOException e) {
-			log.error(e.getMessage(),e);
-		}
+		// fixme
+//		try {
+//			WebSocketServer.sendInfo(new SocketMsg(msg, msgType), "deploy");
+//		} catch (IOException e) {
+//			log.error(e.getMessage(),e);
+//		}
 	}
 
 	@Override
@@ -344,7 +344,7 @@ public class DeployServiceImpl implements DeployService {
 	@Override
 	public String serverReduction(DeployHistory resources) {
 		Long deployId = resources.getDeployId();
-		Deploy deployInfo = deployRepository.findById(deployId).orElseGet(Deploy::new);
+		Deploy deployInfo = deployRepository.findById(deployId);
 		String deployDate = DateUtil.format(resources.getDeployDate(), DatePattern.PURE_DATETIME_PATTERN);
 		App app = deployInfo.getApp();
 		if (app == null) {
@@ -421,7 +421,7 @@ public class DeployServiceImpl implements DeployService {
 	}
 
 	@Override
-	public void download(List<DeployDto> queryAll, HttpServletResponse response) throws IOException {
+	public File download(List<DeployDto> queryAll) throws IOException {
 		List<Map<String, Object>> list = new ArrayList<>();
 		for (DeployDto deployDto : queryAll) {
 			Map<String,Object> map = new LinkedHashMap<>();
@@ -430,6 +430,6 @@ public class DeployServiceImpl implements DeployService {
 			map.put("部署日期", deployDto.getCreateTime());
 			list.add(map);
 		}
-		FileUtil.downloadExcel(list, response);
+		return FileUtil.downloadExcel(list);
 	}
 }

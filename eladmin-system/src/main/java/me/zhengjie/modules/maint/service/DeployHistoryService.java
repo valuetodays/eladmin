@@ -1,14 +1,15 @@
 package me.zhengjie.modules.maint.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.maint.domain.DeployHistory;
 import me.zhengjie.modules.maint.service.dto.DeployHistoryDto;
 import me.zhengjie.modules.maint.service.dto.DeployHistoryQueryCriteria;
 import me.zhengjie.utils.PageResult;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author zhanghouying
@@ -35,7 +36,7 @@ public interface DeployHistoryService {
      * @param id /
      * @return /
      */
-    DeployHistoryDto findById(String id);
+    DeployHistoryDto findById(Long id);
 
     /**
      * 创建
@@ -47,13 +48,12 @@ public interface DeployHistoryService {
      * 删除
      * @param ids /
      */
-    void delete(Set<String> ids);
+    void delete(Set<Long> ids);
 
     /**
      * 导出数据
      * @param queryAll /
-     * @param response /
      * @throws IOException /
      */
-    void download(List<DeployHistoryDto> queryAll, HttpServletResponse response) throws IOException;
+    File download(List<DeployHistoryDto> queryAll) throws IOException;
 }
