@@ -1,4 +1,3 @@
-
 package me.zhengjie.service;
 
 import me.zhengjie.domain.EmailConfig;
@@ -6,7 +5,7 @@ import me.zhengjie.domain.vo.EmailVo;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-26
+ * @since 2018-12-26
  */
 public interface EmailService {
 

@@ -1,8 +1,11 @@
-
 package me.zhengjie.modules.mybiz.domain;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,18 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author vt
  * @website https://eladmin.vip
  * @description /
- * @date 2025-07-11
+ * @since 2025-07-11
  **/
 @Entity
 @Data

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author Zheng Jie
  * @description 程序启动后处理数据
- * @date 2025-01-13
+ * @since 2025-01-13
  **/
 @Slf4j
 @ApplicationScoped

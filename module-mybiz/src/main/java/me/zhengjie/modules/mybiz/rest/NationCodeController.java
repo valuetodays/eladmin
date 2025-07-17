@@ -1,11 +1,13 @@
 package me.zhengjie.modules.mybiz.rest;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-
+import cn.vt.auth.AuthUser;
 import io.quarkus.panache.common.Page;
-import io.swagger.annotations.ApiParam;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.mybiz.domain.NationCode;
@@ -19,7 +21,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
 * @author vt
@@ -57,8 +61,8 @@ public class NationCodeController {
     @Operation(summary = "新增国家编码")
     @PreAuthorize("@el.check('nationCode:add')")
     public Object createNationCode(@Valid NationCode resources) {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-        String username = currentUser.getUsername();
+        AuthUser currentUser = SecurityUtils.getCurrentUser();
+        String username = currentUser.getEmail();
         resources.setCreateBy(username);
         resources.setUpdateBy(username);
         resources.setCreateTime(LocalDateTime.now());
@@ -82,7 +86,7 @@ public class NationCodeController {
     @Log("删除国家编码")
     @Operation(summary = "删除国家编码")
     @PreAuthorize("@el.check('nationCode:del')")
-    public Object deleteNationCode(@ApiParam(value = "传ID数组[]") Long[] ids) {
+    public Object deleteNationCode(Long[] ids) {
         nationCodeService.deleteAll(ids);
         return 1;
     }

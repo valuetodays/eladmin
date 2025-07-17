@@ -19,7 +19,7 @@ package me.zhengjie.modules.security.config.enums;
  * 验证码配置枚举
  *
  * @author liaojinlong
- * @date 2020/6/10 17:40
+ * @since 2020/6/10 17:40
  */
 
 public enum LoginCodeEnum {

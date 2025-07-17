@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.system.service.mapstruct;
 
 import me.zhengjie.base.BaseMapper;
@@ -9,9 +8,9 @@ import org.mapstruct.ReportingPolicy;
 
 /**
  * @author Zheng Jie
- * @date 2019-5-23
+ * @since 2019-5-23
  */
-@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RoleSmallMapper extends BaseMapper<RoleSmallDto, Role> {
 
 }

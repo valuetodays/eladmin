@@ -1,44 +1,41 @@
-
 package me.zhengjie.config;
 
 import cn.hutool.core.util.StrUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Produces;
 import lombok.Data;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 @Data
-@Configuration
-@AutoConfigureBefore(RedisAutoConfiguration.class)
+@ApplicationScoped
 public class RedissonConfiguration {
-
-    @Value("${spring.redis.host}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.host")
     private String redisHost;
-
-    @Value("${spring.redis.port}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.port")
     private int redisPort;
-
-    @Value("${spring.redis.database}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.database")
     private int redisDatabase;
-
-    @Value("${spring.redis.password:}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.password")
     private String redisPassword;
-
-    @Value("${spring.redis.timeout:5000}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.timeout")
     private int timeout;
-
-    @Value("${spring.redis.lettuce.pool.max-active:64}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.lettuce.pool.max-active")
     private int connectionPoolSize;
-
-    @Value("${spring.redis.lettuce.pool.min-idle:16}")
+    @Inject
+    @ConfigProperty(name = "spring.redis.lettuce.pool.min-idle")
     private int connectionMinimumIdleSize;
 
-    @Bean
+    @Produces
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()

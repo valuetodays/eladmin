@@ -1,15 +1,14 @@
-
 package me.zhengjie.modules.system.repository;
-
-import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.DictDetail;
 
+import java.util.List;
+
 /**
 * @author Zheng Jie
-* @date 2019-04-10
+ * @since 2019-04-10
 */
 @ApplicationScoped
 public class DictDetailRepository extends MyPanacheRepository<DictDetail> {

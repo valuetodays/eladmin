@@ -1,8 +1,4 @@
-
 package me.zhengjie.modules.mybiz.service;
-
-import java.io.IOException;
-import java.util.List;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.mybiz.domain.VtServer;
@@ -10,11 +6,14 @@ import me.zhengjie.modules.mybiz.service.dto.VtServerDto;
 import me.zhengjie.modules.mybiz.service.dto.VtServerQueryCriteria;
 import me.zhengjie.utils.PageResult;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * @author vt
  * @website https://eladmin.vip
  * @description 服务接口
- * @date 2025-07-11
+ * @since 2025-07-11
  **/
 public interface VtServerService {
 

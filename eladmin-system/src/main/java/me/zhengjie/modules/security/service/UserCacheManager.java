@@ -1,7 +1,4 @@
-
 package me.zhengjie.modules.security.service;
-
-import javax.annotation.Resource;
 
 import cn.hutool.core.util.RandomUtil;
 import me.zhengjie.modules.security.config.LoginProperties;
@@ -11,10 +8,12 @@ import me.zhengjie.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 
+import javax.annotation.Resource;
+
 /**
  * @author Zheng Jie
  * @description 用户缓存管理
- * @date 2022-05-26
+ * @since 2022-05-26
  **/
 @Component
 public class UserCacheManager {

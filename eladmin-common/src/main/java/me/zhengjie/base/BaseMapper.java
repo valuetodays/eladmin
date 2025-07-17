@@ -1,11 +1,10 @@
-
 package me.zhengjie.base;
 
 import java.util.List;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 public interface BaseMapper<D, E> {
 

@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.security.service.dto;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
@@ -11,9 +6,13 @@ import lombok.Getter;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 @Getter
 @AllArgsConstructor

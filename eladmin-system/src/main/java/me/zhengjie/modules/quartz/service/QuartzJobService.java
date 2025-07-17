@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.quartz.service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.quartz.domain.QuartzJob;
@@ -11,9 +6,14 @@ import me.zhengjie.modules.quartz.domain.QuartzLog;
 import me.zhengjie.modules.quartz.service.dto.JobQueryCriteria;
 import me.zhengjie.utils.PageResult;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2019-01-07
+ * @since 2019-01-07
  */
 public interface QuartzJobService {
 
@@ -87,18 +87,16 @@ public interface QuartzJobService {
     /**
      * 导出定时任务
      * @param queryAll 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<QuartzJob> queryAll, HttpServletResponse response) throws IOException;
+    File download(List<QuartzJob> queryAll) throws IOException;
 
     /**
      * 导出定时任务日志
      * @param queryAllLog 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void downloadLog(List<QuartzLog> queryAllLog, HttpServletResponse response) throws IOException;
+    File downloadLog(List<QuartzLog> queryAllLog) throws IOException;
 
     /**
      * 执行子任务

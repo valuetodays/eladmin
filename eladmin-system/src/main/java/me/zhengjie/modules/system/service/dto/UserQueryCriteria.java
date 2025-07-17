@@ -1,5 +1,7 @@
-
 package me.zhengjie.modules.system.service.dto;
+
+import lombok.Data;
+import me.zhengjie.annotation.Query;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -7,12 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 @Data
 public class UserQueryCriteria implements Serializable {

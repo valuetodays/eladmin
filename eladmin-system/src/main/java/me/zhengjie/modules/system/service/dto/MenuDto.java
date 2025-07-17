@@ -1,18 +1,17 @@
-
 package me.zhengjie.modules.system.service.dto;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * @author Zheng Jie
- * @date 2018-12-17
+ * @since 2018-12-17
  */
 @Getter
 @Setter

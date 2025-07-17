@@ -1,16 +1,19 @@
-
 package me.zhengjie.domain;
 
-import java.io.Serializable;
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.io.Serializable;
 
 /**
  * 支付宝配置类
  * @author Zheng Jie
- * @date 2018-12-31
+ * @since 2018-12-31
  */
 @Data
 @Entity

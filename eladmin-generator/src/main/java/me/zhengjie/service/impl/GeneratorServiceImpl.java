@@ -1,21 +1,12 @@
-
 package me.zhengjie.service.impl;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ZipUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.GenConfig;
@@ -26,37 +17,38 @@ import me.zhengjie.reqresp.GenPreviewResp;
 import me.zhengjie.service.DatabaseTableInfoGather;
 import me.zhengjie.service.DatabaseTableInfoGatherFactory;
 import me.zhengjie.service.GeneratorService;
-import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.GenUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
- * @date 2019-01-02
+ * @since 2019-01-02
  */
 @ApplicationScoped
 @RequiredArgsConstructor
 @SuppressWarnings({"unchecked","all"})
 public class GeneratorServiceImpl implements GeneratorService {
     private static final Logger log = LoggerFactory.getLogger(GeneratorServiceImpl.class);
-    @PersistenceContext
-    private EntityManager em;
+    private final String CONFIG_MESSAGE = "请先配置生成器";
 
     @Inject
     ColumnInfoRepository columnInfoRepository;
-
-    @Value("${generator.base-path}")
-    private String generatorBasePath;
-
     @Inject
-    String CONFIG_MESSAGE = "请先配置生成器";
+    private EntityManager em;
+    @ConfigProperty(name = "generator.base-path")
+    private String generatorBasePath;
 
     private DatabaseTableInfoGatherFactory.DbType dbType = DatabaseTableInfoGatherFactory.DbType.MYSQL;
 
@@ -96,7 +88,8 @@ public class GeneratorServiceImpl implements GeneratorService {
             return columnInfos;
         } else {
             columnInfos = query(tableName);
-            return columnInfoRepository.saveAll(columnInfos);
+            columnInfoRepository.persist(columnInfos);
+            return columnInfos;
         }
     }
 
@@ -158,7 +151,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void save(List<ColumnInfo> columnInfos) {
-        columnInfoRepository.saveAll(columnInfos);
+        columnInfoRepository.persist(columnInfos);
     }
 
     @Override
@@ -175,16 +168,15 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public Object preview(GenConfig genConfig, List<ColumnInfo> columns) {
+    public List<GenPreviewResp> preview(GenConfig genConfig, List<ColumnInfo> columns) {
         if (genConfig.getId() == null) {
             throw new BadRequestException(CONFIG_MESSAGE);
         }
-        List<GenPreviewResp> genList = GenUtil.preview(columns, genConfig);
-        return new ResponseEntity<>(genList, HttpStatus.OK);
+        return GenUtil.preview(columns, genConfig);
     }
 
     @Override
-    public void download(GenConfig genConfig, List<ColumnInfo> columns, HttpServletRequest request, HttpServletResponse response) {
+    public File download(GenConfig genConfig, List<ColumnInfo> columns) {
         if (genConfig.getId() == null) {
             throw new BadRequestException(CONFIG_MESSAGE);
         }
@@ -192,8 +184,10 @@ public class GeneratorServiceImpl implements GeneratorService {
             File file = new File(GenUtil.download(columns, genConfig));
             String zipPath = file.getPath() + ".zip";
             ZipUtil.zip(file.getPath(), zipPath);
-            FileUtil.downloadFile(request, response, new File(zipPath), true);
+            File zipFile = new File(zipPath);
+            return zipFile;
         } catch (IOException e) {
+            log.error("error when download()", e);
             throw new BadRequestException("打包失败");
         }
     }

@@ -1,4 +1,3 @@
-
 package me.zhengjie.utils;
 
 import org.apache.commons.configuration.Configuration;
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * sql字段转java
  *
  * @author Zheng Jie
- * @date 2019-01-03
+ * @since 2019-01-03
  */
 public class ColUtil {
     private static final Logger log = LoggerFactory.getLogger(ColUtil.class);

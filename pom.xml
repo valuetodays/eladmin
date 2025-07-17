@@ -5,7 +5,7 @@
     <groupId>me.zhengjie</groupId>
     <artifactId>eladmin</artifactId>
     <packaging>pom</packaging>
-    <version>2.7</version>
+    <version>3.0</version>
 
     <parent>
         <groupId>ll.vt.quarkus</groupId>
@@ -22,7 +22,7 @@
         <fastjson2.version>2.0.54</fastjson2.version>
         <druid.version>1.2.19</druid.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
 
     <modules>
@@ -31,13 +31,17 @@
         <module>eladmin-system</module>
         <module>eladmin-tools</module>
         <module>eladmin-generator</module>
-        <module>module-mybiz</module>
+        <!--        <module>module-mybiz</module>-->
     </modules>
 
     <description>ELADMIN 后台管理</description>
     <url>https://eladmin.vip</url>
 
     <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>

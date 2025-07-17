@@ -1,11 +1,4 @@
-
 package me.zhengjie.modules.quartz.utils;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 import cn.hutool.extra.template.Template;
 import cn.hutool.extra.template.TemplateConfig;
@@ -27,10 +20,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
 /**
  * 参考人人开源，<a href="https://gitee.com/renrenio/renren-security">...</a>
  * @author /
- * @date 2019-01-07
+ * @since 2019-01-07
  */
 public class ExecutionJob extends QuartzJobBean {
 

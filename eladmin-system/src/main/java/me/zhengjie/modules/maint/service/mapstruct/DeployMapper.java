@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.maint.service.mapstruct;
 
 import me.zhengjie.base.BaseMapper;
@@ -9,9 +8,9 @@ import org.mapstruct.ReportingPolicy;
 
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
-@Mapper(componentModel = "spring",uses = {AppMapper.class, ServerDeployMapper.class},unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "cdi", uses = {AppMapper.class, ServerDeployMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DeployMapper extends BaseMapper<DeployDto, Deploy> {
 
 }

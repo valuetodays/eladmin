@@ -1,19 +1,17 @@
-
 package me.zhengjie.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * 表的数据信息
  * @author Zheng Jie
- * @date 2019-01-02
+ * @since 2019-01-02
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class TableInfo {
 
     @Schema(description = "表名称")

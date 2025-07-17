@@ -1,10 +1,7 @@
-
 package me.zhengjie.modules.maint.rest;
 
-import java.io.IOException;
-import java.util.Set;
-
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -15,6 +12,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.maint.domain.App;
 import me.zhengjie.modules.maint.service.AppService;
@@ -28,16 +26,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.Set;
+
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
 @Tag(name = "运维：应用管理")
 @Path("/api/app")
-public class AppController {
+public class AppController extends BaseController {
 
     @Inject
     AppService appService;
@@ -46,8 +47,8 @@ public class AppController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('app:list')")
-    public void exportApp(HttpServletResponse response, AppQueryCriteria criteria) throws IOException {
-        appService.download(appService.queryAll(criteria), response);
+    public void exportApp(AppQueryCriteria criteria) throws IOException {
+        appService.download(appService.queryAll(criteria));
     }
 
     @Operation(summary = "查询应用")

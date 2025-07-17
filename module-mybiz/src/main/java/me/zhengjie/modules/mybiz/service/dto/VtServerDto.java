@@ -1,16 +1,15 @@
-
 package me.zhengjie.modules.mybiz.service.dto;
+
+import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import lombok.Data;
 
 /**
  * @author vt
  * @website https://eladmin.vip
  * @description /
- * @date 2025-07-11
+ * @since 2025-07-11
  **/
 @Data
 public class VtServerDto implements Serializable {

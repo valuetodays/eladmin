@@ -1,4 +1,3 @@
-
 package me.zhengjie.utils.enums;
 
 import lombok.AllArgsConstructor;
@@ -8,8 +7,9 @@ import lombok.Getter;
  * <p>
  * 数据权限枚举
  * </p>
+ *
  * @author Zheng Jie
- * @date 2020-05-07
+ * @since 2020-05-07
  */
 @Getter
 @AllArgsConstructor
@@ -24,10 +24,8 @@ public enum DataScopeEnum {
     /* 自定义的数据权限 */
     CUSTOMIZE("自定义", "自定义的数据权限");
 
-    @Inject
-    String value;
-    @Inject
-    String description;
+    private final String value;
+    private final String description;
 
     public static DataScopeEnum find(String val) {
         for (DataScopeEnum dataScopeEnum : DataScopeEnum.values()) {

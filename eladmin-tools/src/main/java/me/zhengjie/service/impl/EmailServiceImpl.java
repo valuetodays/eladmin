@@ -1,11 +1,9 @@
-
 package me.zhengjie.service.impl;
-
-import java.util.Optional;
 
 import cn.hutool.extra.mail.Mail;
 import cn.hutool.extra.mail.MailAccount;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.EmailConfig;
@@ -14,24 +12,19 @@ import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.repository.EmailRepository;
 import me.zhengjie.service.EmailService;
 import me.zhengjie.utils.EncryptUtils;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-26
+ * @since 2018-12-26
  */
 @ApplicationScoped
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "email")
 public class EmailServiceImpl implements EmailService {
 
     @Inject
     EmailRepository emailRepository;
 
     @Override
-    @CachePut(key = "'config'")
     @Transactional(rollbackOn = Exception.class)
     public EmailConfig config(EmailConfig emailConfig, EmailConfig old) throws Exception {
         emailConfig.setId(1L);
@@ -43,10 +36,8 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Cacheable(key = "'config'")
     public EmailConfig find() {
-        Optional<EmailConfig> emailConfig = emailRepository.findById(1L);
-        return emailConfig.orElseGet(EmailConfig::new);
+        return emailRepository.findById(1L);
     }
 
     @Override

@@ -1,16 +1,16 @@
-
 package me.zhengjie.domain.vo;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import javax.validation.constraints.NotBlank;
-
-import lombok.Data;
 
 /**
  * 交易详情，按需应该存入数据库，这里存入数据库，仅供临时测试
  * @author Zheng Jie
- * @date 2018-12-31
+ * @since 2018-12-31
  */
 @Data
 public class TradeVo {

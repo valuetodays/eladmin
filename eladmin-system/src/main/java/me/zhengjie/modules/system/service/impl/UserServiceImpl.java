@@ -1,22 +1,9 @@
-
 package me.zhengjie.modules.system.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.validation.constraints.NotBlank;
-
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.config.properties.FileProperties;
@@ -37,16 +24,27 @@ import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -67,13 +65,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageResult<UserDto> queryAll(UserQueryCriteria criteria, Page pageable) {
-        Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        return PageUtil.toPage(page.map(userMapper::toDto));
+        //   fixme:条件查询     Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        PanacheQuery<User> all = userRepository.findAll().page(pageable);
+        List<UserDto> list = userMapper.toDto(all.list());
+        return PageUtil.toPage(list, all.count());
     }
 
     @Override
     public List<UserDto> queryAll(UserQueryCriteria criteria) {
-        List<User> users = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
+        //   fixme:条件查询        List<User> users = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
+        List<User> users = userRepository.findAll().list();
         return userMapper.toDto(users);
     }
 
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
         String key = CacheKey.USER_ID + id;
         User user = redisUtils.get(key, User.class);
         if (user == null) {
-            user = userRepository.findById(id).orElseGet(User::new);
+            user = userRepository.findById(id);
             ValidationUtil.isNull(user.getId(), "User", "id", id);
             redisUtils.set(key, user, 1, TimeUnit.DAYS);
         }
@@ -108,7 +109,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(User resources) throws Exception {
-        User user = userRepository.findById(resources.getId()).orElseGet(User::new);
+        User user = userRepository.findById(resources.getId());
         ValidationUtil.isNull(user.getId(), "User", "id", resources.getId());
         User user1 = userRepository.findByUsername(resources.getUsername());
         User user2 = userRepository.findByEmail(resources.getEmail());
@@ -154,7 +155,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void updateCenter(User resources) {
-        User user = userRepository.findById(resources.getId()).orElseGet(User::new);
+        User user = userRepository.findById(resources.getId());
         User user1 = userRepository.findByPhone(resources.getPhone());
         if (user1 != null && !user.getId().equals(user1.getId())) {
             throw new EntityExistException(User.class, "phone", resources.getPhone());
@@ -222,25 +223,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public Map<String, String> updateAvatar(MultipartFile multipartFile) {
+    public Map<String, String> updateAvatar(File multipartFile, String originalFilename) {
         // 文件大小验证
-        FileUtil.checkSize(properties.getAvatarMaxSize(), multipartFile.getSize());
+        FileUtil.checkSize(properties.getAvatarMaxSize(), multipartFile.length());
         // 验证文件上传的格式
         String image = "gif jpg png jpeg";
-        String fileType = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
+        String fileType = FileUtil.getExtensionName(originalFilename);
         if(fileType != null && !image.contains(fileType)){
             throw new BadRequestException("文件格式错误！, 仅支持 " + image +" 格式");
         }
         User user = userRepository.findByUsername(SecurityUtils.getCurrentUsername());
         String oldPath = user.getAvatarPath();
-        File file = FileUtil.upload(multipartFile, properties.getPath().getAvatar());
+        // fixme: 上传文件到目录下
+        File file = FileUtil.upload(multipartFile, originalFilename, properties.getPath().getAvatar());
         user.setAvatarPath(Objects.requireNonNull(file).getPath());
         user.setAvatarName(file.getName());
         userRepository.save(user);
         if (StringUtils.isNotBlank(oldPath)) {
             FileUtil.del(oldPath);
         }
-        @NotBlank String username = user.getUsername();
+        String username = user.getUsername();
         flushCache(username);
         return new HashMap<String, String>(1) {{
             put("avatar", file.getName());
@@ -255,7 +257,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void download(List<UserDto> queryAll, HttpServletResponse response) throws IOException {
+    public File download(List<UserDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (UserDto userDTO : queryAll) {
             List<String> roles = userDTO.getRoles().stream().map(RoleSmallDto::getName).collect(Collectors.toList());
@@ -271,7 +273,7 @@ public class UserServiceImpl implements UserService {
             map.put("创建日期", userDTO.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 
     /**

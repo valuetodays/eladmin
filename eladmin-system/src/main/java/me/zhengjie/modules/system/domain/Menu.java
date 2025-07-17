@@ -1,8 +1,4 @@
-
 package me.zhengjie.modules.system.domain;
-
-import java.io.Serializable;
-import java.util.Set;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import jakarta.persistence.Column;
@@ -18,9 +14,12 @@ import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.io.Serializable;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-12-17
+ * @since 2018-12-17
  */
 @Entity
 @Getter

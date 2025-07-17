@@ -1,22 +1,19 @@
-
 package me.zhengjie.modules.system.rest;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Menu;
@@ -30,21 +27,26 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.SecurityUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-03
+ * @since 2018-12-03
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
 @Tag(name = "系统：菜单管理")
 @Path("/api/menus")
-public class MenuController {
+public class MenuController extends BaseController {
 
     @Inject
     MenuService menuService;
@@ -56,54 +58,56 @@ public class MenuController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('menu:list')")
-    public void exportMenu(HttpServletResponse response, MenuQueryCriteria criteria) throws Exception {
-        menuService.download(menuService.queryAll(criteria, false), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportMenu(MenuQueryCriteria criteria) throws Exception {
+        File file = menuService.download(menuService.queryAll(criteria, false));
+        return super.download(file);
     }
 
     @GET
     @Path(value = "/build")
     @Operation(summary = "获取前端所需菜单")
-    public ResponseEntity<List<MenuVo>> buildMenus(){
+    public List<MenuVo> buildMenus() {
         List<MenuDto> menuDtoList = menuService.findByUser(SecurityUtils.getCurrentUserId());
         List<MenuDto> menus = menuService.buildTree(menuDtoList);
-        return new ResponseEntity<>(menuService.buildMenus(menus),HttpStatus.OK);
+        return menuService.buildMenus(menus);
     }
 
     @Operation(summary = "返回全部的菜单")
     @GET
     @Path(value = "/lazy")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public ResponseEntity<List<MenuDto>> queryAllMenu(@RequestParam Long pid){
-        return new ResponseEntity<>(menuService.getMenus(pid),HttpStatus.OK);
+    public List<MenuDto> queryAllMenu(/*@RequestParam */Long pid) {
+        return menuService.getMenus(pid);
     }
 
     @Operation(summary = "根据菜单ID返回所有子节点ID，包含自身ID")
     @GET
     @Path(value = "/child")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public Object childMenu(@RequestParam Long id) {
+    public Object childMenu(/*@RequestParam */Long id) {
         Set<Menu> menuSet = new HashSet<>();
         List<MenuDto> menuList = menuService.getMenus(id);
         menuSet.add(menuService.findOne(id));
         menuSet = menuService.getChildMenus(menuMapper.toEntity(menuList), menuSet);
         Set<Long> ids = menuSet.stream().map(Menu::getId).collect(Collectors.toSet());
-        return new ResponseEntity<>(ids,HttpStatus.OK);
+        return ids;
     }
 
     @GET
-    @Path
+    @Path("")
     @Operation(summary = "查询菜单")
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<PageResult<MenuDto>> queryMenu(MenuQueryCriteria criteria) throws Exception {
+    public PageResult<MenuDto> queryMenu(MenuQueryCriteria criteria) throws Exception {
         List<MenuDto> menuDtoList = menuService.queryAll(criteria, true);
-        return new ResponseEntity<>(PageUtil.toPage(menuDtoList, menuDtoList.size()),HttpStatus.OK);
+        return PageUtil.toPage(menuDtoList, menuDtoList.size());
     }
 
     @Operation(summary = "查询菜单:根据ID获取同级与上级数据")
     @POST
     @Path("/superior")
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<List<MenuDto>> getMenuSuperior(List<Long> ids) {
+    public List<MenuDto> getMenuSuperior(List<Long> ids) {
         Set<MenuDto> menuDtos = new LinkedHashSet<>();
         if(CollectionUtil.isNotEmpty(ids)){
             for (Long id : ids) {
@@ -118,9 +122,9 @@ public class MenuController {
             }
             // 编辑菜单时不显示自己以及自己下级的数据，避免出现PID数据环形问题
             menuDtos = menuDtos.stream().filter(i -> !ids.contains(i.getId())).collect(Collectors.toSet());
-            return new ResponseEntity<>(menuService.buildTree(new ArrayList<>(menuDtos)),HttpStatus.OK);
+            return menuService.buildTree(new ArrayList<>(menuDtos));
         }
-        return new ResponseEntity<>(menuService.getMenus(null),HttpStatus.OK);
+        return menuService.getMenus(null);
     }
 
     @Log("新增菜单")
@@ -141,7 +145,7 @@ public class MenuController {
     @PUT
     @Path("")
     @PreAuthorize("@el.check('menu:edit')")
-    public Object updateMenu(@Validated(Menu.Update.class) Menu resources) {
+    public Object updateMenu(/*@Validated(Menu.Update.class) */Menu resources) {
         menuService.update(resources);
         return 1;
     }

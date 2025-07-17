@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.security.config;
 
 import lombok.Data;
@@ -9,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * Jwt参数配置
  *
  * @author Zheng Jie
- * @date 2019年11月28日
+ * @since 2019年11月28日
  */
 @Data
 @Configuration

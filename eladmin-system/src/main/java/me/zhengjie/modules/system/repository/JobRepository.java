@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,7 +6,7 @@ import me.zhengjie.modules.system.domain.Job;
 
 /**
 * @author Zheng Jie
-* @date 2019-03-29
+ * @since 2019-03-29
 */
 @ApplicationScoped
 public class JobRepository extends MyPanacheRepository<Job> {

@@ -1,78 +1,93 @@
-
 package me.zhengjie.aspect;
 
-import javax.servlet.http.HttpServletRequest;
-
+import cn.vt.util.JsonUtils;
+import jakarta.inject.Inject;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.annotation.Log;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.service.SysLogService;
-import me.zhengjie.utils.RequestHolder;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
-import me.zhengjie.utils.ThrowableUtil;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-24
+ * @since 2018-11-24
  */
-@Component
-@Aspect
+@Provider
 @Slf4j
+@Log
+@Interceptor
 public class LogAspect {
-
+    private static final String UNKNOWN = "unknown";
     @Inject
     SysLogService sysLogService;
+    @Inject
+    SecurityUtils securityUtils;
+    @Inject
+    ResourceInfo resourceInfo; // 注入当前请求信息
 
     ThreadLocal<Long> currentTime = new ThreadLocal<>();
+    @Context
+    HttpHeaders headers;
 
-    public LogAspect(SysLogService sysLogService) {
-        this.sysLogService = sysLogService;
-    }
-
-    /**
-     * 配置切入点
-     */
-    @Pointcut("@annotation(me.zhengjie.annotation.Log)")
-    public void logPointcut() {
-        // 该方法无方法体,主要为了让同类中其他方法使用此切入点
-    }
-
-    /**
-     * 配置环绕通知,使用在方法logPointcut()上注册的切入点
-     *
-     * @param joinPoint join point for advice
-     */
-    @Around("logPointcut()")
-    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result;
+    @AroundInvoke
+    public Object logMethodCall(InvocationContext ctx) throws Exception {
+        final Method method = ctx.getMethod();
+        log.info("调用方法: {}", method.getName());
         currentTime.set(System.currentTimeMillis());
-        result = joinPoint.proceed();
+        Object result = ctx.proceed();
         SysLog sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get());
         currentTime.remove();
-        HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request),joinPoint, sysLog);
+        Object[] parameters = ctx.getParameters();
+        sysLog.setParams(JsonUtils.toJsonString(parameters));
+        String methodName = method.getDeclaringClass().getName() + "." + method.getName() + "()";
+        sysLog.setMethod(methodName);
+        me.zhengjie.annotation.Log aopLog = method.getAnnotation(me.zhengjie.annotation.Log.class);
+        sysLog.setDescription(aopLog.value());
+        sysLogService.save(getUsername(), StringUtils.getBrowser(headers.getHeaderString("User-Agent")), getIp(), sysLog);
+        log.info("方法执行完毕: {}", method.getName());
         return result;
     }
 
     /**
-     * 配置异常通知
-     *
-     * @param joinPoint join point for advice
-     * @param e exception
+     * 获取ip地址
      */
-    @AfterThrowing(pointcut = "logPointcut()", throwing = "e")
-    public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        SysLog sysLog = new SysLog("ERROR",System.currentTimeMillis() - currentTime.get());
-        currentTime.remove();
-        sysLog.setExceptionDetail(ThrowableUtil.getStackTrace(e).getBytes());
-        HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request), (ProceedingJoinPoint)joinPoint, sysLog);
+    private String getIp() {
+        String ip = headers.getHeaderString("x-forwarded-for");
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = headers.getHeaderString("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = headers.getHeaderString("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
+// fixme:            ip = headers.getRemoteAddr();
+        }
+        String comma = ",";
+        String localhost = "127.0.0.1";
+        if (ip.contains(comma)) {
+            ip = ip.split(",")[0];
+        }
+        if (localhost.equals(ip)) {
+            // 获取本机真正的ip地址
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return ip;
     }
 
     /**
@@ -81,7 +96,7 @@ public class LogAspect {
      */
     public String getUsername() {
         try {
-            return SecurityUtils.getCurrentUsername();
+            return securityUtils.getCurrentUsername();
         }catch (Exception e){
             return "";
         }

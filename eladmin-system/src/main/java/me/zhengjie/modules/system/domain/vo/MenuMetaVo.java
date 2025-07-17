@@ -1,14 +1,13 @@
-
 package me.zhengjie.modules.system.domain.vo;
-
-import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author Zheng Jie
- * @date 2018-12-20
+ * @since 2018-12-20
  */
 @Data
 @AllArgsConstructor

@@ -1,22 +1,16 @@
-
 package me.zhengjie.utils;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.internal.util.AlipaySignature;
-import me.zhengjie.domain.AlipayConfig;
 
 /**
  * 支付宝工具类
  * @author zhengjie
- * @date 2018/09/30 14:04:35
+ * @since 2018/09/30 14:04:35
  */
-@Component
+@ApplicationScoped
 public class AlipayUtils {
 
     /**
@@ -43,6 +37,7 @@ public class AlipayUtils {
      * @param alipay 阿里云配置
      * @return boolean
      */
+    /* fixme:
     public boolean rsaCheck(HttpServletRequest request, AlipayConfig alipay){
 
         // 获取支付宝POST过来反馈信息
@@ -67,5 +62,5 @@ public class AlipayUtils {
         } catch (AlipayApiException e) {
             return false;
         }
-    }
+    }*/
 }

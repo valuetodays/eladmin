@@ -1,20 +1,18 @@
-
 package me.zhengjie.service.impl;
 
-import java.io.File;
-
 import jakarta.enterprise.context.ApplicationScoped;
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Inject;
 import me.zhengjie.domain.GenConfig;
 import me.zhengjie.repository.GenConfigRepository;
 import me.zhengjie.service.GenConfigService;
 
+import java.io.File;
+
 /**
  * @author Zheng Jie
- * @date 2019-01-14
+ * @since 2019-01-14
  */
 @ApplicationScoped
-@RequiredArgsConstructor
 @SuppressWarnings({"unchecked","all"})
 public class GenConfigServiceImpl implements GenConfigService {
 

@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.maint.service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.maint.domain.App;
@@ -11,9 +6,14 @@ import me.zhengjie.modules.maint.service.dto.AppDto;
 import me.zhengjie.modules.maint.service.dto.AppQueryCriteria;
 import me.zhengjie.utils.PageResult;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
 public interface AppService {
 
@@ -60,8 +60,7 @@ public interface AppService {
     /**
      * 导出数据
      * @param queryAll /
-     * @param response /
      * @throws IOException /
      */
-    void download(List<AppDto> queryAll, HttpServletResponse response) throws IOException;
+    File download(List<AppDto> queryAll) throws IOException;
 }

@@ -1,5 +1,8 @@
 package me.zhengjie.utils;
 
+import org.apache.commons.codec.binary.Base64;
+
+import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -11,14 +14,11 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import javax.crypto.Cipher;
-
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * @author https://www.cnblogs.com/nihaorz/p/10690643.html
  * @description Rsa 工具类，公钥私钥生成，加解密
- * @date 2020-05-18
+ * @since 2020-05-18
  **/
 public class RsaUtils {
 
@@ -56,6 +56,7 @@ public class RsaUtils {
 
     /**
      * 私钥加密公钥解密
+     *
      * @throws Exception /
      */
     private static void test2(RsaKeyPair keyPair) throws Exception {
@@ -77,7 +78,7 @@ public class RsaUtils {
      * 公钥解密
      *
      * @param publicKeyText 公钥
-     * @param text 待解密的信息
+     * @param text          待解密的信息
      * @return /
      * @throws Exception /
      */
@@ -95,7 +96,7 @@ public class RsaUtils {
      * 私钥加密
      *
      * @param privateKeyText 私钥
-     * @param text 待加密的信息
+     * @param text           待加密的信息
      * @return /
      * @throws Exception /
      */
@@ -113,7 +114,7 @@ public class RsaUtils {
      * 私钥解密
      *
      * @param privateKeyText 私钥
-     * @param text 待解密的文本
+     * @param text           待解密的文本
      * @return /
      * @throws Exception /
      */
@@ -131,7 +132,7 @@ public class RsaUtils {
      * 公钥加密
      *
      * @param publicKeyText 公钥
-     * @param text 待加密的文本
+     * @param text          待加密的文本
      * @return /
      */
     public static String encryptByPublicKey(String publicKeyText, String text) throws Exception {
@@ -144,7 +145,7 @@ public class RsaUtils {
         return Base64.encodeBase64String(result);
     }
 
-    private static byte[] doLongerCipherFinal(int opMode,Cipher cipher, byte[] source) throws Exception {
+    private static byte[] doLongerCipherFinal(int opMode, Cipher cipher, byte[] source) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         if (opMode == Cipher.DECRYPT_MODE) {
             out.write(cipher.doFinal(source));
@@ -184,10 +185,9 @@ public class RsaUtils {
      */
     public static class RsaKeyPair {
 
-        @Inject
-        String publicKey;
-        @Inject
-        String privateKey;
+        private final String publicKey;
+
+        private final String privateKey;
 
         public RsaKeyPair(String publicKey, String privateKey) {
             this.publicKey = publicKey;

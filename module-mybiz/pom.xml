@@ -6,7 +6,7 @@
     <parent>
         <groupId>me.zhengjie</groupId>
         <artifactId>eladmin</artifactId>
-        <version>2.7</version>
+        <version>3.0</version>
     </parent>
 
     <artifactId>module-mybiz</artifactId>
@@ -15,13 +15,12 @@
         <dependency>
             <groupId>me.zhengjie</groupId>
             <artifactId>eladmin-tools</artifactId>
-            <version>2.7</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.zhengjie</groupId>
             <artifactId>eladmin-common</artifactId>
-            <version>2.7</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

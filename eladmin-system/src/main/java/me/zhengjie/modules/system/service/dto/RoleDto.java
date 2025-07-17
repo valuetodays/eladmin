@@ -1,17 +1,16 @@
-
 package me.zhengjie.modules.system.service.dto;
-
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
 
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 @Getter
 @Setter

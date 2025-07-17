@@ -1,15 +1,15 @@
-
 package me.zhengjie.service.dto;
-
-import java.io.Serializable;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.io.Serializable;
 
 /**
 * @author Zheng Jie
-* @date 2019-09-05
+ * @since 2019-09-05
 */
 @Getter
 @Setter

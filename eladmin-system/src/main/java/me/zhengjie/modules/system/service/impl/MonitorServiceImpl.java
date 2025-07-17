@@ -1,13 +1,4 @@
-
 package me.zhengjie.modules.system.service.impl;
-
-import java.lang.management.ManagementFactory;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.hutool.core.date.BetweenFormatter.Level;
 import cn.hutool.core.date.DateUtil;
@@ -28,15 +19,22 @@ import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 import oshi.util.Util;
 
+import java.lang.management.ManagementFactory;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
 * @author Zheng Jie
-* @date 2020-05-02
+ * @since 2020-05-02
 */
 @Slf4j
 @ApplicationScoped
 public class MonitorServiceImpl implements MonitorService {
 
-    @Inject
     DecimalFormat df = new DecimalFormat("0.00");
 
     @Override

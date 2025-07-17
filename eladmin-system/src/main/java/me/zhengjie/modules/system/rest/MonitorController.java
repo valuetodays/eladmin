@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.system.rest;
 
 import jakarta.inject.Inject;
@@ -15,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * @author Zheng Jie
- * @date 2020-05-02
+ * @since 2020-05-02
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})

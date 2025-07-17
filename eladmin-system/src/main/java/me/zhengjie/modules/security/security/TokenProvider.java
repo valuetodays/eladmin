@@ -1,13 +1,4 @@
-
 package me.zhengjie.modules.security.security;
-
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
@@ -26,6 +17,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author /

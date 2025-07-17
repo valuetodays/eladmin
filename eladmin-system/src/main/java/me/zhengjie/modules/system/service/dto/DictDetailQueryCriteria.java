@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.system.service.dto;
 
 import lombok.Data;
@@ -7,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @author Zheng Jie
-* @date 2019-04-10
+ * @since 2019-04-10
 */
 @Data
 public class DictDetailQueryCriteria {

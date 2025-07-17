@@ -1,21 +1,20 @@
-
 package me.zhengjie.modules.system.service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 public interface UserService {
 
@@ -71,7 +70,7 @@ public interface UserService {
      * @param file 文件
      * @return /
      */
-    Map<String, String> updateAvatar(MultipartFile file);
+    Map<String, String> updateAvatar(File file, String originalFilename);
 
     /**
      * 修改邮箱
@@ -98,10 +97,9 @@ public interface UserService {
     /**
      * 导出数据
      * @param queryAll 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<UserDto> queryAll, HttpServletResponse response) throws IOException;
+    File download(List<UserDto> queryAll) throws IOException;
 
     /**
      * 用户自助修改资料

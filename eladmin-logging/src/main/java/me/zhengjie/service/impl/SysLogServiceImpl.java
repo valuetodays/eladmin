@@ -1,23 +1,11 @@
-
 package me.zhengjie.service.impl;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.ObjectUtil;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.SysLog;
@@ -30,17 +18,19 @@ import me.zhengjie.service.mapstruct.LogSmallMapper;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-24
+ * @since 2018-11-24
  */
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -57,117 +47,57 @@ public class SysLogServiceImpl implements SysLogService {
 
     @Override
     public Object queryAll(SysLogQueryCriteria criteria, Page pageable) {
-        Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
+        //   fixme: 条件查询    Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
+        PanacheQuery<SysLog> paged = logRepository.findAll().page(pageable);
+        long count = paged.count();
         String status = "ERROR";
         if (status.equals(criteria.getLogType())) {
-            return PageUtil.toPage(page.map(logErrorMapper::toDto));
+            return PageUtil.toPage(logErrorMapper.toDto(paged.list()), count);
         }
-        return PageUtil.toPage(page);
+        return PageUtil.toPage(paged);
     }
 
     @Override
     public List<SysLog> queryAll(SysLogQueryCriteria criteria) {
-        return logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)));
+        //   fixme: 条件查询        return logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)));
+        return logRepository.findAll().list();
     }
 
     @Override
     public PageResult<SysLogSmallDto> queryAllByUser(SysLogQueryCriteria criteria, Page pageable) {
-        Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
-        return PageUtil.toPage(page.map(logSmallMapper::toDto));
+        //   fixme: 条件查询      Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
+        PanacheQuery<SysLog> paged = logRepository.findAll().page(pageable);
+        return PageUtil.toPage(logSmallMapper.toDto(paged.list()), paged.count());
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void save(String username, String browser, String ip, ProceedingJoinPoint joinPoint, SysLog sysLog) {
+    public void save(String username, String browser, String ip, SysLog sysLog) {
         if (sysLog == null) {
             throw new IllegalArgumentException("Log 不能为 null!");
         }
 
-        // 获取方法签名
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
-        me.zhengjie.annotation.Log aopLog = method.getAnnotation(me.zhengjie.annotation.Log.class);
-
-        // 方法路径
-        String methodName = joinPoint.getTarget().getClass().getName() + "." + signature.getName() + "()";
-
-        // 获取参数
-        JSONObject params = getParameter(method, joinPoint.getArgs());
-
         // 填充基本信息
         sysLog.setRequestIp(ip);
         sysLog.setAddress(StringUtils.getCityInfo(sysLog.getRequestIp()));
-        sysLog.setMethod(methodName);
         sysLog.setUsername(username);
-        sysLog.setParams(JSON.toJSONString(params));
         sysLog.setBrowser(browser);
-        sysLog.setDescription(aopLog.value());
-
-        // 如果没有获取到用户名，尝试从参数中获取
-        if(StringUtils.isBlank(sysLog.getUsername())){
-            sysLog.setUsername(params.getString("username"));
-        }
 
         // 保存
-        logRepository.save(sysLog);
+        logRepository.persist(sysLog);
     }
 
-    /**
-     * 根据方法和传入的参数获取请求参数
-     */
-    private JSONObject getParameter(Method method, Object[] args) {
-        JSONObject params = new JSONObject();
-        Parameter[] parameters = method.getParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            // 过滤掉 MultiPartFile
-            if (args[i] instanceof MultipartFile) {
-                continue;
-            }
-            // 过滤掉 HttpServletResponse
-            if (args[i] instanceof HttpServletResponse) {
-                continue;
-            }
-            // 过滤掉 HttpServletRequest
-            if (args[i] instanceof HttpServletRequest) {
-                continue;
-            }
-            // 将RequestBody注解修饰的参数作为请求参数
-            RequestBody requestBody = parameters[i].getAnnotation(RequestBody.class);
-            if (requestBody != null) {
-                // [el-async-1] ERROR o.s.a.i.SimpleAsyncUncaughtExceptionHandler - Unexpected exception occurred invoking async method: public void me.zhengjie.service.impl.SysLogServiceImpl.save(java.lang.String,java.lang.String,java.lang.String,org.aspectj.lang.ProceedingJoinPoint,me.zhengjie.domain.SysLog)
-                // java.lang.ClassCastException: com.alibaba.fastjson2.JSONArray cannot be cast to com.alibaba.fastjson2.JSONObject
-                Object json = JSON.toJSON(args[i]);
-                if (json instanceof JSONArray) {
-                    params.put("reqBodyList", json);
-                } else {
-                    params.putAll((JSONObject) json);
-                }
-            } else {
-                String key = parameters[i].getName();
-                params.put(key, args[i]);
-            }
-        }
-        // 遍历敏感字段数组并替换值
-        Set<String> keys = params.keySet();
-        for (String key : SENSITIVE_KEYS) {
-            if (keys.contains(key)) {
-                params.put(key, "******");
-            }
-        }
-        // 返回参数
-        return params;
-    }
 
     @Override
     public Object findByErrDetail(Long id) {
-        SysLog sysLog = logRepository.findById(id).orElseGet(SysLog::new);
+        SysLog sysLog = logRepository.findById(id);
         ValidationUtil.isNull(sysLog.getId(), "Log", "id", id);
         byte[] details = sysLog.getExceptionDetail();
         return Dict.create().set("exception", new String(ObjectUtil.isNotNull(details) ? details : "".getBytes()));
     }
 
     @Override
-    public void download(List<SysLog> sysLogs, HttpServletResponse response) throws IOException {
+    public File download(List<SysLog> sysLogs) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (SysLog sysLog : sysLogs) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -181,7 +111,7 @@ public class SysLogServiceImpl implements SysLogService {
             map.put("创建日期", sysLog.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 
     @Override

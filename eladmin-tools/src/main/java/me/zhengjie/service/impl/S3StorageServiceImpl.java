@@ -12,26 +12,18 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*/
+ */
 package me.zhengjie.service.impl;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.config.AmzS3Config;
+import me.zhengjie.config.AmzS3ConfigProperty;
 import me.zhengjie.domain.S3Storage;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.repository.S3StorageRepository;
@@ -40,10 +32,8 @@ import me.zhengjie.service.dto.S3StorageQueryCriteria;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.StringUtils;
 import org.apache.commons.io.IOUtils;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
@@ -60,46 +50,57 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
 * @description 服务实现
 * @author Zheng Jie
-* @date 2025-06-25
+ * @since 2025-06-25
 **/
 @Slf4j
 @ApplicationScoped
-@RequiredArgsConstructor
 public class S3StorageServiceImpl implements S3StorageService {
 
     @Inject
     S3Client s3Client;
     @Inject
-    AmzS3Config amzS3Config;
+    AmzS3ConfigProperty amzS3ConfigProperty;
     @Inject
     S3StorageRepository s3StorageRepository;
 
     @Override
     public S3Storage getById(Long id) {
-        return s3StorageRepository.findById(id).orElse(null);
+        return s3StorageRepository.findById(id);
     }
 
     @Override
     public PageResult<S3Storage> queryAll(S3StorageQueryCriteria criteria, Page pageable) {
-        Page<S3Storage> page = s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page);
+        // fixme:     Page<S3Storage> page = s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
+        // fixme:                -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        PanacheQuery<S3Storage> paged = s3StorageRepository.findAll().page(pageable);
+        return PageUtil.toPage(paged);
     }
 
     @Override
     public List<S3Storage> queryAll(S3StorageQueryCriteria criteria){
-        return s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+//     fixme:    return s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
+//   fixme:              -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+        return s3StorageRepository.findAll().list();
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void deleteAll(List<Long> ids) {
         // 检查桶是否存在
-        String bucketName = amzS3Config.getDefaultBucket();
+        String bucketName = amzS3ConfigProperty.defaultBucket();
         if (!bucketExists(bucketName)) {
             throw new BadRequestException("存储桶不存在，请检查配置或权限。");
         }
@@ -128,8 +129,8 @@ public class S3StorageServiceImpl implements S3StorageService {
     }
 
     @Override
-    public S3Storage upload(MultipartFile file) {
-        String bucketName = amzS3Config.getDefaultBucket();
+    public S3Storage upload(File file) {
+        String bucketName = amzS3ConfigProperty.defaultBucket();
         // 检查存储桶是否存在
         if (!bucketExists(bucketName)) {
             log.warn("存储桶 {} 不存在，尝试创建...", bucketName);
@@ -139,35 +140,37 @@ public class S3StorageServiceImpl implements S3StorageService {
                 throw new BadRequestException("存储桶创建失败，请检查配置或权限。");
             }
         }
+        // fixme:
+        String originalName = "fixme:";
         // 获取文件名
-        String originalName = file.getOriginalFilename();
+//        String originalName = file.getOriginalFilename();
         if (StringUtils.isBlank(originalName)) {
             throw new IllegalArgumentException("文件名不能为空");
         }
         // 生成存储路径和文件名
-        String folder = DateUtil.format(new Date(), amzS3Config.getTimeformat());
+        String folder = DateUtil.format(new Date(), amzS3ConfigProperty.timeformat());
         String fileName = IdUtil.simpleUUID() + "." + FileUtil.getExtensionName(originalName);
         String filePath = folder + "/" + fileName;
         // 构建上传请求
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(amzS3Config.getDefaultBucket())
+                .bucket(amzS3ConfigProperty.defaultBucket())
                 .key(filePath)
                 .build();
         // 创建 S3Storage 实例
         S3Storage s3Storage = new S3Storage();
         try {
             // 上传文件到 S3
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
             // 设置 S3Storage 属性
             s3Storage.setFileMimeType(FileUtil.getMimeType(originalName));
             s3Storage.setFileName(originalName);
             s3Storage.setFileRealName(fileName);
-            s3Storage.setFileSize(FileUtil.getSize(file.getSize()));
+            s3Storage.setFileSize(FileUtil.getSize(file.length()));
             s3Storage.setFileType(FileUtil.getExtensionName(originalName));
             s3Storage.setFilePath(filePath);
             // 保存入库
             s3StorageRepository.save(s3Storage);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         // 设置地址
@@ -175,7 +178,7 @@ public class S3StorageServiceImpl implements S3StorageService {
     }
 
     @Override
-    public void download(List<S3Storage> all, HttpServletResponse response) throws IOException {
+    public File download(List<S3Storage> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (S3Storage s3Storage : all) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -191,17 +194,17 @@ public class S3StorageServiceImpl implements S3StorageService {
             map.put("更新时间", s3Storage.getUpdateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 
     public Map<String, String> privateDownload(Long id) {
-        S3Storage storage = s3StorageRepository.findById(id).orElse(null);
+        S3Storage storage = s3StorageRepository.findById(id);
         if (storage == null) {
             throw new BadRequestException("文件不存在或已被删除");
         }
         // 创建 GetObjectRequest，指定存储桶和文件键
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(amzS3Config.getDefaultBucket())
+                .bucket(amzS3ConfigProperty.defaultBucket())
                 .key(storage.getFilePath())
                 .build();
         String base64Data;

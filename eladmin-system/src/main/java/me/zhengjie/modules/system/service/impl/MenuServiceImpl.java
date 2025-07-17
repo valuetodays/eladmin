@@ -1,25 +1,12 @@
-
 package me.zhengjie.modules.system.service.impl;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.modules.system.domain.Menu;
@@ -41,13 +28,25 @@ import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
-import org.springframework.data.domain.Sort;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
  */
 @ApplicationScoped
-@RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
     @Inject
@@ -69,7 +68,7 @@ public class MenuServiceImpl implements MenuService {
     
     @Override
     public List<MenuDto> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception {
-        Sort sort = Sort.by(Sort.Direction.ASC, "menuSort");
+        Sort sort = Sort.ascending("menuSort");
         if(Boolean.TRUE.equals(isQuery)){
             criteria.setPidIsNull(true);
             List<Field> fields = QueryHelp.getAllFields(criteria.getClass(), new ArrayList<>());
@@ -86,7 +85,9 @@ public class MenuServiceImpl implements MenuService {
                 }
             }
         }
-        return menuMapper.toDto(menuRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
+        //   fixme: 条件查询          return menuMapper.toDto(menuRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
+        List<Menu> all = menuRepository.findAll(sort).list();
+        return menuMapper.toDto(all);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class MenuServiceImpl implements MenuService {
         String key = CacheKey.MENU_ID + id;
         Menu menu = redisUtils.get(key, Menu.class);
         if(menu == null){
-            menu = menuRepository.findById(id).orElseGet(Menu::new);
+            menu = menuRepository.findById(id);
             ValidationUtil.isNull(menu.getId(),"Menu","id",id);
             redisUtils.set(key, menu, 1, TimeUnit.DAYS);
         }
@@ -152,7 +153,7 @@ public class MenuServiceImpl implements MenuService {
         if(resources.getId().equals(resources.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
-        Menu menu = menuRepository.findById(resources.getId()).orElseGet(Menu::new);
+        Menu menu = menuRepository.findById(resources.getId());
         ValidationUtil.isNull(menu.getId(),"Permission","id",resources.getId());
 
         if(resources.getIFrame()){
@@ -315,13 +316,13 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Menu findOne(Long id) {
-        Menu menu = menuRepository.findById(id).orElseGet(Menu::new);
+        Menu menu = menuRepository.findById(id);
         ValidationUtil.isNull(menu.getId(),"Menu","id",id);
         return menu;
     }
 
-    @Override
-    public void download(List<MenuDto> menuDtos, HttpServletResponse response) throws IOException {
+    @Override // fixme: rename to generateExcelFile
+    public File download(List<MenuDto> menuDtos) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (MenuDto menuDTO : menuDtos) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -334,7 +335,7 @@ public class MenuServiceImpl implements MenuService {
             map.put("创建日期", menuDTO.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 
     private void updateSubCnt(Long menuId){

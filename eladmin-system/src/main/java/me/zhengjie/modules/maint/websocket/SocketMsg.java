@@ -1,11 +1,10 @@
-
 package me.zhengjie.modules.maint.websocket;
 
 import lombok.Data;
 
 /**
  * @author ZhangHouYing
- * @date 2019-08-10 9:55
+ * @since 2019-08-10 9:55
  */
 @Data
 public class SocketMsg {

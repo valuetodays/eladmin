@@ -1,19 +1,18 @@
-
 package me.zhengjie.service;
-
-import java.io.IOException;
-import java.util.List;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.domain.LocalStorage;
 import me.zhengjie.service.dto.LocalStorageDto;
 import me.zhengjie.service.dto.LocalStorageQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
 * @author Zheng Jie
-* @date 2019-09-05
+ * @since 2019-09-05
 */
 public interface LocalStorageService {
 
@@ -45,7 +44,7 @@ public interface LocalStorageService {
      * @param file 文件
      * @return /
      */
-    LocalStorage create(String name, MultipartFile file);
+    LocalStorage create(String name, File file);
 
     /**
      * 编辑
@@ -62,8 +61,7 @@ public interface LocalStorageService {
     /**
      * 导出数据
      * @param localStorageDtos 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<LocalStorageDto> localStorageDtos, HttpServletResponse response) throws IOException;
+    File download(List<LocalStorageDto> localStorageDtos) throws IOException;
 }

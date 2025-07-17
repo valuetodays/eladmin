@@ -1,21 +1,19 @@
-
 package me.zhengjie.modules.system.repository;
-
-import java.util.List;
-import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Dept;
 
+import java.util.List;
+import java.util.Set;
+
 /**
 * @author Zheng Jie
-* @date 2019-03-25
+ * @since 2019-03-25
 */
 @ApplicationScoped
 public class DeptRepository extends MyPanacheRepository<Dept> {
-
     /**
      * 根据 PID 查询
      * @param id pid
@@ -40,7 +38,9 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
      */
     @Query(value = "select d.* from sys_dept d, sys_roles_depts r where " +
             "d.dept_id = r.dept_id and r.role_id = ?1", nativeQuery = true)
-    Set<Dept> findByRoleId(Long roleId);
+    public Set<Dept> findByRoleId(Long roleId) {
+
+    }
 
     /**
      * 判断是否存在子节点
@@ -48,7 +48,7 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
      * @return /
      */
     public int countByPid(Long pid) {
-
+        return find("SELECT COUNT(DISTINCT e.id) FROM Dept e where e.pid = ?1", pid).project(Integer.class).firstResult();
     }
 
     /**

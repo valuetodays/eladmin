@@ -12,23 +12,23 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*/
+ */
 package me.zhengjie.service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.domain.S3Storage;
 import me.zhengjie.service.dto.S3StorageQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @description 服务接口
 * @author Zheng Jie
-* @date 2025-06-25
+ * @since 2025-06-25
 **/
 public interface S3StorageService {
 
@@ -56,10 +56,9 @@ public interface S3StorageService {
     /**
     * 导出数据
     * @param all 待导出的数据
-    * @param response /
     * @throws IOException /
     */
-    void download(List<S3Storage> all, HttpServletResponse response) throws IOException;
+    File download(List<S3Storage> all) throws IOException;
 
     /**
      * 私有化下载，仅供参考，还有许多方式
@@ -72,7 +71,7 @@ public interface S3StorageService {
      * @param file 上传的文件
      * @return S3Storage 对象，包含文件存储信息
      */
-    S3Storage upload(MultipartFile file);
+    S3Storage upload(File file);
 
     /**
      * 根据ID获取文件信息

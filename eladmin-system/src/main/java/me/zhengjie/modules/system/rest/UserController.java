@@ -1,11 +1,4 @@
-
 package me.zhengjie.modules.system.rest;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.vt.encrypt.BCryptUtils;
@@ -22,6 +15,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.config.properties.RsaProperties;
 import me.zhengjie.exception.BadRequestException;
@@ -43,24 +37,28 @@ import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.enums.CodeEnum;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 @Tag(name = "系统：用户管理")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("/api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController extends BaseController {
 
     @Inject
     UserService userService;
@@ -77,15 +75,15 @@ public class UserController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('user:list')")
-    public void exportUser(HttpServletResponse response, UserQueryCriteria criteria) throws IOException {
-        userService.download(userService.queryAll(criteria), response);
+    public void exportUser(UserQueryCriteria criteria) throws IOException {
+//  fixme:      userService.download(userService.queryAll(criteria), response);
     }
 
     @Operation(summary = "查询用户")
     @GET
-    @Path
+    @Path("")
     @PreAuthorize("@el.check('user:list')")
-    public ResponseEntity<PageResult<UserDto>> queryUser(UserQueryCriteria criteria, Page pageable) {
+    public PageResult<UserDto> queryUser(UserQueryCriteria criteria, Page pageable) {
         if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
             // 先查找是否存在子节点
@@ -100,14 +98,14 @@ public class UserController {
             // 取交集
             criteria.getDeptIds().retainAll(dataScopes);
             if(!CollectionUtil.isEmpty(criteria.getDeptIds())){
-                return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
+                return userService.queryAll(criteria, pageable);
             }
         } else {
             // 否则取并集
             criteria.getDeptIds().addAll(dataScopes);
-            return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
+            return userService.queryAll(criteria, pageable);
         }
-        return new ResponseEntity<>(PageUtil.noData(),HttpStatus.OK);
+        return PageUtil.noData();
     }
 
     @Log("新增用户")
@@ -128,7 +126,7 @@ public class UserController {
     @PUT
     @Path("")
     @PreAuthorize("@el.check('user:edit')")
-    public Object updateUser(@Validated(User.Update.class) User resources) throws Exception {
+    public Object updateUser(/*@Validated(User.Update.class) */User resources) throws Exception {
         checkLevel(resources);
         userService.update(resources);
         return 1;
@@ -138,7 +136,7 @@ public class UserController {
     @Operation(summary = "修改用户：个人中心")
     @PUT
     @Path("center")
-    public Object centerUser(@Validated(User.Update.class) User resources) {
+    public Object centerUser(/*@Validated(User.Update.class) */User resources) {
         if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
             throw new BadRequestException("不能修改他人资料");
         }
@@ -192,8 +190,10 @@ public class UserController {
     @Operation(summary = "修改头像")
     @POST
     @Path(value = "/updateAvatar")
-    public Object updateUserAvatar(@RequestParam MultipartFile avatar) {
-        return new ResponseEntity<>(userService.updateAvatar(avatar), HttpStatus.OK);
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Object updateUserAvatar(/*@RequestParam */MultipartFormDataInput dataInput) {
+        File avatar = getFileFormItem(dataInput, "avatar");
+        return userService.updateAvatar(avatar, avatar.getName());
     }
 
     @Log("修改邮箱")

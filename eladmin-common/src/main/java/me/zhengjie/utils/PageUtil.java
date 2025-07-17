@@ -1,15 +1,14 @@
-
 package me.zhengjie.utils;
+
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 import java.util.Collections;
 import java.util.List;
 
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-
 /**
  * 分页工具
  * @author Zheng Jie
- * @date 2018-12-10
+ * @since 2018-12-10
  */
 public class PageUtil extends cn.hutool.core.util.PageUtil {
 

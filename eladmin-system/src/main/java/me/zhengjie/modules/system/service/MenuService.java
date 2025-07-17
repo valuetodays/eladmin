@@ -1,18 +1,18 @@
-
 package me.zhengjie.modules.system.service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.vo.MenuVo;
 import me.zhengjie.modules.system.service.dto.MenuDto;
 import me.zhengjie.modules.system.service.dto.MenuQueryCriteria;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-12-17
+ * @since 2018-12-17
  */
 public interface MenuService {
 
@@ -82,10 +82,9 @@ public interface MenuService {
     /**
      * 导出
      * @param queryAll 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<MenuDto> queryAll, HttpServletResponse response) throws IOException;
+    File download(List<MenuDto> queryAll) throws IOException;
 
     /**
      * 懒加载菜单数据

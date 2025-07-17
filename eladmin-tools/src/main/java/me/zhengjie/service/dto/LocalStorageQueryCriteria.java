@@ -1,15 +1,15 @@
-
 package me.zhengjie.service.dto;
+
+import lombok.Data;
+import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-
 /**
 * @author Zheng Jie
-* @date 2019-09-05
+ * @since 2019-09-05
 */
 @Data
 public class LocalStorageQueryCriteria{

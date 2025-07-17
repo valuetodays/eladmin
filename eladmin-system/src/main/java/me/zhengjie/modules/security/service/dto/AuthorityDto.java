@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.security.service.dto;
 
 import lombok.AllArgsConstructor;
@@ -9,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 /**
  * 避免序列化问题
  * @author Zheng Jie
- * @date 2018-11-30
+ * @since 2018-11-30
  */
 @Data
 @NoArgsConstructor

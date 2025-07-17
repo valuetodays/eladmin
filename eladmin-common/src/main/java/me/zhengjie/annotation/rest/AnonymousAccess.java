@@ -1,4 +1,3 @@
-
 package me.zhengjie.annotation.rest;
 
 import java.lang.annotation.Documented;

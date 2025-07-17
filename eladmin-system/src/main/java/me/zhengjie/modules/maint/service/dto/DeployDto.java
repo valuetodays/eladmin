@@ -1,20 +1,19 @@
-
 package me.zhengjie.modules.maint.service.dto;
-
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
 
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
 @Getter
 @Setter

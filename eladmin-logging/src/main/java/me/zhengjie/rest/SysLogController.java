@@ -1,33 +1,40 @@
-
 package me.zhengjie.rest;
 
-import java.io.IOException;
-
+import cn.vt.auth.AuthUser;
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.service.SysLogService;
 import me.zhengjie.service.dto.SysLogQueryCriteria;
 import me.zhengjie.service.dto.SysLogSmallDto;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SecurityUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-24
+ * @since 2018-11-24
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
 @Path("/api/logs")
 @Tag(name = "系统：日志管理")
-public class SysLogController {
+public class SysLogController extends BaseController {
 
     @Inject
     SysLogService sysLogService;
@@ -37,9 +44,11 @@ public class SysLogController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check()")
-    public void exportLog(HttpServletResponse response, SysLogQueryCriteria criteria) throws IOException {
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportLog(SysLogQueryCriteria criteria) throws IOException {
         criteria.setLogType("INFO");
-        sysLogService.download(sysLogService.queryAll(criteria), response);
+        File file = sysLogService.download(sysLogService.queryAll(criteria));
+        return super.download(file);
     }
 
     @Log("导出错误数据")
@@ -47,27 +56,30 @@ public class SysLogController {
     @GET
     @Path(value = "/error/download")
     @PreAuthorize("@el.check()")
-    public void exportErrorLog(HttpServletResponse response, SysLogQueryCriteria criteria) throws IOException {
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportErrorLog(SysLogQueryCriteria criteria) throws IOException {
         criteria.setLogType("ERROR");
-        sysLogService.download(sysLogService.queryAll(criteria), response);
+        File file = sysLogService.download(sysLogService.queryAll(criteria));
+        return super.download(file);
     }
 
     @GET
-    @Path
+    @Path("")
     @Operation(summary = "日志查询")
     @PreAuthorize("@el.check()")
     public Object queryLog(SysLogQueryCriteria criteria, Page pageable) {
         criteria.setLogType("INFO");
-        return new ResponseEntity<>(sysLogService.queryAll(criteria,pageable), HttpStatus.OK);
+        return sysLogService.queryAll(criteria, pageable);
     }
 
     @GET
     @Path(value = "/user")
     @Operation(summary = "用户日志查询")
-    public ResponseEntity<PageResult<SysLogSmallDto>> queryUserLog(SysLogQueryCriteria criteria, Page pageable) {
+    public PageResult<SysLogSmallDto> queryUserLog(SysLogQueryCriteria criteria, Page pageable) {
         criteria.setLogType("INFO");
-        criteria.setUsername(SecurityUtils.getCurrentUsername());
-        return new ResponseEntity<>(sysLogService.queryAllByUser(criteria,pageable), HttpStatus.OK);
+        AuthUser currentAccount = getCurrentAccount();
+        criteria.setUsername(currentAccount.getEmail());
+        return sysLogService.queryAllByUser(criteria, pageable);
     }
 
     @GET
@@ -76,15 +88,15 @@ public class SysLogController {
     @PreAuthorize("@el.check()")
     public Object queryErrorLog(SysLogQueryCriteria criteria, Page pageable) {
         criteria.setLogType("ERROR");
-        return new ResponseEntity<>(sysLogService.queryAll(criteria,pageable), HttpStatus.OK);
+        return sysLogService.queryAll(criteria, pageable);
     }
 
     @GET
     @Path(value = "/error/{id}")
     @Operation(summary = "日志异常详情查询")
     @PreAuthorize("@el.check()")
-    public Object queryErrorLogDetail(@PathParam Long id) {
-        return new ResponseEntity<>(sysLogService.findByErrDetail(id), HttpStatus.OK);
+    public Object queryErrorLogDetail(@PathParam("id") Long id) {
+        return sysLogService.findByErrDetail(id);
     }
 
     @DELETE

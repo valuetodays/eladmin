@@ -1,10 +1,4 @@
-
 package me.zhengjie.modules.system.domain;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,9 +19,14 @@ import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-11-22
+ * @since 2018-11-22
  */
 @Entity
 @Getter

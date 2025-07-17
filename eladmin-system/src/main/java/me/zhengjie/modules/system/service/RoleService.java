@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.system.service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.security.service.dto.AuthorityDto;
@@ -14,9 +9,13 @@ import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.utils.PageResult;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-12-03
+ * @since 2018-12-03
  */
 public interface RoleService {
 
@@ -96,10 +95,9 @@ public interface RoleService {
     /**
      * 导出数据
      * @param queryAll 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<RoleDto> queryAll, HttpServletResponse response) throws IOException;
+    void download(List<RoleDto> queryAll) throws IOException;
 
     /**
      * 获取用户权限信息

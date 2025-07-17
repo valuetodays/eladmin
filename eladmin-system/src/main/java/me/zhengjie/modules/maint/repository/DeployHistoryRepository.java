@@ -1,13 +1,13 @@
-
 package me.zhengjie.modules.maint.repository;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.maint.domain.DeployHistory;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
-public interface DeployHistoryRepository extends JpaRepository<DeployHistory, String>, JpaSpecificationExecutor<DeployHistory> {
+@ApplicationScoped
+public class DeployHistoryRepository extends MyPanacheRepository<DeployHistory> {
 }

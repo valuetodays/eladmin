@@ -1,7 +1,4 @@
-
 package me.zhengjie.modules.system.service.impl;
-
-import java.util.Collections;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
@@ -10,24 +7,26 @@ import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.vo.EmailVo;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.service.VerifyService;
 import me.zhengjie.utils.RedisUtils;
-import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Collections;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-26
+ * @since 2018-12-26
  */
 @ApplicationScoped
 @RequiredArgsConstructor
 public class VerifyServiceImpl implements VerifyService {
 
-    @Value("${code.expiration}")
-    private Long expiration;
+    // fixme   @ConfigProperty("code.expiration")
+    private Long expiration = 30000L;
     @Inject
     RedisUtils redisUtils;
 

@@ -1,4 +1,3 @@
-
 package me.zhengjie.service;
 
 import me.zhengjie.domain.AlipayConfig;
@@ -6,7 +5,7 @@ import me.zhengjie.domain.vo.TradeVo;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-31
+ * @since 2018-12-31
  */
 public interface AliPayService {
 

@@ -1,17 +1,9 @@
-
 package me.zhengjie.utils;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import jakarta.inject.Inject;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
@@ -22,13 +14,27 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.DataPermission;
 import me.zhengjie.annotation.Query;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Zheng Jie
- * @date 2019-6-4 14:59:48
+ * @since 2019-6-4 14:59:48
  */
 @Slf4j
 @SuppressWarnings({"unchecked","all"})
 public class QueryHelp {
+    static SecurityUtils securityUtils;
+
+    @Inject
+    public static void setSecurityUtils(SecurityUtils securityUtils) {
+        QueryHelp.securityUtils = securityUtils;
+    }
 
     public static <R, Q> Predicate getPredicate(Root<R> root, Q query, CriteriaBuilder cb) {
         List<Predicate> list = new ArrayList<>();
@@ -39,7 +45,7 @@ public class QueryHelp {
         DataPermission permission = query.getClass().getAnnotation(DataPermission.class);
         if(permission != null){
             // 获取数据权限
-            List<Long> dataScopes = SecurityUtils.getCurrentUserDataScope();
+            List<Long> dataScopes = securityUtils.getCurrentUserDataScope();
             if(CollectionUtil.isNotEmpty(dataScopes)){
                 if(StringUtils.isNotBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
                     Join join = root.join(permission.joinName(), JoinType.LEFT);

@@ -1,4 +1,3 @@
-
 package me.zhengjie.utils.enums;
 
 import lombok.AllArgsConstructor;
@@ -8,7 +7,7 @@ import lombok.Getter;
  * @author Zheng Jie
  * @website https://eladmin.vip
  * @description
- * @date 2020-06-10
+ * @since 2020-06-10
  **/
 @Getter
 @AllArgsConstructor
@@ -47,8 +46,7 @@ public enum RequestMethodEnum {
     /**
      * Request 类型
      */
-    @Inject
-    String type;
+    private final String type;
 
     public static RequestMethodEnum find(String type) {
         for (RequestMethodEnum value : RequestMethodEnum.values()) {

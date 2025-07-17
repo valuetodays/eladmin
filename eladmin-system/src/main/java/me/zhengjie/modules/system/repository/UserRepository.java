@@ -1,18 +1,17 @@
-
 package me.zhengjie.modules.system.repository;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.User;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-11-22
+ * @since 2018-11-22
  */
 @ApplicationScoped
 public class UserRepository extends MyPanacheRepository<User> {

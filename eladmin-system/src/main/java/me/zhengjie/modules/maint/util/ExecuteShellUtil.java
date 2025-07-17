@@ -1,10 +1,4 @@
-
 package me.zhengjie.modules.maint.util;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.Vector;
 
 import cn.hutool.core.io.IoUtil;
 import com.jcraft.jsch.ChannelShell;
@@ -12,11 +6,16 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.Vector;
+
 /**
  * 执行shell命令
  *
  * @author ZhangHouYing
- * @date 2019/8/10
+ * @since 2019/8/10
  */
 @Slf4j
 public class ExecuteShellUtil {

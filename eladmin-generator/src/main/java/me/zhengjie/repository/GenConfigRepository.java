@@ -1,19 +1,22 @@
-
 package me.zhengjie.repository;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.domain.GenConfig;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @author Zheng Jie
- * @date 2019-01-14
+ * @since 2019-01-14
  */
-public interface GenConfigRepository extends JpaRepository<GenConfig,Long> {
+@ApplicationScoped
+public class GenConfigRepository extends MyPanacheRepository<GenConfig> {
 
     /**
      * 查询表配置
      * @param tableName 表名
      * @return /
      */
-    GenConfig findByTableName(String tableName);
+    public GenConfig findByTableName(String tableName) {
+        return find("tableName = ?1", tableName).firstResult();
+    }
 }

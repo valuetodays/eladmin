@@ -1,10 +1,4 @@
-
 package me.zhengjie.modules.security.rest;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.core.util.IdUtil;
 import cn.vt.encrypt.BCryptUtils;
@@ -44,9 +38,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  * 授权、根据token获取用户详细信息
  */
 @Slf4j

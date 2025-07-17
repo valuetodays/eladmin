@@ -1,18 +1,17 @@
-
 package me.zhengjie.modules.system.repository;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+import me.zhengjie.MyPanacheRepository;
+import me.zhengjie.modules.system.domain.Role;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Set;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import me.zhengjie.MyPanacheRepository;
-import me.zhengjie.modules.system.domain.Role;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-
 /**
  * @author Zheng Jie
- * @date 2018-12-03
+ * @since 2018-12-03
  */
 @ApplicationScoped
 public class RoleRepository extends MyPanacheRepository<Role> {
@@ -23,7 +22,7 @@ public class RoleRepository extends MyPanacheRepository<Role> {
      * @return /
      */
     public Role findByName(String name) {
-
+        return find("name = ?1", name).firstResult();
     }
 
     /**
@@ -41,7 +40,7 @@ public class RoleRepository extends MyPanacheRepository<Role> {
      * 解绑角色菜单
      * @param id 菜单ID
      */
-    @Modifying
+    @Transactional
     @Query(value = "delete from sys_roles_menus where menu_id = ?1",nativeQuery = true)
     public void untiedMenu(Long id) {
 

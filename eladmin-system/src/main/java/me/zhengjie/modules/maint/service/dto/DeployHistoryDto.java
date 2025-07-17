@@ -1,14 +1,13 @@
-
 package me.zhengjie.modules.maint.service.dto;
+
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import lombok.Data;
-
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
 @Data
 public class DeployHistoryDto implements Serializable {

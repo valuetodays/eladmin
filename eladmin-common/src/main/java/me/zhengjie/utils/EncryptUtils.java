@@ -1,17 +1,16 @@
-
 package me.zhengjie.utils;
 
-import java.nio.charset.StandardCharsets;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 加密
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 public class EncryptUtils {
 

@@ -1,4 +1,3 @@
-
 package me.zhengjie.utils;
 
 import java.io.Closeable;
@@ -7,7 +6,7 @@ import java.io.Closeable;
  * @author Zheng Jie
  * @website https://eladmin.vip
  * @description 用于关闭各种连接，缺啥补啥
- * @date 2021-03-05
+ * @since 2021-03-05
  **/
 public class CloseUtil {
 

@@ -1,4 +1,3 @@
-
 package me.zhengjie.annotation;
 
 import java.lang.annotation.ElementType;
@@ -15,7 +14,7 @@ import java.lang.annotation.Target;
  * </p>
  * @author Zheng Jie
  * @website <a href="https://eladmin.vip">...</a>
- * @date 2020-05-07
+ * @since 2020-05-07
  **/
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

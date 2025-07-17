@@ -1,4 +1,3 @@
-
 package me.zhengjie.utils.enums;
 
 import lombok.AllArgsConstructor;
@@ -8,8 +7,9 @@ import lombok.Getter;
  * <p>
  * 验证码业务场景对应的 Redis 中的 key
  * </p>
+ *
  * @author Zheng Jie
- * @date 2020-05-02
+ * @since 2020-05-02
  */
 @Getter
 @AllArgsConstructor
@@ -27,8 +27,6 @@ public enum CodeEnum {
     /* 通过邮箱重置密码 */
     EMAIL_RESET_PWD_CODE("email_reset_pwd_code_", "通过邮箱重置密码");
 
-    @Inject
-    String key;
-    @Inject
-    String description;
+    private final String key;
+    private final String description;
 }

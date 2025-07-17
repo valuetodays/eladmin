@@ -1,20 +1,19 @@
-
 package me.zhengjie.modules.maint.util;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import com.google.common.collect.Maps;
 import me.zhengjie.utils.StringUtils;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * 远程执行linux命令
  * @author ZhangHouYing
- * @date 2019-08-10 10:06
+ * @since 2019-08-10 10:06
  */
 public class ScpClientUtil {
 

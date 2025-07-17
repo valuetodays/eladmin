@@ -1,23 +1,13 @@
-
 package me.zhengjie.modules.system.service.impl;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.modules.security.service.UserCacheManager;
@@ -38,18 +28,26 @@ import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
-import org.springframework.data.domain.Sort;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-03
+ * @since 2018-12-03
  */
 @ApplicationScoped
-@RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
     @Inject
@@ -67,19 +65,25 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleDto> queryAll() {
-        Sort sort = Sort.by(Sort.Direction.ASC, "level");
-        return roleMapper.toDto(roleRepository.findAll(sort));
+        Sort sort = Sort.ascending("level");
+        List<Role> list = roleRepository.findAll(sort).list();
+        return roleMapper.toDto(list);
     }
 
     @Override
     public List<RoleDto> queryAll(RoleQueryCriteria criteria) {
-        return roleMapper.toDto(roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
+//   fixme:条件查询      return roleMapper.toDto(roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
+        PanacheQuery<Role> all = roleRepository.findAll();
+        return roleMapper.toDto(all.list());
     }
 
     @Override
     public PageResult<RoleDto> queryAll(RoleQueryCriteria criteria, Page pageable) {
-        Page<Role> page = roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        return PageUtil.toPage(page.map(roleMapper::toDto));
+        //   fixme:条件查询         Page<Role> page = roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        PanacheQuery<Role> paged = roleRepository.findAll().page(pageable);
+        List<Role> list = paged.list();
+        long count = paged.count();
+        return PageUtil.toPage(roleMapper.toDto(list), count);
     }
 
     @Override
@@ -87,7 +91,7 @@ public class RoleServiceImpl implements RoleService {
         String key = CacheKey.ROLE_ID + id;
         Role role = redisUtils.get(key, Role.class);
         if (role == null) {
-            role = roleRepository.findById(id).orElseGet(Role::new);
+            role = roleRepository.findById(id);
             ValidationUtil.isNull(role.getId(), "Role", "id", id);
             redisUtils.set(key, role, 1, TimeUnit.DAYS);
         }
@@ -106,7 +110,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(Role resources) {
-        Role role = roleRepository.findById(resources.getId()).orElseGet(Role::new);
+        Role role = roleRepository.findById(resources.getId());
         ValidationUtil.isNull(role.getId(), "Role", "id", resources.getId());
 
         Role role1 = roleRepository.findByName(resources.getName());
@@ -198,7 +202,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void download(List<RoleDto> roles, HttpServletResponse response) throws IOException {
+    public void download(List<RoleDto> roles) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (RoleDto role : roles) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -208,7 +212,7 @@ public class RoleServiceImpl implements RoleService {
             map.put("创建日期", role.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        FileUtil.downloadExcel(list);
     }
 
     @Override

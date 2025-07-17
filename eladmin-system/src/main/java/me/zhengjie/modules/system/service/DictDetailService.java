@@ -1,7 +1,4 @@
-
 package me.zhengjie.modules.system.service;
-
-import java.util.List;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.system.domain.DictDetail;
@@ -9,9 +6,11 @@ import me.zhengjie.modules.system.service.dto.DictDetailDto;
 import me.zhengjie.modules.system.service.dto.DictDetailQueryCriteria;
 import me.zhengjie.utils.PageResult;
 
+import java.util.List;
+
 /**
 * @author Zheng Jie
-* @date 2019-04-10
+ * @since 2019-04-10
 */
 public interface DictDetailService {
 

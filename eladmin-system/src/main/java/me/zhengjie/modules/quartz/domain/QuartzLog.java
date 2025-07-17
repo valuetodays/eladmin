@@ -1,16 +1,15 @@
-
 package me.zhengjie.modules.quartz.domain;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
-import javax.persistence.*;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
+
 /**
  * @author Zheng Jie
- * @date 2019-01-07
+ * @since 2019-01-07
  */
 @Entity
 @Data

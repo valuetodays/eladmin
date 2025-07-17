@@ -33,7 +33,7 @@ import java.awt.*;
 /**
  * 登录验证码配置信息
  * @author liaojinlong
- * @date 2025-01-13
+ * @since 2025-01-13
  */
 @Data
 @Configuration

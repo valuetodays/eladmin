@@ -1,7 +1,4 @@
-
 package me.zhengjie.modules.security.service;
-
-import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +12,11 @@ import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 /**
  * @author Zheng Jie
- * @date 2018-11-22
+ * @since 2018-11-22
  */
 @Slf4j
 @RequiredArgsConstructor

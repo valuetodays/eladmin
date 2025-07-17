@@ -1,21 +1,23 @@
-
 package me.zhengjie.modules.quartz.repository;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import me.zhengjie.MyPanacheRepository;
+import me.zhengjie.modules.quartz.domain.QuartzJob;
 
 import java.util.List;
 
-import me.zhengjie.modules.quartz.domain.QuartzJob;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
 /**
  * @author Zheng Jie
- * @date 2019-01-07
+ * @since 2019-01-07
  */
-public interface QuartzJobRepository extends JpaRepository<QuartzJob,Long>, JpaSpecificationExecutor<QuartzJob> {
+@ApplicationScoped
+public class QuartzJobRepository extends MyPanacheRepository<QuartzJob> {
 
     /**
      * 查询启用的任务
      * @return List
      */
-    List<QuartzJob> findByIsPauseFalse();
+    public List<QuartzJob> findByIsPauseFalse() {
+        return find("isPause = false").list();
+    }
 }

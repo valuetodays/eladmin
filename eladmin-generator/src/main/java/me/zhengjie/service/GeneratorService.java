@@ -1,18 +1,17 @@
-
 package me.zhengjie.service;
-
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.GenConfig;
 import me.zhengjie.domain.vo.TableInfo;
+import me.zhengjie.reqresp.GenPreviewResp;
 import me.zhengjie.utils.PageResult;
-import org.springframework.http.ResponseEntity;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @author Zheng Jie
- * @date 2019-01-02
+ * @since 2019-01-02
  */
 public interface GeneratorService {
 
@@ -63,16 +62,14 @@ public interface GeneratorService {
      * @param columns 字段信息
      * @return /
      */
-    ResponseEntity<Object> preview(GenConfig genConfig, List<ColumnInfo> columns);
+    List<GenPreviewResp> preview(GenConfig genConfig, List<ColumnInfo> columns);
 
     /**
      * 打包下载
      * @param genConfig 配置信息
      * @param columns 字段信息
-     * @param request /
-     * @param response /
      */
-    void download(GenConfig genConfig, List<ColumnInfo> columns, HttpServletRequest request, HttpServletResponse response);
+    File download(GenConfig genConfig, List<ColumnInfo> columns);
 
     /**
      * 查询数据库的表字段数据数据

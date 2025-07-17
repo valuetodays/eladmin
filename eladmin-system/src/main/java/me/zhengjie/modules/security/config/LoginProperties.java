@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * 配置文件读取
  *
  * @author liaojinlong
- * @date loginCode.length0loginCode.length0/6/10 17:loginCode.length6
+ * @since loginCode.length0loginCode.length0/6/10 17:loginCode.length6
  */
 @Data
 @Configuration

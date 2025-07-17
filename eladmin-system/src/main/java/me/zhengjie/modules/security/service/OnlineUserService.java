@@ -1,18 +1,8 @@
-
 package me.zhengjie.modules.security.service;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.http.HttpServletRequest;
 
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.security.config.SecurityProperties;
@@ -26,9 +16,19 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Zheng Jie
- * @date 2019年10月26日21:56:27
+ * @since 2019年10月26日21:56:27
  */
 @ApplicationScoped
 @Slf4j
@@ -46,13 +46,15 @@ public class OnlineUserService {
      * 保存在线用户信息
      * @param jwtUserDto /
      * @param token /
-     * @param request /
      */
-    public void save(JwtUserDto jwtUserDto, String token, HttpServletRequest request){
+    public void save(JwtUserDto jwtUserDto, String token) {
         String dept = jwtUserDto.getUser().getDept().getName();
-        String ip = StringUtils.getIp(request);
+        // fixme:
+        String ip = "fixme";
+//        String ip = StringUtils.getIp(request);
         String id = tokenProvider.getId(token);
-        String browser = StringUtils.getBrowser(request);
+        String browser = "fixme";
+//        String browser = StringUtils.getBrowser(request.getHeader("User-Agent"));
         String address = StringUtils.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
@@ -73,7 +75,7 @@ public class OnlineUserService {
     public PageResult<OnlineUserDto> getAll(String username, Page pageable) {
         List<OnlineUserDto> onlineUserDtos = getAll(username);
         return PageUtil.toPage(
-                PageUtil.paging(pageable.getPageNumber(),pageable.getPageSize(), onlineUserDtos),
+                PageUtil.paging(pageable.index, pageable.size, onlineUserDtos),
                 onlineUserDtos.size()
         );
     }
@@ -108,10 +110,9 @@ public class OnlineUserService {
     /**
      * 导出
      * @param all /
-     * @param response /
      * @throws IOException /
      */
-    public void download(List<OnlineUserDto> all, HttpServletResponse response) throws IOException {
+    public File download(List<OnlineUserDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (OnlineUserDto user : all) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -123,7 +124,7 @@ public class OnlineUserService {
             map.put("登录日期", user.getLoginTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 
     /**

@@ -1,18 +1,4 @@
-
 package me.zhengjie.modules.system.service.impl;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
@@ -41,9 +27,22 @@ import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.enums.DataScopeEnum;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 /**
 * @author Zheng Jie
-* @date 2019-03-25
+ * @since 2019-03-25
 */
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -83,7 +82,9 @@ public class DeptServiceImpl implements DeptService {
                 }
             }
         }
-        List<DeptDto> list = deptMapper.toDto(deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
+        List<Dept> deptList = deptRepository.findAll(sort).list();
+        List<DeptDto> list = deptMapper.toDto(deptList);
+        // fixme: 条件查询        List<DeptDto> list = deptMapper.toDto(deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
         // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
         if(StringUtils.isBlank(dataScopeType)){
             return deduplication(list);
@@ -96,7 +97,7 @@ public class DeptServiceImpl implements DeptService {
         String key = CacheKey.DEPT_ID + id;
         Dept dept = redisUtils.get(key, Dept.class);
         if(dept == null){
-            dept = deptRepository.findById(id).orElseGet(Dept::new);
+            dept = deptRepository.findById(id);
             ValidationUtil.isNull(dept.getId(),"Dept","id",id);
             redisUtils.set(key, dept, 1, TimeUnit.DAYS);
         }
@@ -134,7 +135,7 @@ public class DeptServiceImpl implements DeptService {
         if(resources.getPid() != null && resources.getId().equals(resources.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
-        Dept dept = deptRepository.findById(resources.getId()).orElseGet(Dept::new);
+        Dept dept = deptRepository.findById(resources.getId());
         ValidationUtil.isNull( dept.getId(),"Dept","id",resources.getId());
         resources.setId(dept.getId());
         deptRepository.save(resources);

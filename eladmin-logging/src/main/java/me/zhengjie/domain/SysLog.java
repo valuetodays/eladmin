@@ -1,25 +1,26 @@
-
 package me.zhengjie.domain;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-24
+ * @since 2018-11-24
  */
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "sys_log")
-@NoArgsConstructor
 public class SysLog implements Serializable {
 
     @Id
@@ -64,6 +65,8 @@ public class SysLog implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
+    public SysLog() {
+    }
     public SysLog(String logType, Long time) {
         this.logType = logType;
         this.time = time;

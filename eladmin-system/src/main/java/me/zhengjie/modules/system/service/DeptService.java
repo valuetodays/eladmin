@@ -1,18 +1,17 @@
-
 package me.zhengjie.modules.system.service;
+
+import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.service.dto.DeptDto;
+import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import me.zhengjie.modules.system.domain.Dept;
-import me.zhengjie.modules.system.service.dto.DeptDto;
-import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
-
 /**
 * @author Zheng Jie
-* @date 2019-03-25
+ * @since 2019-03-25
 */
 public interface DeptService {
 

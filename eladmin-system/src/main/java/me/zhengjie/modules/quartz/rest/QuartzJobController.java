@@ -1,13 +1,21 @@
-
 package me.zhengjie.modules.quartz.rest;
 
-import java.io.IOException;
-import java.util.Set;
-
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.quartz.domain.QuartzJob;
@@ -15,17 +23,17 @@ import me.zhengjie.modules.quartz.domain.QuartzLog;
 import me.zhengjie.modules.quartz.service.QuartzJobService;
 import me.zhengjie.modules.quartz.service.dto.JobQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SpringBeanHolder;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
- * @date 2019-01-07
+ * @since 2019-01-07
  */
 @Slf4j
 @Produces({MediaType.APPLICATION_JSON})
@@ -33,7 +41,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Path("/api/jobs")
 @Tag(name = "系统:定时任务管理")
-public class QuartzJobController {
+public class QuartzJobController extends BaseController {
 
     private static final String ENTITY_NAME = "quartzJob";
     @Inject
@@ -41,34 +49,38 @@ public class QuartzJobController {
 
     @Operation(summary = "查询定时任务")
     @GET
-    @Path
+    @Path("")
     @PreAuthorize("@el.check('timing:list')")
-    public ResponseEntity<PageResult<QuartzJob>> queryQuartzJob(JobQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(quartzJobService.queryAll(criteria,pageable), HttpStatus.OK);
+    public PageResult<QuartzJob> queryQuartzJob(JobQueryCriteria criteria, Page pageable) {
+        return quartzJobService.queryAll(criteria, pageable);
     }
 
     @Operation(summary = "导出任务数据")
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('timing:list')")
-    public void exportQuartzJob(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
-        quartzJobService.download(quartzJobService.queryAll(criteria), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportQuartzJob(JobQueryCriteria criteria) throws IOException {
+        File file = quartzJobService.download(quartzJobService.queryAll(criteria));
+        return super.download(file);
     }
 
     @Operation(summary = "导出日志数据")
     @GET
     @Path(value = "/logs/download")
     @PreAuthorize("@el.check('timing:list')")
-    public void exportQuartzJobLog(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
-        quartzJobService.downloadLog(quartzJobService.queryAllLog(criteria), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportQuartzJobLog(JobQueryCriteria criteria) throws IOException {
+        File file = quartzJobService.downloadLog(quartzJobService.queryAllLog(criteria));
+        return super.download(file);
     }
 
     @Operation(summary = "查询任务执行日志")
     @GET
     @Path(value = "/logs")
     @PreAuthorize("@el.check('timing:list')")
-    public ResponseEntity<PageResult<QuartzLog>> queryQuartzJobLog(JobQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(quartzJobService.queryAllLog(criteria,pageable), HttpStatus.OK);
+    public PageResult<QuartzLog> queryQuartzJobLog(JobQueryCriteria criteria, Page pageable) {
+        return quartzJobService.queryAllLog(criteria, pageable);
     }
 
     @Log("新增定时任务")
@@ -91,7 +103,7 @@ public class QuartzJobController {
     @PUT
     @Path("")
     @PreAuthorize("@el.check('timing:edit')")
-    public Object updateQuartzJob(@Validated(QuartzJob.Update.class) QuartzJob resources) {
+    public Object updateQuartzJob(/*@Validated(QuartzJob.Update.class)*/ QuartzJob resources) {
         // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @ApplicationScoped 定义
         checkBean(resources.getBeanName());
         quartzJobService.update(resources);
@@ -101,9 +113,9 @@ public class QuartzJobController {
     @Log("更改定时任务状态")
     @Operation(summary = "更改定时任务状态")
     @PUT
-    @Path("")(value ="/{id}")
+    @Path("/{id}")
     @PreAuthorize("@el.check('timing:edit')")
-    public Object updateQuartzJobStatus(@PathParam Long id) {
+    public Object updateQuartzJobStatus(@PathParam("id") Long id) {
         quartzJobService.updateIsPause(quartzJobService.findById(id));
         return 1;
     }
@@ -111,9 +123,9 @@ public class QuartzJobController {
     @Log("执行定时任务")
     @Operation(summary = "执行定时任务")
     @PUT
-    @Path("")(value ="/exec/{id}")
+    @Path("/exec/{id}")
     @PreAuthorize("@el.check('timing:edit')")
-    public Object executionQuartzJob(@PathParam Long id) {
+    public Object executionQuartzJob(@PathParam("id") Long id) {
         quartzJobService.execution(quartzJobService.findById(id));
         return 1;
     }
@@ -131,8 +143,8 @@ public class QuartzJobController {
     private void checkBean(String beanName){
         // 避免调用攻击者可以从SpringContextHolder获得控制jdbcTemplate类
         // 并使用getDeclaredMethod调用jdbcTemplate的queryForMap函数，执行任意sql命令。
-        if(!SpringBeanHolder.getAllServiceBeanName().contains(beanName)){
-            throw new BadRequestException("非法的 Bean，请重新输入！");
-        }
+//  fixme:      if(!SpringBeanHolder.getAllServiceBeanName().contains(beanName)){
+//            throw new BadRequestException("非法的 Bean，请重新输入！");
+//        }
     }
 }

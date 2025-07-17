@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.system.rest;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
@@ -29,9 +24,13 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
 /**
 * @author Zheng Jie
-* @date 2019-03-29
+ * @since 2019-03-29
 */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
@@ -47,6 +46,7 @@ public class JobController extends BaseController {
     @Path(value = "/download")
     @GET
     @PreAuthorize("@el.check('job:list')")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response exportJob(JobQueryCriteria criteria) throws IOException {
         File file = jobService.download(jobService.queryAll(criteria));
         return super.download(file);

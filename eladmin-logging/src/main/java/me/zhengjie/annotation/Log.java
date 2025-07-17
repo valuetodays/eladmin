@@ -1,4 +1,3 @@
-
 package me.zhengjie.annotation;
 
 import java.lang.annotation.ElementType;
@@ -8,9 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-24
+ * @since 2018-11-24
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Log {
     String value() default "";

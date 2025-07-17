@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.quartz.task;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 测试用
  * @author Zheng Jie
- * @date 2019-01-08
+ * @since 2019-01-08
  */
 @Slf4j
 @ApplicationScoped

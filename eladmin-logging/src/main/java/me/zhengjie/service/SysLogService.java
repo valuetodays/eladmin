@@ -1,20 +1,18 @@
-
 package me.zhengjie.service;
-
-import java.io.IOException;
-import java.util.List;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.service.dto.SysLogQueryCriteria;
 import me.zhengjie.service.dto.SysLogSmallDto;
 import me.zhengjie.utils.PageResult;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.springframework.scheduling.annotation.Async;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-24
+ * @since 2018-11-24
  */
 public interface SysLogService {
 
@@ -46,11 +44,10 @@ public interface SysLogService {
      * @param username 用户
      * @param browser 浏览器
      * @param ip 请求IP
-     * @param joinPoint /
      * @param sysLog 日志实体
      */
-    @Async
-    void save(String username, String browser, String ip, ProceedingJoinPoint joinPoint, SysLog sysLog);
+//fixme    @Async
+    void save(String username, String browser, String ip, SysLog sysLog);
 
     /**
      * 查询异常详情
@@ -62,10 +59,9 @@ public interface SysLogService {
     /**
      * 导出日志
      * @param sysLogs 待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<SysLog> sysLogs, HttpServletResponse response) throws IOException;
+    File download(List<SysLog> sysLogs) throws IOException;
 
     /**
      * 删除所有错误日志

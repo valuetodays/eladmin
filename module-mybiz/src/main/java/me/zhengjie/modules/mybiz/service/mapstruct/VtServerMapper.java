@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.mybiz.service.mapstruct;
 
 import me.zhengjie.base.BaseMapper;
@@ -10,9 +9,9 @@ import org.mapstruct.ReportingPolicy;
 /**
  * @author vt
  * @website https://eladmin.vip
- * @date 2025-07-11
+ * @since 2025-07-11
  **/
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface VtServerMapper extends BaseMapper<VtServerDto, VtServer> {
 
 }

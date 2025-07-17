@@ -1,15 +1,8 @@
-
 package me.zhengjie.modules.maint.service.impl;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
@@ -25,9 +18,17 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.ValidationUtil;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -106,7 +107,7 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public void download(List<AppDto> queryAll, HttpServletResponse response) throws IOException {
+    public File download(List<AppDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (AppDto appDto : queryAll) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -120,6 +121,6 @@ public class AppServiceImpl implements AppService {
             map.put("创建日期", appDto.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 }

@@ -1,15 +1,19 @@
-
 package me.zhengjie.modules.system.rest;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.lang.Dict;
+import cn.vt.exception.CommonException;
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
@@ -22,14 +26,17 @@ import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.SecurityUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
- * @date 2018-12-03
+ * @since 2018-12-03
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
@@ -47,39 +54,40 @@ public class RoleController {
     @GET
     @Path(value = "/{id}")
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<RoleDto> findRoleById(@PathParam Long id) {
-        return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
+    public RoleDto findRoleById(@PathParam("id") Long id) {
+        return roleService.findById(id);
     }
 
     @Operation(summary = "导出角色数据")
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('role:list')")
-    public void exportRole(HttpServletResponse response, RoleQueryCriteria criteria) throws IOException {
-        roleService.download(roleService.queryAll(criteria), response);
+    public void exportRole(RoleQueryCriteria criteria) throws IOException {
+        throw new CommonException("not support");
+//    fixme:    roleService.download(roleService.queryAll(criteria), response);
     }
 
     @Operation(summary = "返回全部的角色")
     @GET
     @Path(value = "/all")
     @PreAuthorize("@el.check('roles:list','user:add','user:edit')")
-    public ResponseEntity<List<RoleDto>> queryAllRole(){
-        return new ResponseEntity<>(roleService.queryAll(),HttpStatus.OK);
+    public List<RoleDto> queryAllRole() {
+        return roleService.queryAll();
     }
 
     @Operation(summary = "查询角色")
     @GET
-    @Path
+    @Path("")
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<PageResult<RoleDto>> queryRole(RoleQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(roleService.queryAll(criteria,pageable),HttpStatus.OK);
+    public PageResult<RoleDto> queryRole(RoleQueryCriteria criteria, Page pageable) {
+        return roleService.queryAll(criteria, pageable);
     }
 
     @Operation(summary = "获取用户级别")
     @GET
     @Path(value = "/level")
     public Object getRoleLevel() {
-        return new ResponseEntity<>(Dict.create().set("level", getLevels(null)),HttpStatus.OK);
+        return Dict.create().set("level", getLevels(null));
     }
 
     @Log("新增角色")
@@ -101,7 +109,7 @@ public class RoleController {
     @PUT
     @Path("")
     @PreAuthorize("@el.check('roles:edit')")
-    public Object updateRole(@Validated(Role.Update.class) Role resources) {
+    public Object updateRole(/*@Validated(Role.Update.class) */Role resources) {
         getLevels(resources.getLevel());
         roleService.update(resources);
         return 1;
@@ -110,7 +118,7 @@ public class RoleController {
     @Log("修改角色菜单")
     @Operation(summary = "修改角色菜单")
     @PUT
-    @Path("")(value ="/menu")
+    @Path("/menu")
     @PreAuthorize("@el.check('roles:edit')")
     public Object updateRoleMenu(Role resources) {
         RoleDto role = roleService.findById(resources.getId());

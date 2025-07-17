@@ -1,6 +1,12 @@
-
 package me.zhengjie.modules.maint.util;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.modules.maint.domain.enums.DataTypeEnum;
+import me.zhengjie.utils.CloseUtil;
+
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -11,13 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
-
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.util.StringUtils;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.maint.domain.enums.DataTypeEnum;
-import me.zhengjie.utils.CloseUtil;
 
 /**
  * @author /

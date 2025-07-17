@@ -1,4 +1,3 @@
-
 package me.zhengjie.config;
 
 import cn.hutool.core.util.StrUtil;
@@ -8,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author Zheng Jie
  * @description 自定义 p6spy sql输出格式
- * @date 2024-12-26
+ * @since 2024-12-26
  **/
 @Slf4j
 public class CustomP6SpyLogger implements MessageFormattingStrategy {

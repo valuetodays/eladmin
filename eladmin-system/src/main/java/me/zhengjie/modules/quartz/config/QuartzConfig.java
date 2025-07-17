@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.quartz.config;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,7 @@ import org.springframework.scheduling.quartz.AdaptableJobFactory;
 /**
  * 定时任务配置
  * @author /
- * @date 2019-01-07
+ * @since 2019-01-07
  */
 @Slf4j
 @Configuration

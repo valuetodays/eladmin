@@ -1,4 +1,3 @@
-
 package me.zhengjie.modules.mybiz.service.dto;
 
 import lombok.Data;
@@ -7,7 +6,7 @@ import me.zhengjie.annotation.Query;
 /**
  * @author vt
  * @website https://eladmin.vip
- * @date 2025-07-11
+ * @since 2025-07-11
  **/
 @Data
 public class VtServerQueryCriteria {

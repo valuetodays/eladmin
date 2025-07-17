@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.system.repository;
-
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,9 +6,13 @@ import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Menu;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2018-12-17
+ * @since 2018-12-17
  */
 @ApplicationScoped
 public class MenuRepository extends MyPanacheRepository<Menu> {

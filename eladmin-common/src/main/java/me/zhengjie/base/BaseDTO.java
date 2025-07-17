@@ -1,17 +1,18 @@
 package me.zhengjie.base;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.sql.Timestamp;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.sql.Timestamp;
 
 /**
  * @author Zheng Jie
- * @date 2019年10月24日20:48:53
+ * @since 2019年10月24日20:48:53
  */
 @Getter
 @Setter

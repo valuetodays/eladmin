@@ -1,21 +1,27 @@
-
 package me.zhengjie.modules.security.rest;
 
-import java.io.IOException;
-import java.util.Set;
-
 import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
 import me.zhengjie.utils.EncryptUtils;
 import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -25,25 +31,27 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Path("/auth/online")
 @Tag(name = "系统：在线用户管理")
-public class OnlineController {
+public class OnlineController extends BaseController {
 
     @Inject
     OnlineUserService onlineUserService;
 
     @Operation(summary = "查询在线用户")
     @GET
-    @Path
+    @Path("")
     @PreAuthorize("@el.check()")
-    public ResponseEntity<PageResult<OnlineUserDto>> queryOnlineUser(String username, Page pageable) {
-        return new ResponseEntity<>(onlineUserService.getAll(username, pageable),HttpStatus.OK);
+    public PageResult<OnlineUserDto> queryOnlineUser(String username, Page pageable) {
+        return onlineUserService.getAll(username, pageable);
     }
 
     @Operation(summary = "导出数据")
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check()")
-    public void exportOnlineUser(HttpServletResponse response, String username) throws IOException {
-        onlineUserService.download(onlineUserService.getAll(username), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportOnlineUser(String username) throws IOException {
+        File file = onlineUserService.download(onlineUserService.getAll(username));
+        return super.download(file);
     }
 
     @Operation(summary = "踢出用户")

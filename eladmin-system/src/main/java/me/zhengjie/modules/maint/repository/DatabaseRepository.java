@@ -1,13 +1,13 @@
-
 package me.zhengjie.modules.maint.repository;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.maint.domain.Database;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
-public interface DatabaseRepository extends JpaRepository<Database, String>, JpaSpecificationExecutor<Database> {
+@ApplicationScoped
+public class DatabaseRepository extends MyPanacheRepository<Database> {
 }

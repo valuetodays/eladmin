@@ -1,4 +1,3 @@
-
 package me.zhengjie.annotation;
 
 import java.lang.annotation.ElementType;
@@ -8,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author Zheng Jie
- * @date 2019-6-4 13:52:30
+ * @since 2019-6-4 13:52:30
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

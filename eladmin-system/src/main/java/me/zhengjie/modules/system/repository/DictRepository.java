@@ -1,16 +1,15 @@
-
 package me.zhengjie.modules.system.repository;
-
-import java.util.List;
-import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Dict;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Zheng Jie
- * @date 2019-04-10
+ * @since 2019-04-10
  */
 @ApplicationScoped
 public class DictRepository extends MyPanacheRepository<Dict> {
@@ -21,7 +20,7 @@ public class DictRepository extends MyPanacheRepository<Dict> {
      * @param ids /
      */
     public long deleteByIdIn(Set<Long> ids) {
-        return delete("where id in ?1", ids);
+        return super.deleteAllByIdIn(ids);
     }
 
     /**

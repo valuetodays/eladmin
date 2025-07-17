@@ -1,19 +1,16 @@
-
 package me.zhengjie.utils;
-
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
 import net.dreamlu.mica.ip2region.core.IpInfo;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * @author Zheng Jie
@@ -23,13 +20,13 @@ import net.dreamlu.mica.ip2region.core.IpInfo;
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     private static final char SEPARATOR = '_';
-    private static final String UNKNOWN = "unknown";
+
 
     /**
      * 注入bean
      */
-    @Inject
-    static Ip2regionSearcher IP_SEARCHER = SpringBeanHolder.getBean(Ip2regionSearcher.class);
+    // fixme:
+    private final static Ip2regionSearcher IP_SEARCHER = null;// SpringBeanHolder.getBean(Ip2regionSearcher.class);
 
     /**
      * 驼峰命名法工具
@@ -117,36 +114,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
-     * 获取ip地址
-     */
-    public static String getIp(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        String comma = ",";
-        String localhost = "127.0.0.1";
-        if (ip.contains(comma)) {
-            ip = ip.split(",")[0];
-        }
-        if (localhost.equals(ip)) {
-            // 获取本机真正的ip地址
-            try {
-                ip = InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        return ip;
-    }
-
-    /**
      * 根据ip获取详细地址
      */
     public static String getCityInfo(String ip) {
@@ -160,8 +127,8 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     /**
      * 获取浏览器
      */
-    public static String getBrowser(HttpServletRequest request) {
-        UserAgent ua = UserAgentUtil.parse(request.getHeader("User-Agent"));
+    public static String getBrowser(String uaStr) {
+        UserAgent ua = UserAgentUtil.parse(uaStr);
         String browser = ua.getBrowser().toString() + " " + ua.getVersion();
         return browser.replace(".0.0.0","");
     }

@@ -1,9 +1,4 @@
-
 package me.zhengjie.modules.maint.domain;
-
-import java.io.Serializable;
-import java.util.Set;
-import javax.persistence.*;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
@@ -12,9 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
+
 /**
 * @author zhanghouying
-* @date 2019-08-24
+ * @since 2019-08-24
 */
 @Entity
 @Getter

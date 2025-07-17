@@ -1,7 +1,14 @@
-
 package me.zhengjie.rest;
 
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.domain.EmailConfig;
@@ -9,14 +16,11 @@ import me.zhengjie.domain.vo.EmailVo;
 import me.zhengjie.service.EmailService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 发送邮件
  * @author 郑杰
- * @date 2018/09/28 6:55:53
+ * @since 2018/09/28 6:55:53
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
@@ -29,9 +33,9 @@ public class EmailController {
     EmailService emailService;
 
     @GET
-    @Path
-    public ResponseEntity<EmailConfig> queryEmailConfig(){
-        return new ResponseEntity<>(emailService.find(),HttpStatus.OK);
+    @Path("")
+    public EmailConfig queryEmailConfig() {
+        return emailService.find();
     }
 
     @Log("配置邮件")

@@ -1,8 +1,14 @@
-
 package me.zhengjie.utils;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.exception.BadRequestException;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,22 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.poi.excel.BigExcelWriter;
-import cn.hutool.poi.excel.ExcelUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.exception.BadRequestException;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * File工具类，扩展 hutool 工具包
  *
  * @author Zheng Jie
- * @date 2018-12-27
+ * @since 2018-12-27
  */
 @Slf4j
 public class FileUtil extends cn.hutool.core.io.FileUtil {
@@ -72,26 +68,6 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     public static final String VIDEO = "视频";
     public static final String OTHER = "其他";
 
-
-    /**
-     * MultipartFile转File
-     */
-    public static File toFile(MultipartFile multipartFile) {
-        // 获取文件名
-        String fileName = multipartFile.getOriginalFilename();
-        // 获取文件后缀
-        String prefix = "." + getExtensionName(fileName);
-        File file = null;
-        try {
-            // 用uuid作为文件名，防止生成的临时文件重复
-            file = new File(SYS_TEM_DIR + IdUtil.simpleUUID() + prefix);
-            // MultipartFile to File
-            multipartFile.transferTo(file);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-        return file;
-    }
 
     /**
      * 获取文件扩展名，不带 .
@@ -168,12 +144,12 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     /**
      * 将文件名解析成文件的上传路径
      */
-    public static File upload(MultipartFile file, String filePath) {
+    public static File upload(File file, String originalFilename, String filePath) {
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssS");
         // 过滤非法文件名
-        String name = getFileNameNoEx(verifyFilename(file.getOriginalFilename()));
-        String suffix = getExtensionName(file.getOriginalFilename());
+        String name = getFileNameNoEx(verifyFilename(originalFilename));
+        String suffix = getExtensionName(originalFilename);
         String nowStr = "-" + format.format(date);
         try {
             String fileName = name + nowStr + "." + suffix;
@@ -186,8 +162,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
                     System.out.println("was not successful.");
                 }
             }
-            // 文件写入
-            file.transferTo(dest);
+            FileUtils.copyFile(file, dest);
             return dest;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -196,7 +171,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     }
 
     /**
-     * 导出excel
+     * 导出excel, fixme: rename to generateExcelFile
      */
     public static File downloadExcel(List<Map<String, Object>> list) throws IOException {
         String tempPath = SYS_TEM_DIR + IdUtil.fastSimpleUUID() + ".xlsx";
@@ -325,6 +300,8 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
      * @param response /
      * @param file     /
      */
+
+    /*
     public static void downloadFile(HttpServletRequest request, HttpServletResponse response, File file, boolean deleteOnExit) {
         response.setCharacterEncoding(request.getCharacterEncoding());
         response.setContentType("application/octet-stream");
@@ -348,7 +325,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * 验证并过滤非法的文件名

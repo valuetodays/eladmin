@@ -12,18 +12,19 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*/
+ */
 package me.zhengjie.service.dto;
+
+import lombok.Data;
+import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-
 /**
 * @author Zheng Jie
-* @date 2025-06-25
+ * @since 2025-06-25
 **/
 @Data
 public class S3StorageQueryCriteria {

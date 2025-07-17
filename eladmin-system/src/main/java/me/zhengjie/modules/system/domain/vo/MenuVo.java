@@ -1,15 +1,14 @@
-
 package me.zhengjie.modules.system.domain.vo;
+
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
-
 /**
  * 构建前端路由时用到
  * @author Zheng Jie
- * @date 2018-12-20
+ * @since 2018-12-20
  */
 @Data
 public class MenuVo implements Serializable {

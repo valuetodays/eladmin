@@ -1,15 +1,8 @@
-
 package me.zhengjie.modules.system.service.impl;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import cn.hutool.core.collection.CollUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.service.DataService;
@@ -21,10 +14,17 @@ import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.enums.DataScopeEnum;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Zheng Jie
  * @description 数据权限服务实现
- * @date 2020-05-07
+ * @since 2020-05-07
  **/
 @ApplicationScoped
 @RequiredArgsConstructor

@@ -1,16 +1,15 @@
-
 package me.zhengjie.modules.system.service.dto;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 import lombok.Data;
 import me.zhengjie.annotation.DataPermission;
 import me.zhengjie.annotation.Query;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 /**
 * @author Zheng Jie
-* @date 2019-03-25
+ * @since 2019-03-25
 */
 @Data
 @DataPermission(fieldName = "id")

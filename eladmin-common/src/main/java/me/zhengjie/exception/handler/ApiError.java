@@ -1,11 +1,10 @@
-
 package me.zhengjie.exception.handler;
 
 import lombok.Data;
 
 /**
  * @author Zheng Jie
- * @date 2018-11-23
+ * @since 2018-11-23
  */
 @Data
 public class ApiError {

@@ -1,10 +1,4 @@
-
 package me.zhengjie.modules.system.service;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.system.domain.Job;
@@ -12,9 +6,14 @@ import me.zhengjie.modules.system.service.dto.JobDto;
 import me.zhengjie.modules.system.service.dto.JobQueryCriteria;
 import me.zhengjie.utils.PageResult;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 /**
 * @author Zheng Jie
-* @date 2019-03-29
+ * @since 2019-03-29
 */
 public interface JobService {
 

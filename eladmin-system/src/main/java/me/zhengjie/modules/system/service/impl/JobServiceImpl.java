@@ -1,17 +1,9 @@
-
 package me.zhengjie.modules.system.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
@@ -27,13 +19,21 @@ import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.ValidationUtil;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 /**
 * @author Zheng Jie
-* @date 2019-03-29
+ * @since 2019-03-29
 */
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -50,13 +50,18 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public PageResult<JobDto> queryAll(JobQueryCriteria criteria, Page pageable) {
-        Page<Job> page = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page.map(jobMapper::toDto).getContent(),page.getTotalElements());
+//   fixme: 条件查询         Page<Job> page = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        PanacheQuery<Job> paged = jobRepository.findAll().page(pageable);
+        List<Job> list = paged.list();
+        long count = paged.count();
+        return PageUtil.toPage(jobMapper.toDto(list), count);
     }
 
     @Override
     public List<JobDto> queryAll(JobQueryCriteria criteria) {
-        List<Job> list = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+        //   fixme: 条件查询       List<Job> list = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+        PanacheQuery<Job> paged = jobRepository.findAll();
+        List<Job> list = paged.list();
         return jobMapper.toDto(list);
     }
 
@@ -65,7 +70,7 @@ public class JobServiceImpl implements JobService {
         String key = CacheKey.JOB_ID + id;
         Job job = redisUtils.get(key, Job.class);
         if(job == null){
-            job = jobRepository.findById(id).orElseGet(Job::new);
+            job = jobRepository.findById(id);
             ValidationUtil.isNull(job.getId(),"Job","id",id);
             redisUtils.set(key, job, 1, TimeUnit.DAYS);
         }

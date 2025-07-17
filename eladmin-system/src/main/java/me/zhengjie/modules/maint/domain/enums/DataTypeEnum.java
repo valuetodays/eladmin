@@ -16,7 +16,6 @@
  *  >>
  *
  */
-
 package me.zhengjie.modules.maint.domain.enums;
 import lombok.extern.slf4j.Slf4j;
 

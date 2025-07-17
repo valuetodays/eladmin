@@ -1,14 +1,13 @@
-
 package me.zhengjie.modules.security.security;
-
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.zhengjie.exception.handler.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @author Zheng Jie

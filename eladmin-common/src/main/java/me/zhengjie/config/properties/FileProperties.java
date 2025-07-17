@@ -1,46 +1,58 @@
-
 package me.zhengjie.config.properties;
 
-import lombok.Data;
-import me.zhengjie.utils.ElConstant;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.Getter;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-/**
- * @author Zheng Jie
- */
-@Data
-@Configuration
-@ConfigurationProperties(prefix = "file")
+@ApplicationScoped
+@Getter
 public class FileProperties {
 
-    /** 文件大小限制 */
-    private Long maxSize;
+    @Inject
+    @ConfigProperty(name = "file.max-size")
+    Long maxSize;
 
-    /** 头像大小限制 */
-    private Long avatarMaxSize;
+    @Inject
+    @ConfigProperty(name = "file.avatar-max-size")
+    Long avatarMaxSize;
 
-    private ElPath mac;
+    @Inject
+    ElPathConfig mac;
 
-    private ElPath linux;
+    @Inject
+    ElPathConfig linux;
 
-    private ElPath windows;
+    @Inject
+    ElPathConfig windows;
 
-    public ElPath getPath(){
+    public ElPathConfig getPath() {
         String os = System.getProperty("os.name");
-        if(os.toLowerCase().startsWith(ElConstant.WIN)) {
+        if (os.toLowerCase().startsWith("win")) {
             return windows;
-        } else if(os.toLowerCase().startsWith(ElConstant.MAC)){
+        } else if (os.toLowerCase().startsWith("mac")) {
             return mac;
         }
         return linux;
     }
 
-    @Data
-    public static class ElPath{
+    @ApplicationScoped
+    public static class ElPathConfig {
 
-        private String path;
+        @Inject
+        @ConfigProperty(name = "file.mac.path", defaultValue = "")
+        String path;
 
-        private String avatar;
+        @Inject
+        @ConfigProperty(name = "file.mac.avatar", defaultValue = "")
+        String avatar;
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getAvatar() {
+            return avatar;
+        }
     }
 }
