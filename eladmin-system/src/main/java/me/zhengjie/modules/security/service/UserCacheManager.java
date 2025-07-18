@@ -19,8 +19,8 @@ public class UserCacheManager {
 
     @Inject
     RedisUtils redisUtils;
-    // fixme   @Value("${login.user-cache.idle-time}")
-    private long idleTime = 9999;
+    @Inject
+    LoginProperties loginProperties;
 
     /**
      * 返回用户缓存
@@ -47,7 +47,7 @@ public class UserCacheManager {
         userName = StringUtils.lowerCase(userName);
         if (StringUtils.isNotEmpty(userName)) {
             // 添加数据, 避免数据同时过期
-            long time = idleTime + RandomUtil.randomInt(900, 1800);
+            long time = loginProperties.userCacheIdleTime() + RandomUtil.randomInt(900, 1800);
             redisUtils.set(LoginProperties.cacheKey + userName, user, time);
         }
     }

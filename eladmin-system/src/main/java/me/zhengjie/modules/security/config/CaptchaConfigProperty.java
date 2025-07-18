@@ -1,17 +1,13 @@
 package me.zhengjie.modules.security.config;
 
-import io.quarkus.runtime.annotations.StaticInitSafe;
-import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
-import jakarta.enterprise.context.ApplicationScoped;
 import me.zhengjie.modules.security.config.enums.LoginCodeEnum;
+
+import java.util.Optional;
 
 /**
  * 验证码配置映射
  */
-@ConfigMapping(prefix = "login.code")
-@StaticInitSafe
-@ApplicationScoped
 public interface CaptchaConfigProperty {
 
     /**
@@ -46,7 +42,8 @@ public interface CaptchaConfigProperty {
     /**
      * 验证码字体名称（可为空）
      */
-    String fontName();
+    @WithDefault("")
+    Optional<String> fontName();
 
     /**
      * 字体大小

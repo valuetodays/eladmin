@@ -1,36 +1,36 @@
 quarkus:
   application:
-    name: api3-web
+    name: eladmin
   profile: dev
   http:
     # 不配置host，只能 localhost 访问
     # 因为 前端页面是在另一个服务器上（使用vscode + remote development），要访问本服务
     host: 0.0.0.0
-    port: 20003
-    root-path: "/api3"
+    port: 20008
+    root-path: "/api"
     limits:
       max-body-size: 12M
   # https://quarkus.io/guides/datasource
   datasource:
     db-kind: postgresql
-    #    db-kind: other
-    #    db-version: 8.0.27
     username: postgres
     password: z1l78fkSMgq8o0
     jdbc:
       driver: com.p6spy.engine.spy.P6SpyDriver
-      url: jdbc:p6spy:postgresql://aliyuntest:5432/db_example
-      #      url: jdbc:p6spy:mysql://aliyun-test:3306/eblog?useUnicode=true&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+      url: jdbc:p6spy:postgresql://aliyuntest:5432/db_pg_eladmin
       max-size: 5
       min-size: 1
   # https://quarkus.io/guides/hibernate-orm
   hibernate-orm:
+    #    physical-naming-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    physical-naming-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl
+    implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
     # https://docs.jboss.org/hibernate/orm/6.6/dialect/dialect.html
     #    dialect: MySQL
     #    dialect: cn.valuetodays.api3.web.extend.NoEscapeMySQLDialect
     schema-management:
       strategy: none
-    packages: cn.valuetodays
+    packages: me.zhengjie
     database:
       #      generation: none
       version-check:
@@ -71,6 +71,63 @@ quarkus:
         file-suffix: .yyyy-MM-dd
   smallrye-openapi:
     enable: true
-nats:
-  server: nats://aliyun-test:4222
 
+login:
+  #  是否限制单用户登录
+  single-login: false
+  # Redis用户登录缓存配置   # 存活时间/秒
+  user-cache-idle-time: 21600
+  #  验证码
+  captcha:
+    #  验证码类型配置 查看 LoginProperties 类
+    code-type: ARITHMETIC
+    #  登录图形验证码有效时间/分钟
+    expiration: 2
+    #  验证码高度
+    width: 111
+    #  验证码宽度
+    height: 36
+    # 内容长度
+    length: 2
+    # 字体名称，为空则使用默认字体
+    font-name: ''
+    # 字体大小
+    font-size: 25
+
+# 亚马逊S3协议云存储配置
+#支持七牛云，阿里云OSS，腾讯云COS，华为云OBS，移动云EOS等
+amz:
+  s3:
+    # 地域
+    region: test
+    # 地域对应的 endpoint
+    end-point: https://s3.test.com
+    # 访问的域名
+    domain: https://s3.test.com
+    # 账号的认证信息，或者子账号的认证信息
+    access-key: 填写你的AccessKey
+    secret-key: 填写你的SecretKey
+    # 存储桶（Bucket）
+    default-bucket: 填写你的存储桶名称
+    # 文件存储路径
+    timeformat: yyyy-MM
+
+#是否允许生成代码，生产环境设置为false
+generator:
+  enabled: true
+  base-path: /tmp/eladmin_gen
+
+# 文件存储路径
+file:
+  mac:
+    path: ~/file/
+    avatar: ~/avatar/
+  linux:
+    path: /home/eladmin/file/
+    avatar: /home/eladmin/avatar/
+  windows:
+    path: C:\eladmin\file\
+    avatar: C:\eladmin\avatar\
+  # 文件大小 /M
+  max-size: 100
+  avatar-max-size: 2

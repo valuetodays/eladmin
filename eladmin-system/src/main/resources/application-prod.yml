@@ -6,22 +6,15 @@ quarkus:
     password: 'abc123'
   datasource:
     db-kind: postgresql
-    #    db-kind: other
-    #    db-version: 8.0.27
     username: postgres
     password: z1l78fkSMgq8o0
     jdbc:
       driver: com.p6spy.engine.spy.P6SpyDriver
-      url: jdbc:p6spy:postgresql://aliyun-tmp:5432/db_example
-  #      url: jdbc:p6spy:mysql://aliyun-tmp-prod:3306/eblog?useUnicode=true&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
-  #      url: jdbc:p6spy:mysql://aliyun-prod:3306/eblog?useUnicode=true&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+      url: jdbc:p6spy:postgresql://aliyun-tmp:5432/db_pg_eladmin
   hibernate-orm:
     log:
       # the printed sql is containing ?
       sql: false
   smallrye-openapi:
     enable: false
-nats:
-  server: nats://aliyun2:4222
-  token: by-command-line
 

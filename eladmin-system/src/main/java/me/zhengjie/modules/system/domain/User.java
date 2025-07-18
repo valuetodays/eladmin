@@ -14,25 +14,23 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.zhengjie.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author Zheng Jie
  * @since 2018-11-22
  */
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name="sys_user")
-public class User extends BaseEntity implements Serializable {
+public class User extends BaseEntity {
 
     @Id
     @Column(name = "user_id")
@@ -100,22 +98,4 @@ public class User extends BaseEntity implements Serializable {
     @Column(name = "pwd_reset_time")
     @Schema(description = "最后修改密码的时间", hidden = true)
     private Date pwdResetTime;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        User user = (User) o;
-        return Objects.equals(id, user.id) &&
-                Objects.equals(username, user.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username);
-    }
 }

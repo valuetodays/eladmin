@@ -1,6 +1,7 @@
 package me.zhengjie.config;
 
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**
@@ -51,7 +52,6 @@ public interface AmzS3ConfigProperty {
     /**
      * 文件上传后存储的文件夹格式，默认为 "yyyy-MM"。
      */
-    default String timeformat() {
-        return "yyyy-MM";
-    }
+    @WithDefault("yyyy-MM")
+    String timeformat();
 }

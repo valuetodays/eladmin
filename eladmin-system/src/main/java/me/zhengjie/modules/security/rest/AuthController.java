@@ -1,9 +1,5 @@
 package me.zhengjie.modules.security.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import cn.hutool.core.util.IdUtil;
 import cn.vt.auth.AuthUser;
 import cn.vt.encrypt.BCryptUtils;
@@ -12,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -19,11 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.annotation.rest.AnonymousGetMapping;
-import me.zhengjie.annotation.rest.AnonymousPostMapping;
-import me.zhengjie.config.properties.RsaProperties;
 import me.zhengjie.exception.BadRequestException;
-import me.zhengjie.modules.security.config.CaptchaConfigProperty;
 import me.zhengjie.modules.security.config.CaptchaFactory;
 import me.zhengjie.modules.security.config.LoginProperties;
 import me.zhengjie.modules.security.config.enums.LoginCodeEnum;
@@ -33,10 +26,12 @@ import me.zhengjie.modules.security.service.UserDetailsServiceImpl;
 import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.RsaUtils;
-import me.zhengjie.utils.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Zheng Jie
@@ -63,26 +58,26 @@ public class AuthController extends BaseController {
     @Inject
     CaptchaFactory captchaFactory;
     @Inject
-    CaptchaConfigProperty captchaConfigProperty;
-    @Inject
     UserDetailsServiceImpl userDetailsService;
 
     @Log("用户登录")
-    @Operation(summary = "登录授权")
-    @AnonymousPostMapping(value = "/login")
+    @Operation(summary = "用户登录")
+    @Path(value = "/login")
+    @POST
     public Object login(@Valid AuthUserDto authUser) throws Exception {
         // 密码解密
-        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
-        // 查询验证码
-        String code = redisUtils.get(authUser.getUuid(), String.class);
-        // 清除验证码
-        redisUtils.del(authUser.getUuid());
-        if (StringUtils.isBlank(code)) {
-            throw new BadRequestException("验证码不存在或已过期");
-        }
-        if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-            throw new BadRequestException("验证码错误");
-        }
+//        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
+        String password = authUser.getPassword();
+//        // 查询验证码
+//        String code = redisUtils.get(authUser.getUuid(), String.class);
+//        // 清除验证码
+//        redisUtils.del(authUser.getUuid());
+//        if (StringUtils.isBlank(code)) {
+//            throw new BadRequestException("验证码不存在或已过期");
+//        }
+//        if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
+//            throw new BadRequestException("验证码错误");
+//        }
         // 获取用户信息
         JwtUserDto jwtUser = userDetailsService.loadUserByUsername(authUser.getUsername());
         // 验证用户密码
@@ -117,7 +112,8 @@ public class AuthController extends BaseController {
     }
 
     @Operation(summary = "获取验证码")
-    @AnonymousGetMapping(value = "/code")
+    @Path(value = "/code")
+    @POST
     public Object getCode() {
         // 获取运算的结果
         Captcha captcha = captchaFactory.getCaptcha();
@@ -128,7 +124,7 @@ public class AuthController extends BaseController {
             captchaValue = captchaValue.split("\\.")[0];
         }
         // 保存
-        redisUtils.set(uuid, captchaValue, captchaConfigProperty.expiration(), TimeUnit.MINUTES);
+        redisUtils.set(uuid, captchaValue, loginProperties.captcha().expiration(), TimeUnit.MINUTES);
         // 验证码信息
         Map<String, Object> imgResult = new HashMap<String, Object>(2) {{
             put("img", captcha.toBase64());
@@ -138,7 +134,8 @@ public class AuthController extends BaseController {
     }
 
     @Operation(summary = "退出登录")
-    @AnonymousPostMapping(value = "/logout")
+    @Path(value = "/logout")
+    @POST
     public Object logout() {
         onlineUserService.logout(tokenProvider.getToken());
         return 1;

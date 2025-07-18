@@ -39,11 +39,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.hibernatetypes</groupId>
-            <artifactId>quarkus-hibernate-types</artifactId>
-            <version>2.2.0</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.quarkiverse.hibernatetypes</groupId>-->
+        <!--            <artifactId>quarkus-hibernate-types</artifactId>-->
+        <!--            <version>2.2.0</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-openapi</artifactId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
-            <version>3.17.1</version>
+            <version>3.22.0</version>
         </dependency>
     </dependencies>
 </project>

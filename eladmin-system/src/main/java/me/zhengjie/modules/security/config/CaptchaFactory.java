@@ -1,7 +1,5 @@
 package me.zhengjie.modules.security.config;
 
-import java.awt.*;
-
 import cn.vt.exception.CommonException;
 import com.wf.captcha.ArithmeticCaptcha;
 import com.wf.captcha.ChineseCaptcha;
@@ -12,13 +10,16 @@ import com.wf.captcha.base.Captcha;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.awt.Font;
+
 @ApplicationScoped
 public class CaptchaFactory {
 
     @Inject
-    CaptchaConfigProperty config;
+    LoginProperties loginProperties;
 
     public Captcha getCaptcha() {
+        CaptchaConfigProperty config = loginProperties.captcha();
         Captcha captcha;
         int width = config.width();
         int height = config.height();
@@ -49,8 +50,8 @@ public class CaptchaFactory {
                 throw new CommonException("验证码配置信息错误！正确配置查看 LoginCodeEnum");
         }
 
-        if (config.fontName() != null && !config.fontName().isBlank()) {
-            captcha.setFont(new Font(config.fontName(), Font.PLAIN, config.fontSize()));
+        if (config.fontName().isPresent()) {
+            captcha.setFont(new Font(config.fontName().get(), Font.PLAIN, config.fontSize()));
         }
 
         return captcha;
