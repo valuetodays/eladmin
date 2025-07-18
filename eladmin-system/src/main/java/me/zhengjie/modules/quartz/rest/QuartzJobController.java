@@ -1,6 +1,9 @@
 package me.zhengjie.modules.quartz.rest;
 
-import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -27,10 +30,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 /**
  * @author Zheng Jie
  * @since 2019-01-07
@@ -51,8 +50,8 @@ public class QuartzJobController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('timing:list')")
-    public PageResult<QuartzJob> queryQuartzJob(JobQueryCriteria criteria, Page pageable) {
-        return quartzJobService.queryAll(criteria, pageable);
+    public PageResult<QuartzJob> queryQuartzJob(JobQueryCriteria criteria) {
+        return quartzJobService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Operation(summary = "导出任务数据")
@@ -79,8 +78,8 @@ public class QuartzJobController extends BaseController {
     @GET
     @Path(value = "/logs")
     @PreAuthorize("@el.check('timing:list')")
-    public PageResult<QuartzLog> queryQuartzJobLog(JobQueryCriteria criteria, Page pageable) {
-        return quartzJobService.queryAllLog(criteria, pageable);
+    public PageResult<QuartzLog> queryQuartzJobLog(JobQueryCriteria criteria) {
+        return quartzJobService.queryAllLog(criteria, criteria.toPageRequest());
     }
 
     @Log("新增定时任务")

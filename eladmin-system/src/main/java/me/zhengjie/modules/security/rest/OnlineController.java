@@ -1,6 +1,10 @@
 package me.zhengjie.modules.security.rest;
 
-import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
+import cn.valuetodays.quarkus.commons.base.PageIO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -19,10 +23,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 /**
  * @author Zheng Jie
  */
@@ -40,8 +40,9 @@ public class OnlineController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check()")
-    public PageResult<OnlineUserDto> queryOnlineUser(String username, Page pageable) {
-        return onlineUserService.getAll(username, pageable);
+    // fixme
+    public PageResult<OnlineUserDto> queryOnlineUser(String username/*, Page pageable*/) {
+        return onlineUserService.getAll(username, new PageIO().toPageRequest());
     }
 
     @Operation(summary = "导出数据")

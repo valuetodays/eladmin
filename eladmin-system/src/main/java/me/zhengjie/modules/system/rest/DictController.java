@@ -1,6 +1,10 @@
 package me.zhengjie.modules.system.rest;
 
-import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -24,11 +28,6 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -69,8 +68,8 @@ public class DictController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('dict:list')")
-    public PageResult<DictDto> queryDict(DictQueryCriteria resources, Page pageable) {
-        return dictService.queryAll(resources, pageable);
+    public PageResult<DictDto> queryDict(DictQueryCriteria resources) {
+        return dictService.queryAll(resources, resources.toPageRequest());
     }
 
     @Log("新增字典")

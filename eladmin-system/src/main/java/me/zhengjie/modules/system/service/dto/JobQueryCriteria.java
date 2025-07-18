@@ -3,7 +3,9 @@ package me.zhengjie.modules.system.service.dto;
 import java.sql.Timestamp;
 import java.util.List;
 
+import cn.valuetodays.quarkus.commons.base.PageIO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import me.zhengjie.annotation.Query;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -12,9 +14,10 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 * @author Zheng Jie
  * @since 2019-6-4 14:49:34
 */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class JobQueryCriteria {
+public class JobQueryCriteria extends PageIO {
 
     @Schema(description = "岗位名称")
     @Query(type = Query.Type.INNER_LIKE)

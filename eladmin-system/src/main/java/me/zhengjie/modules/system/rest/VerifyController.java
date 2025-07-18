@@ -1,5 +1,7 @@
 package me.zhengjie.modules.system.rest;
 
+import java.util.Objects;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -16,8 +18,6 @@ import me.zhengjie.utils.enums.CodeBiEnum;
 import me.zhengjie.utils.enums.CodeEnum;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import java.util.Objects;
 
 /**
  * @author Zheng Jie
@@ -56,7 +56,12 @@ public class VerifyController {
     @GET
     @Path(value = "/validated")
     @Operation(summary = "验证码验证")
-    public Object validated(/*@RequestParam*/ String email, /*@RequestParam*/ String code,  /*@RequestParam*/ Integer codeBi) {
+    public Object validated(/*@RequestParam*/ String email /*,@RequestParam String code,  @RequestParamInteger codeBi*/) {
+        // fixme: move to a request obj
+        /*@RequestParam*/
+        String code = "null";
+        /*@RequestParam*/
+        Integer codeBi = 111;
         CodeBiEnum biEnum = CodeBiEnum.find(codeBi);
         switch (Objects.requireNonNull(biEnum)){
             case ONE:

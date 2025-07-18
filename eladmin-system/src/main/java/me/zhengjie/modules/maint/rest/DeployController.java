@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import cn.vt.exception.AssertUtils;
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -58,8 +57,8 @@ public class DeployController {
 	@GET
     @Path("")
 	@PreAuthorize("@el.check('deploy:list')")
-    public PageResult<DeployDto> queryDeployData(DeployQueryCriteria criteria, Page pageable) {
-        return deployService.queryAll(criteria, pageable);
+    public PageResult<DeployDto> queryDeployData(DeployQueryCriteria criteria) {
+        return deployService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Log("新增部署")

@@ -3,7 +3,6 @@ package me.zhengjie.modules.maint.rest;
 import java.io.IOException;
 import java.util.Set;
 
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -52,8 +51,8 @@ public class AppController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('app:list')")
-    public PageResult<AppDto> queryApp(AppQueryCriteria criteria, Page pageable) {
-        return appService.queryAll(criteria, pageable);
+    public PageResult<AppDto> queryApp(AppQueryCriteria criteria) {
+        return appService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Log("新增应用")

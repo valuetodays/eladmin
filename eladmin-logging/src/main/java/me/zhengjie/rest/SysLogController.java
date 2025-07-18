@@ -1,7 +1,9 @@
 package me.zhengjie.rest;
 
+import java.io.File;
+import java.io.IOException;
+
 import cn.vt.auth.AuthUser;
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -21,9 +23,6 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Zheng Jie
@@ -67,28 +66,28 @@ public class SysLogController extends BaseController {
     @Path("")
     @Operation(summary = "日志查询")
     @PreAuthorize("@el.check()")
-    public Object queryLog(SysLogQueryCriteria criteria, Page pageable) {
+    public Object queryLog(SysLogQueryCriteria criteria) {
         criteria.setLogType("INFO");
-        return sysLogService.queryAll(criteria, pageable);
+        return sysLogService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @GET
     @Path(value = "/user")
     @Operation(summary = "用户日志查询")
-    public PageResult<SysLogSmallDto> queryUserLog(SysLogQueryCriteria criteria, Page pageable) {
+    public PageResult<SysLogSmallDto> queryUserLog(SysLogQueryCriteria criteria) {
         criteria.setLogType("INFO");
         AuthUser currentAccount = getCurrentAccount();
         criteria.setUsername(currentAccount.getEmail());
-        return sysLogService.queryAllByUser(criteria, pageable);
+        return sysLogService.queryAllByUser(criteria, criteria.toPageRequest());
     }
 
     @GET
     @Path(value = "/error")
     @Operation(summary = "错误日志查询")
     @PreAuthorize("@el.check()")
-    public Object queryErrorLog(SysLogQueryCriteria criteria, Page pageable) {
+    public Object queryErrorLog(SysLogQueryCriteria criteria) {
         criteria.setLogType("ERROR");
-        return sysLogService.queryAll(criteria, pageable);
+        return sysLogService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @GET

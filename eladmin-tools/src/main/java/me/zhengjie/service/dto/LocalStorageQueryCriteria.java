@@ -1,18 +1,21 @@
 package me.zhengjie.service.dto;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.sql.Timestamp;
 import java.util.List;
+
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @author Zheng Jie
  * @since 2019-09-05
 */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class LocalStorageQueryCriteria{
+public class LocalStorageQueryCriteria extends PageIO {
 
     @Schema(description = "模糊查询")
     @Query(blurry = "name,suffix,type,createBy,size")

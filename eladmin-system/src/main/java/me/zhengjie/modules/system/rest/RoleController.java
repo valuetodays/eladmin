@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.lang.Dict;
 import cn.vt.exception.CommonException;
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -79,8 +78,8 @@ public class RoleController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('roles:list')")
-    public PageResult<RoleDto> queryRole(RoleQueryCriteria criteria, Page pageable) {
-        return roleService.queryAll(criteria, pageable);
+    public PageResult<RoleDto> queryRole(RoleQueryCriteria criteria) {
+        return roleService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Operation(summary = "获取用户级别")

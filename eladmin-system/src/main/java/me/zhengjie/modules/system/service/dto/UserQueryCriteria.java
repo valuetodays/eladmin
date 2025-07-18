@@ -1,12 +1,13 @@
 package me.zhengjie.modules.system.service.dto;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import cn.valuetodays.quarkus.commons.base.PageIO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.zhengjie.annotation.Query;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -14,8 +15,9 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
  * @author Zheng Jie
  * @since 2018-11-23
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserQueryCriteria implements Serializable {
+public class UserQueryCriteria extends PageIO {
 
     @Query
     @Schema(description = "ID")

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -55,8 +54,8 @@ public class ServerDeployController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('serverDeploy:list')")
-    public PageResult<ServerDeployDto> queryServerDeploy(ServerDeployQueryCriteria criteria, Page pageable) {
-        return serverDeployService.queryAll(criteria, pageable);
+    public PageResult<ServerDeployDto> queryServerDeploy(ServerDeployQueryCriteria criteria) {
+        return serverDeployService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Log("新增服务器")

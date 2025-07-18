@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.vt.encrypt.BCryptUtils;
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -82,7 +81,7 @@ public class UserController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('user:list')")
-    public PageResult<UserDto> queryUser(UserQueryCriteria criteria, Page pageable) {
+    public PageResult<UserDto> queryUser(UserQueryCriteria criteria) {
         if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
             // 先查找是否存在子节点
@@ -97,12 +96,12 @@ public class UserController extends BaseController {
             // 取交集
             criteria.getDeptIds().retainAll(dataScopes);
             if(!CollectionUtil.isEmpty(criteria.getDeptIds())){
-                return userService.queryAll(criteria, pageable);
+                return userService.queryAll(criteria, criteria.toPageRequest());
             }
         } else {
             // 否则取并集
             criteria.getDeptIds().addAll(dataScopes);
-            return userService.queryAll(criteria, pageable);
+            return userService.queryAll(criteria, criteria.toPageRequest());
         }
         return PageUtil.noData();
     }

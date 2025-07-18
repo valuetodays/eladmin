@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import cn.vt.exception.AssertUtils;
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -59,8 +58,8 @@ public class DatabaseController extends BaseController {
 	@GET
     @Path("")
 	@PreAuthorize("@el.check('database:list')")
-    public PageResult<DatabaseDto> queryDatabase(DatabaseQueryCriteria criteria, Page pageable) {
-        return databaseService.queryAll(criteria, pageable);
+    public PageResult<DatabaseDto> queryDatabase(DatabaseQueryCriteria criteria) {
+        return databaseService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Log("新增数据库")

@@ -1,6 +1,9 @@
 package me.zhengjie.modules.system.rest;
 
-import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -23,10 +26,6 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -55,8 +54,8 @@ public class JobController extends BaseController {
     @Operation(summary = "查询岗位")
     @GET
     @PreAuthorize("@el.check('job:list','user:list')")
-    public PageResult<JobDto> queryJob(JobQueryCriteria criteria, Page pageable) {
-        return jobService.queryAll(criteria, pageable);
+    public PageResult<JobDto> queryJob(JobQueryCriteria criteria) {
+        return jobService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Log("新增岗位")

@@ -1,6 +1,8 @@
 package me.zhengjie.rest;
 
-import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -11,6 +13,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
@@ -22,9 +25,6 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
 * @author Zheng Jie
@@ -44,24 +44,25 @@ public class LocalStorageController extends BaseController {
     @Path("")
     @Operation(summary = "查询文件")
     @PreAuthorize("@el.check('storage:list')")
-    public PageResult<LocalStorageDto> queryFile(LocalStorageQueryCriteria criteria, Page pageable) {
-        return localStorageService.queryAll(criteria, pageable);
+    public PageResult<LocalStorageDto> queryFile(LocalStorageQueryCriteria criteria) {
+        return localStorageService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Operation(summary = "导出数据")
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('storage:list')")
-    public void exportFile(LocalStorageQueryCriteria criteria) throws IOException {
+    public Response exportFile(LocalStorageQueryCriteria criteria) throws IOException {
         File file = localStorageService.download(localStorageService.queryAll(criteria));
+        return super.download(file);
     }
 
     @POST
     @Path("")
     @Operation(summary = "上传文件")
     @PreAuthorize("@el.check('storage:add')")
-    public Object createFile(/*@RequestParam */String name, /*@RequestParam("file")*/ File file) {
-        localStorageService.create(name, file);
+    public Object createFile(/*@RequestParam */String name /*,@RequestParam("file") File file*/) {
+        localStorageService.create(name, null);
         return 1;
     }
 

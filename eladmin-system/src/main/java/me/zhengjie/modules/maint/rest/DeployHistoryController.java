@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -51,8 +50,8 @@ public class DeployHistoryController extends BaseController {
     @GET
     @Path("")
     @PreAuthorize("@el.check('deployHistory:list')")
-    public PageResult<DeployHistoryDto> queryDeployHistory(DeployHistoryQueryCriteria criteria, Page pageable) {
-        return deployhistoryService.queryAll(criteria, pageable);
+    public PageResult<DeployHistoryDto> queryDeployHistory(DeployHistoryQueryCriteria criteria) {
+        return deployhistoryService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Log("删除DeployHistory")

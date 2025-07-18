@@ -1,19 +1,22 @@
 package me.zhengjie.service.dto;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.sql.Timestamp;
 import java.util.List;
+
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * 日志查询类
  * @author Zheng Jie
  * @since 2019-6-4 09:23:07
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class SysLogQueryCriteria {
+public class SysLogQueryCriteria extends PageIO {
 
     @Schema(description = "模糊查询")
     @Query(blurry = "username,description,address,requestIp,method,params")
