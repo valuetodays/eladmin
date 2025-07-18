@@ -1,11 +1,11 @@
 package me.zhengjie.base;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author Zheng Jie
@@ -22,11 +22,11 @@ public class BaseDTO  implements Serializable {
 
     @Schema(description = "创建时间: yyyy-MM-dd HH:mm:ss", hidden = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Timestamp createTime;
+    private LocalDateTime createTime;
 
     @Schema(description = "更新时间: yyyy-MM-dd HH:mm:ss", hidden = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Timestamp updateTime;
+    private LocalDateTime updateTime;
 
 
 }

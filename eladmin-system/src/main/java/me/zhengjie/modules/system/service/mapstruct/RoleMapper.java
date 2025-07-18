@@ -1,5 +1,6 @@
 package me.zhengjie.modules.system.service.mapstruct;
 
+import me.zhengjie.MapStructMapperConfig;
 import me.zhengjie.base.BaseMapper;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.service.dto.RoleDto;
@@ -10,7 +11,7 @@ import org.mapstruct.ReportingPolicy;
  * @author Zheng Jie
  * @since 2018-11-23
  */
-@Mapper(componentModel = "cdi", uses = {MenuMapper.class, DeptMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "cdi", config = MapStructMapperConfig.class, uses = {MenuMapper.class, DeptMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RoleMapper extends BaseMapper<RoleDto, Role> {
 
 }

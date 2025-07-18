@@ -1,18 +1,5 @@
 package me.zhengjie.modules.system.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,6 +27,19 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -191,11 +191,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getLoginData(String userName) {
         User user = userRepository.findByUsername(userName);
-        if (user == null) {
-            return null;
-        } else {
-            return userMapper.toDto(user);
-        }
+        return userMapper.toDto(user);
     }
 
     @Override
