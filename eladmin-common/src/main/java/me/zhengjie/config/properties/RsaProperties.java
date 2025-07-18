@@ -1,6 +1,6 @@
 package me.zhengjie.config.properties;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Data;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -11,13 +11,10 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  * @since 2020-05-18
  **/
 @Data
+@ApplicationScoped
 public class RsaProperties {
 
-    public static String privateKey;
+    @ConfigProperty(name = "rsa.private-key")
+    private String privateKey;
 
-    @Inject
-    @ConfigProperty(name = "rsa.private_key")
-    public void setPrivateKey(String privateKey) {
-        RsaProperties.privateKey = privateKey;
-    }
 }

@@ -1,14 +1,14 @@
 package me.zhengjie.modules.system.repository;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Menu;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -83,5 +83,9 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 //    @Query(value = " update sys_menu set sub_count = ?1 where menu_id = ?2 ",nativeQuery = true)
     public void updateSubCntById(int count, Long menuId) {
         update("set subCount=?1 where menuId=?2", count, menuId);
+    }
+
+    public List<Menu> findByIdsAndTypeNotAndSortable(List<Long> menuIds, int i) {
+        return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), menuIds, i).list();
     }
 }

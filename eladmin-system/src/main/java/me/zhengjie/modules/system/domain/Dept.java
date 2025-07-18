@@ -1,12 +1,10 @@
 package me.zhengjie.modules.system.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +14,6 @@ import me.zhengjie.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -35,10 +32,10 @@ public class Dept extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JSONField(serialize = false)
-    @ManyToMany(mappedBy = "depts")
-    @Schema(description = "角色")
-    private Set<Role> roles;
+//    @JSONField(serialize = false)
+//    @ManyToMany(mappedBy = "depts")
+//    @Schema(description = "角色")
+//    private Set<Role> roles;
 
     @Schema(description = "排序")
     private Integer deptSort;

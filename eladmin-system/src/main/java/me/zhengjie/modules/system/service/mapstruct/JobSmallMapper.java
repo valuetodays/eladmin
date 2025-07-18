@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
 * @author Zheng Jie
  * @since 2019-03-29
 */
-@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface JobSmallMapper extends BaseMapper<JobSmallDto, Job> {
 
 }

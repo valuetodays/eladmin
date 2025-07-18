@@ -1,12 +1,12 @@
 package me.zhengjie.modules.system.repository;
 
-import java.util.List;
-import java.util.Set;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Role;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -26,14 +26,15 @@ public class RoleRepository extends MyPanacheRepository<Role> {
 
     /**
      * 根据用户ID查询
-     * @param id 用户ID
+     * @param userId 用户ID
      * @return /
+     * @see me.zhengjie.modules.system.service.UserAuthCompositeService
      */
 //    @Query(value = "SELECT r.* FROM sys_role r, sys_users_roles u WHERE " +
 //            "r.role_id = u.role_id AND u.user_id = ?1",nativeQuery = true)
-    public Set<Role> findByUserId(Long id) {
-        return null;
-    }
+//    public Set<Role> findByUserId(Long userId) {
+//        return null;
+//    }
 
     /**
      * 解绑角色菜单

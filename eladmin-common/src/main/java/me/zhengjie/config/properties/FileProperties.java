@@ -9,11 +9,9 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Getter
 public class FileProperties {
 
-    @Inject
     @ConfigProperty(name = "file.max-size")
     Long maxSize;
 
-    @Inject
     @ConfigProperty(name = "file.avatar-max-size")
     Long avatarMaxSize;
 
@@ -39,11 +37,9 @@ public class FileProperties {
     @ApplicationScoped
     public static class ElPathConfig {
 
-        @Inject
         @ConfigProperty(name = "file.mac.path", defaultValue = "")
         String path;
 
-        @Inject
         @ConfigProperty(name = "file.mac.avatar", defaultValue = "")
         String avatar;
 

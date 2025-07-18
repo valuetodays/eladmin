@@ -6,7 +6,7 @@ import org.mapstruct.MappingInheritanceStrategy;
 
 @MapperConfig(
     mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_ALL_FROM_CONFIG,
-    componentModel = MappingConstants.ComponentModel.CDI
+    componentModel = MappingConstants.ComponentModel.JAKARTA
 )
 public interface MapStructMapperConfig {
 }

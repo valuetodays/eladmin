@@ -18,6 +18,7 @@ import me.zhengjie.modules.system.repository.MenuRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.MenuService;
 import me.zhengjie.modules.system.service.RoleService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.MenuDto;
 import me.zhengjie.modules.system.service.dto.MenuQueryCriteria;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
@@ -35,7 +36,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,13 +59,15 @@ public class MenuServiceImpl implements MenuService {
     RoleService roleService;
     @Inject
     RedisUtils redisUtils;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
 
     private static final String HTTP_PRE = "http://";
     private static final String HTTPS_PRE = "https://";
     private static final String YES_STR = "是";
     private static final String NO_STR = "否";
     private static final String BAD_REQUEST = "外链必须以http://或者https://开头";
-    
+
     @Override
     public List<MenuDto> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception {
         Sort sort = Sort.ascending("menuSort");
@@ -114,7 +116,7 @@ public class MenuServiceImpl implements MenuService {
         if (CollUtil.isEmpty(menus)){
             List<RoleSmallDto> roles = roleService.findByUsersId(currentUserId);
             Set<Long> roleIds = roles.stream().map(RoleSmallDto::getId).collect(Collectors.toSet());
-            LinkedHashSet<Menu> data = menuRepository.findByRoleIdsAndTypeNot(roleIds, 2);
+            List<Menu> data = userAuthCompositeService.findMenusByRoleIdsAndTypeNot(roleIds, 2);
             menus = new ArrayList<>(data);
             redisUtils.set(key, menus, 1, TimeUnit.DAYS);
         }

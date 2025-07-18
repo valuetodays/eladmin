@@ -2,14 +2,9 @@ package me.zhengjie.modules.system.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +15,6 @@ import me.zhengjie.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.Date;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -39,24 +33,8 @@ public class User extends BaseEntity {
     @Schema(description = "ID", hidden = true)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Schema(description = "用户角色")
-    @JoinTable(name = "sys_users_roles",
-            joinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "role_id")})
-    private Set<Role> roles;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Schema(description = "用户岗位")
-    @JoinTable(name = "sys_users_jobs",
-            joinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "job_id",referencedColumnName = "job_id")})
-    private Set<Job> jobs;
-
-    @OneToOne
-    @JoinColumn(name = "dept_id")
-    @Schema(description = "用户部门")
-    private Dept dept;
+    @Column(name = "dept_id")
+    private Long deptId;
 
     @NotBlank
     @Column(unique = true)

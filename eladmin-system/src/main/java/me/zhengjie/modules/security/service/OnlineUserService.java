@@ -1,5 +1,22 @@
 package me.zhengjie.modules.security.service;
 
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.modules.security.security.TokenProvider;
+import me.zhengjie.modules.security.service.dto.JwtUserDto;
+import me.zhengjie.modules.security.service.dto.OnlineUserDto;
+import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
+import me.zhengjie.utils.EncryptUtils;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,21 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import io.quarkus.panache.common.Page;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.security.security.TokenProvider;
-import me.zhengjie.modules.security.service.dto.JwtUserDto;
-import me.zhengjie.modules.security.service.dto.OnlineUserDto;
-import me.zhengjie.utils.EncryptUtils;
-import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
 
 /**
  * @author Zheng Jie
@@ -40,21 +42,20 @@ public class OnlineUserService {
     TokenProvider tokenProvider;
     @Inject
     RedisUtils redisUtils;
-
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
     /**
      * 保存在线用户信息
      * @param jwtUserDto /
      * @param token /
      */
-    public void save(JwtUserDto jwtUserDto, String token) {
-        String dept = jwtUserDto.getUser().getDept().getName();
-        // fixme:
-        String ip = "fixme";
-//        String ip = StringUtils.getIp(request);
+    public void save(JwtUserDto jwtUserDto, String token, String ua, String ip) {
+        Long deptId = jwtUserDto.getUser().getDeptId();
+        Dept deptObj = userAuthCompositeService.findDeptById(deptId);
+        String dept = deptObj.getName();
         String id = tokenProvider.getId(token);
-        String browser = "fixme";
-//        String browser = StringUtils.getBrowser(request.getHeader("User-Agent"));
-        String address = StringUtils.getCityInfo(ip);
+        String browser = StringUtils.getBrowser(ua);
+        String address = "none";// fixme StringUtils.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
             onlineUserDto = new OnlineUserDto(id, jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), dept, browser , ip, address, EncryptUtils.desEncrypt(token), new Date());

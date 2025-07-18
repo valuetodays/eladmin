@@ -1,18 +1,5 @@
 package me.zhengjie.modules.system.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -38,6 +25,19 @@ import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.enums.DataScopeEnum;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
 * @author Zheng Jie
@@ -109,10 +109,6 @@ public class DeptServiceImpl implements DeptService {
         return deptRepository.findByPid(pid);
     }
 
-    @Override
-    public Set<Dept> findByRoleId(Long id) {
-        return deptRepository.findByRoleId(id);
-    }
 
     @Override
     @Transactional(rollbackOn = Exception.class)

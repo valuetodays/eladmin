@@ -11,7 +11,7 @@ import org.mapstruct.ReportingPolicy;
  * @website https://eladmin.vip
  * @since 2025-07-11
  **/
-@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface VtServerMapper extends BaseMapper<VtServerDto, VtServer> {
 
 }

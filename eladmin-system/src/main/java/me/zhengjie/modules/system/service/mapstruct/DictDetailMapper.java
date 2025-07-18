@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
 * @author Zheng Jie
  * @since 2019-04-10
 */
-@Mapper(componentModel = "cdi", uses = {DictSmallMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", uses = {DictSmallMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DictDetailMapper extends BaseMapper<DictDetailDto, DictDetail> {
 
 }

@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
 * @author zhanghouying
  * @since 2019-08-24
 */
-@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DatabaseMapper extends BaseMapper<DatabaseDto, Database> {
 
 }

@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
  * @author Zheng Jie
  * @since 2019-5-22
  */
-@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LogErrorMapper extends BaseMapper<SysLogErrorDto, SysLog> {
 
 }

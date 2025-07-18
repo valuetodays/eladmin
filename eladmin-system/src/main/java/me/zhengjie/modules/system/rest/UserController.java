@@ -1,12 +1,5 @@
 package me.zhengjie.modules.system.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.collection.CollectionUtil;
 import cn.vt.encrypt.BCryptUtils;
 import jakarta.inject.Inject;
@@ -26,8 +19,11 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.config.properties.RsaProperties;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.User;
+import me.zhengjie.modules.system.domain.UsersRole;
 import me.zhengjie.modules.system.domain.vo.UserPassVo;
+import me.zhengjie.modules.system.repository.UsersRoleRepository;
 import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.RoleService;
@@ -46,6 +42,13 @@ import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -68,6 +71,10 @@ public class UserController extends BaseController {
     RoleService roleService;
     @Inject
     VerifyService verificationCodeService;
+    @Inject
+    RsaProperties rsaProperties;
+    @Inject
+    UsersRoleRepository usersRoleRepository;
 
     @Operation(summary = "导出用户数据")
     @GET
@@ -163,8 +170,8 @@ public class UserController extends BaseController {
     @POST
     @Path(value = "/updatePass")
     public Object updateUserPass(UserPassVo passVo) throws Exception {
-        String oldPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
-        String newPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
+        String oldPass = RsaUtils.decryptByPrivateKey(rsaProperties.getPrivateKey(), passVo.getOldPass());
+        String newPass = RsaUtils.decryptByPrivateKey(rsaProperties.getPrivateKey(), passVo.getNewPass());
         UserDto user = userService.findByName(getCurrentAccount().getEmail());
         if (!BCryptUtils.checkpw(oldPass, user.getPassword())) {
             throw new BadRequestException("修改失败，旧密码错误");
@@ -199,7 +206,7 @@ public class UserController extends BaseController {
     @POST
     @Path(value = "/updateEmail/{code}")
     public Object updateUserEmail(@PathParam("code") String code, User user) throws Exception {
-        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,user.getPassword());
+        String password = RsaUtils.decryptByPrivateKey(rsaProperties.getPrivateKey(), user.getPassword());
         UserDto userDto = userService.findByName(getCurrentAccount().getEmail());
         if (!BCryptUtils.checkpw(password, userDto.getPassword())) {
             throw new BadRequestException("密码错误");
@@ -215,7 +222,13 @@ public class UserController extends BaseController {
      */
     private void checkLevel(User resources) {
         Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-        Integer optLevel = roleService.findByRoles(resources.getRoles());
+        List<UsersRole> usersRoles = usersRoleRepository.findByUserId(resources.getId());
+        Set<Role> roles = usersRoles.stream().map(e -> {
+            Role role = new Role();
+            role.setId(e.getRoleId());
+            return role;
+        }).collect(Collectors.toSet());
+        Integer optLevel = roleService.findByRoles(roles);
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");
         }

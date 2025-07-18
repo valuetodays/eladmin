@@ -1,12 +1,11 @@
 package me.zhengjie.modules.system.repository;
 
-import java.util.List;
-import java.util.Set;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Dept;
+
+import java.util.List;
 
 /**
 * @author Zheng Jie
@@ -38,9 +37,9 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
      */
 //    @Query(value = "select d.* from sys_dept d, sys_roles_depts r where " +
 //            "d.dept_id = r.dept_id and r.role_id = ?1", nativeQuery = true)
-    public Set<Dept> findByRoleId(Long roleId) {
-        return null;
-    }
+//    public Set<Dept> findByRoleId(Long roleId) {
+//        return null;
+//    }
 
     /**
      * 判断是否存在子节点

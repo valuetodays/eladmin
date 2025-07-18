@@ -18,6 +18,7 @@ import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.repository.RoleRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.RoleService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.RoleDto;
 import me.zhengjie.modules.system.service.dto.RoleQueryCriteria;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
@@ -62,6 +63,8 @@ public class RoleServiceImpl implements RoleService {
     UserRepository userRepository;
     @Inject
     UserCacheManager userCacheManager;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
 
     @Override
     public List<RoleDto> queryAll() {
@@ -121,7 +124,7 @@ public class RoleServiceImpl implements RoleService {
         role.setName(resources.getName());
         role.setDescription(resources.getDescription());
         role.setDataScope(resources.getDataScope());
-        role.setDepts(resources.getDepts());
+// fixme        role.setDepts(resources.getDepts());
         role.setLevel(resources.getLevel());
         roleRepository.save(role);
         // 更新相关缓存
@@ -133,7 +136,7 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleMapper.toEntity(roleDTO);
         List<User> users = userRepository.findByRoleId(role.getId());
         // 更新菜单
-        role.setMenus(resources.getMenus());
+// fixme        role.setMenus(resources.getMenus());
         delCaches(resources.getId(), users);
         roleRepository.save(role);
     }
@@ -160,7 +163,8 @@ public class RoleServiceImpl implements RoleService {
         String key = CacheKey.ROLE_USER + userId;
         List<RoleSmallDto> roles = redisUtils.getList(key, RoleSmallDto.class);
         if (CollUtil.isEmpty(roles)) {
-            roles = roleSmallMapper.toDto(new ArrayList<>(roleRepository.findByUserId(userId)));
+            List<Role> rolesByUserId = userAuthCompositeService.findRolesByUserId(userId);
+            roles = roleSmallMapper.toDto(new ArrayList<>(rolesByUserId));
             redisUtils.set(key, roles, 1, TimeUnit.DAYS);
         }
         return roles;
@@ -175,7 +179,7 @@ public class RoleServiceImpl implements RoleService {
         for (Role role : roles) {
             roleDtos.add(findById(role.getId()));
         }
-        return Collections.min(roleDtos.stream().map(RoleDto::getLevel).collect(Collectors.toList()));
+        return Collections.min(roleDtos.stream().map(RoleDto::getLevel).toList());
     }
 
     @Override
@@ -190,12 +194,16 @@ public class RoleServiceImpl implements RoleService {
                 return permissions.stream().map(AuthorityDto::new)
                         .collect(Collectors.toList());
             }
-            Set<Role> roles = roleRepository.findByUserId(user.getId());
-            permissions = roles.stream().flatMap(role -> role.getMenus().stream())
-                    .map(Menu::getPermission)
-                    .filter(StringUtils::isNotBlank).collect(Collectors.toSet());
-            authorityDtos = permissions.stream().map(AuthorityDto::new)
-                    .collect(Collectors.toList());
+            List<Role> roles = userAuthCompositeService.findRolesByUserId(user.getId());
+            final List<Long> roleIds = roles.stream().map(Role::getId).toList();
+            List<Menu> menus = userAuthCompositeService.findMenusByRoleIds(roleIds);
+            permissions = menus.stream()
+                .map(Menu::getPermission)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toSet());
+            authorityDtos = permissions.stream()
+                .map(AuthorityDto::new)
+                .collect(Collectors.toList());
             redisUtils.set(key, authorityDtos, 1, TimeUnit.HOURS);
         }
         return authorityDtos;

@@ -7,7 +7,7 @@ import me.zhengjie.modules.system.service.dto.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "cdi",
+@Mapper(componentModel = "jakarta",
     config = MapStructMapperConfig.class,
     uses = {RoleMapper.class, DeptMapper.class, JobMapper.class},
     unmappedTargetPolicy = ReportingPolicy.IGNORE)

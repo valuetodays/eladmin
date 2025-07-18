@@ -11,6 +11,6 @@ import org.mapstruct.ReportingPolicy;
  * @author Zheng Jie
  * @since 2018-12-17
  */
-@Mapper(componentModel = "cdi", config = MapStructMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", config = MapStructMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MenuMapper extends BaseMapper<MenuDto, Menu> {
 }

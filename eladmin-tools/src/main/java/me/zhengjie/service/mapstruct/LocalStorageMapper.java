@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
 * @author Zheng Jie
  * @since 2019-09-05
 */
-@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LocalStorageMapper extends BaseMapper<LocalStorageDto, LocalStorage> {
 
 }

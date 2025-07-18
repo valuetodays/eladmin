@@ -58,13 +58,6 @@ public interface DeptService {
     List<Dept> findByPid(long pid);
 
     /**
-     * 根据角色ID查询
-     * @param id /
-     * @return /
-     */
-    Set<Dept> findByRoleId(Long id);
-
-    /**
      * 导出数据
      * @param queryAll 待导出的数据
      * @throws IOException /

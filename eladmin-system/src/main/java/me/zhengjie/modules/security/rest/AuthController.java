@@ -11,11 +11,14 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
+import me.zhengjie.config.properties.RsaProperties;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.config.CaptchaFactory;
 import me.zhengjie.modules.security.config.LoginProperties;
@@ -26,6 +29,7 @@ import me.zhengjie.modules.security.service.UserDetailsServiceImpl;
 import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.RsaUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
@@ -59,6 +63,10 @@ public class AuthController extends BaseController {
     CaptchaFactory captchaFactory;
     @Inject
     UserDetailsServiceImpl userDetailsService;
+    @Inject
+    RsaProperties rsaProperties;
+    @Context
+    HttpHeaders headers;
 
     @Log("用户登录")
     @Operation(summary = "用户登录")
@@ -66,8 +74,8 @@ public class AuthController extends BaseController {
     @POST
     public Object login(@Valid AuthUserDto authUser) throws Exception {
         // 密码解密
-//        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
-        String password = authUser.getPassword();
+        String password = RsaUtils.decryptByPrivateKey(rsaProperties.getPrivateKey(), authUser.getPassword());
+//        String password = authUser.getPassword();
 //        // 查询验证码
 //        String code = redisUtils.get(authUser.getUuid(), String.class);
 //        // 清除验证码
@@ -85,9 +93,14 @@ public class AuthController extends BaseController {
             throw new BadRequestException("登录密码错误");
         }
         // fixme:
-        putLoginAccount(null);
         // 生成令牌
         String token = tokenProvider.createToken(jwtUser);
+        AuthUser authUserToPut = new AuthUser();
+        authUserToPut.setUserId(jwtUser.getUser().getId().toString());
+        authUserToPut.setEmail(jwtUser.getUser().getUsername());
+        authUserToPut.setExtra(new HashMap<>(2));
+        authUserToPut.setLoginToken(token);
+        putLoginAccount(authUserToPut);
         // 返回 token 与 用户信息
         Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
             put("token", token);
@@ -98,7 +111,7 @@ public class AuthController extends BaseController {
             onlineUserService.kickOutForUsername(authUser.getUsername());
         }
         // 保存在线信息
-        onlineUserService.save(jwtUser, token);
+        onlineUserService.save(jwtUser, token, headers.getHeaderString("User-Agent"), getIp());
         // 返回登录信息
         return authInfo;
     }

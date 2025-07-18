@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
 * @author vt
 * @since 2025-07-14 22:15
 **/
-@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NationCodeMapper extends BaseMapper<NationCodeDto, NationCode> {
 
 }

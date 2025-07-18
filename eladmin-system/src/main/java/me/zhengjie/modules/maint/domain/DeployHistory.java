@@ -1,8 +1,5 @@
 package me.zhengjie.modules.maint.domain;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import jakarta.persistence.Column;
@@ -13,6 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.CreationTimestamp;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
 * @author zhanghouying
@@ -27,7 +27,7 @@ public class DeployHistory implements Serializable {
     @Id
     @Column(name = "history_id")
     @Schema(description = "ID", hidden = true)
-    private String id;
+    private Long id;
 
     @Schema(description = "应用名称")
     private String appName;

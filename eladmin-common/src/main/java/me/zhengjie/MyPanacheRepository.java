@@ -3,6 +3,7 @@ package me.zhengjie;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.transaction.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -24,15 +25,15 @@ public class MyPanacheRepository<Entity> implements PanacheRepository<Entity> {
         return delete(" where id in ?1", ids);
     }
 
-    public List<Entity> findAllById(Set<Long> ids) {
+    public List<Entity> findAllById(Collection<Long> ids) {
         return find("id in ?1", ids).list();
     }
 
-    public List<Entity> findAllByIds(Set<Long> ids) {
+    public List<Entity> findAllByIds(Collection<Long> ids) {
         return findAllById(ids);
     }
 
-    public List<Entity> findByIds(Set<Long> ids) {
+    public List<Entity> findByIds(Collection<Long> ids) {
         return findAllById(ids);
     }
 }

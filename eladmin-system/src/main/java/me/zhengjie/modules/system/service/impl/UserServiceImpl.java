@@ -123,14 +123,15 @@ public class UserServiceImpl implements UserService {
             throw new EntityExistException(User.class, "phone", resources.getPhone());
         }
         // 如果用户的角色改变
-        if (!resources.getRoles().equals(user.getRoles())) {
-            redisUtils.del(CacheKey.DATA_USER + resources.getId());
-            redisUtils.del(CacheKey.MENU_USER + resources.getId());
-            redisUtils.del(CacheKey.ROLE_AUTH + resources.getId());
-            redisUtils.del(CacheKey.ROLE_USER + resources.getId());
-        }
+        // fixme
+//        if (!resources.getRoles().equals(user.getRoles())) {
+//            redisUtils.del(CacheKey.DATA_USER + resources.getId());
+//            redisUtils.del(CacheKey.MENU_USER + resources.getId());
+//            redisUtils.del(CacheKey.ROLE_AUTH + resources.getId());
+//            redisUtils.del(CacheKey.ROLE_USER + resources.getId());
+//        }
         // 修改部门会影响 数据权限
-        if (!Objects.equals(resources.getDept(),user.getDept())) {
+        if (!Objects.equals(resources.getDeptId(), user.getDeptId())) {
             redisUtils.del(CacheKey.DATA_USER + resources.getId());
         }
         // 如果用户被禁用，则清除用户登录信息
@@ -140,13 +141,13 @@ public class UserServiceImpl implements UserService {
         user.setUsername(resources.getUsername());
         user.setEmail(resources.getEmail());
         user.setEnabled(resources.getEnabled());
-        user.setRoles(resources.getRoles());
-        user.setDept(resources.getDept());
-        user.setJobs(resources.getJobs());
         user.setPhone(resources.getPhone());
         user.setNickName(resources.getNickName());
         user.setGender(resources.getGender());
         userRepository.save(user);
+
+        // fixme 更新roles
+        // fixme 更新jobs
         // 清除缓存
         delCaches(user.getId(), user.getUsername());
     }

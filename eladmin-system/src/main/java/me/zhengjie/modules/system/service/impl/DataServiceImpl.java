@@ -8,6 +8,7 @@ import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.RoleService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.utils.CacheKey;
@@ -36,6 +37,8 @@ public class DataServiceImpl implements DataService {
     RoleService roleService;
     @Inject
     DeptService deptService;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
 
     /**
      * 用户角色和用户部门改变时需清理缓存
@@ -56,7 +59,7 @@ public class DataServiceImpl implements DataService {
                 DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
                 switch (Objects.requireNonNull(dataScopeEnum)) {
                     case THIS_LEVEL:
-                        deptIds.add(user.getDept().getId());
+                        deptIds.add(user.getDeptId());
                         break;
                     case CUSTOMIZE:
                         deptIds.addAll(getCustomize(deptIds, role));
@@ -78,7 +81,7 @@ public class DataServiceImpl implements DataService {
      * @return 数据权限ID
      */
     public Set<Long> getCustomize(Set<Long> deptIds, RoleSmallDto role){
-        Set<Dept> depts = deptService.findByRoleId(role.getId());
+        List<Dept> depts = userAuthCompositeService.findDeptsByRoleIds(List.of(role.getId()));
         for (Dept dept : depts) {
             deptIds.add(dept.getId());
             List<Dept> deptChildren = deptService.findByPid(dept.getId());
