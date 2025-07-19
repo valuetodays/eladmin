@@ -1,8 +1,5 @@
 package me.zhengjie.modules.maint.rest;
 
-import java.io.IOException;
-import java.util.Set;
-
 import cn.vt.exception.AssertUtils;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -10,7 +7,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -27,6 +23,9 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -64,7 +63,7 @@ public class DeployController {
     @Log("新增部署")
 	@Operation(summary = "新增部署")
 	@POST
-	@Path("")
+    @Path("add")
 	@PreAuthorize("@el.check('deploy:add')")
 	public Object createDeploy(@Valid Deploy resources) {
 		deployService.create(resources);
@@ -73,8 +72,8 @@ public class DeployController {
 
     @Log("修改部署")
 	@Operation(summary = "修改部署")
-	@PUT
-	@Path("")
+    @POST
+    @Path("edit")
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object updateDeploy(@Valid Deploy resources) {
         deployService.update(resources);

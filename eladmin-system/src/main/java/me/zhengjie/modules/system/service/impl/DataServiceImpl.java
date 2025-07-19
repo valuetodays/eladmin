@@ -5,12 +5,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
-import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.enums.DataScopeEnum;
@@ -46,7 +46,7 @@ public class DataServiceImpl implements DataService {
      * @return /
      */
     @Override
-    public List<Long> getDeptIds(UserDto user) {
+    public List<Long> getDeptIds(User user) {
         String key = CacheKey.DATA_USER + user.getId();
         List<Long> ids = redisUtils.getList(key, Long.class);
         if (CollUtil.isEmpty(ids)) {

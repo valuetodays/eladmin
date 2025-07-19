@@ -5,7 +5,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -73,7 +72,7 @@ public class GeneratorController extends BaseController {
     }
 
     @Operation(summary = "保存字段数据")
-    @PUT
+    @POST
     @Path("")
     public Object saveColumn(List<ColumnInfo> columnInfos) {
         generatorService.save(columnInfos);

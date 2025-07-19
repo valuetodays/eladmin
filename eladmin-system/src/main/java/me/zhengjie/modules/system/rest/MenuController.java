@@ -4,10 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -94,7 +92,7 @@ public class MenuController extends BaseController {
     }
 
     @GET
-    @Path("")
+    @Path("/query")
     @Operation(summary = "查询菜单")
     @PreAuthorize("@el.check('menu:list')")
     public PageResult<MenuDto> queryMenu(MenuQueryCriteria criteria) throws Exception {
@@ -129,7 +127,7 @@ public class MenuController extends BaseController {
     @Log("新增菜单")
     @Operation(summary = "新增菜单")
     @POST
-    @Path("")
+    @Path("/add")
     @PreAuthorize("@el.check('menu:add')")
     public Object createMenu(@Valid Menu resources) {
         if (resources.getId() != null) {
@@ -141,8 +139,8 @@ public class MenuController extends BaseController {
 
     @Log("修改菜单")
     @Operation(summary = "修改菜单")
-    @PUT
-    @Path("")
+    @POST
+    @Path("/edit")
     @PreAuthorize("@el.check('menu:edit')")
     public Object updateMenu(/*@Validated(Menu.Update.class) */Menu resources) {
         menuService.update(resources);
@@ -151,8 +149,8 @@ public class MenuController extends BaseController {
 
     @Log("删除菜单")
     @Operation(summary = "删除菜单")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('menu:del')")
     public Object deleteMenu(Set<Long> ids) {
         Set<Menu> menuSet = new HashSet<>();

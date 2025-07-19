@@ -12,13 +12,16 @@ import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.exception.EntityNotFoundException;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.UserCacheManager;
+import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.repository.UserRepository;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.modules.system.service.dto.JobSmallDto;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
+import me.zhengjie.modules.system.service.mapstruct.DeptSmallMapper;
 import me.zhengjie.modules.system.service.mapstruct.UserMapper;
 import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
@@ -27,6 +30,7 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +58,8 @@ public class UserServiceImpl implements UserService {
     @Inject
     UserMapper userMapper;
     @Inject
+    DeptSmallMapper deptSmallMapper;
+    @Inject
     FileProperties properties;
     @Inject
     RedisUtils redisUtils;
@@ -61,17 +67,29 @@ public class UserServiceImpl implements UserService {
     UserCacheManager userCacheManager;
     @Inject
     OnlineUserService onlineUserService;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
 
     @Override
-    public PageResult<UserDto> queryAll(UserQueryCriteria criteria, Page pageable) {
+    public PageResult<UserDto> queryWithDetail(UserQueryCriteria criteria, Page pageable) {
         //   fixme:条件查询     Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
         PanacheQuery<User> all = userRepository.findAll().page(pageable);
         List<UserDto> list = userMapper.toDto(all.list());
+        fillDept(list);
         return PageUtil.toPage(list, all.count());
     }
 
+    private void fillDept(List<UserDto> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        List<Long> deptIds = list.stream().map(UserDto::getDeptId).distinct().toList();
+        Map<Long, Dept> deptsMap = userAuthCompositeService.findDeptsMapByIds(deptIds);
+        list.forEach(e -> e.setDept(deptSmallMapper.toDto(deptsMap.get(e.getDeptId()))));
+    }
+
     @Override
-    public List<UserDto> queryAll(UserQueryCriteria criteria) {
+    public List<UserDto> queryWithDetail(UserQueryCriteria criteria) {
         //   fixme:条件查询        List<User> users = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
         List<User> users = userRepository.findAll().list();
         return userMapper.toDto(users);

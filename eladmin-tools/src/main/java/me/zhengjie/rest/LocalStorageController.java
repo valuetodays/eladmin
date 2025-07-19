@@ -1,15 +1,10 @@
 package me.zhengjie.rest;
 
-import java.io.File;
-import java.io.IOException;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -25,6 +20,9 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
 * @author Zheng Jie
@@ -79,7 +77,7 @@ public class LocalStorageController extends BaseController {
         return localStorage;
     }
 
-    @PUT
+    @POST
     @Path("")
     @Log("修改文件")
     @Operation(summary = "修改文件")
@@ -90,8 +88,8 @@ public class LocalStorageController extends BaseController {
     }
 
     @Log("删除文件")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @Operation(summary = "多选删除")
     public Object deleteFile(Long[] ids) {
         localStorageService.deleteAll(ids);

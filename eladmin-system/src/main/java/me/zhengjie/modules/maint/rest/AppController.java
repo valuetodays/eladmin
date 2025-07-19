@@ -1,15 +1,10 @@
 package me.zhengjie.modules.maint.rest;
 
-import java.io.IOException;
-import java.util.Set;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -24,6 +19,9 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -58,7 +56,7 @@ public class AppController extends BaseController {
     @Log("新增应用")
     @Operation(summary = "新增应用")
     @POST
-    @Path("")
+    @Path("add")
     @PreAuthorize("@el.check('app:add')")
     public Object createApp(@Valid App resources) {
         appService.create(resources);
@@ -67,8 +65,8 @@ public class AppController extends BaseController {
 
     @Log("修改应用")
     @Operation(summary = "修改应用")
-    @PUT
-    @Path("")
+    @POST
+    @Path("edit")
     @PreAuthorize("@el.check('app:edit')")
     public Object updateApp(@Valid App resources) {
         appService.update(resources);
@@ -77,8 +75,8 @@ public class AppController extends BaseController {
 
     @Log("删除应用")
     @Operation(summary = "删除应用")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('app:del')")
     public Object deleteApp(Set<Long> ids) {
         appService.delete(ids);

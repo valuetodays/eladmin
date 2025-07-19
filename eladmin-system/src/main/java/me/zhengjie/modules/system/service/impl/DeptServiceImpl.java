@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.User;
@@ -15,6 +16,7 @@ import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.repository.RoleRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.DeptService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.DeptMapper;
@@ -22,6 +24,7 @@ import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.enums.DataScopeEnum;
@@ -57,12 +60,16 @@ public class DeptServiceImpl implements DeptService {
     RedisUtils redisUtils;
     @Inject
     RoleRepository roleRepository;
+    @Inject
+    SecurityUtils securityUtils;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
 
+    @SneakyThrows
     @Override
-    public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception {
+    public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery, List<Long> dataScopes) {
         Sort sort = Sort.ascending("deptSort");
-        String dataScopeType = null;
-//        String dataScopeType = SecurityUtils.getDataScopeType();
+        String dataScopeType = securityUtils.getDataScopeType();
         if (isQuery) {
             if(dataScopeType.equals(DataScopeEnum.ALL.getValue())){
                 criteria.setPidIsNull(true);

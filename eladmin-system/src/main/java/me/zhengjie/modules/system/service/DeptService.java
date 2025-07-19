@@ -22,7 +22,7 @@ public interface DeptService {
      * @throws Exception /
      * @return /
      */
-    List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception;
+    List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery, List<Long> dataScopes);
 
     /**
      * 根据ID查询

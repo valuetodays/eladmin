@@ -71,7 +71,7 @@ public class NationCodeController {
         return 1;
     }
 
-    @PUT
+    @POST
     @Path("")
     @Log("修改国家编码")
     @Operation(summary = "修改国家编码")
@@ -81,8 +81,8 @@ public class NationCodeController {
         return 1;
     }
 
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @Log("删除国家编码")
     @Operation(summary = "删除国家编码")
     @PreAuthorize("@el.check('nationCode:del')")

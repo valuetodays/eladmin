@@ -1,13 +1,9 @@
 package me.zhengjie.modules.maint.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -22,6 +18,10 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -56,8 +56,8 @@ public class DeployHistoryController extends BaseController {
 
     @Log("删除DeployHistory")
     @Operation(summary = "删除部署历史")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('deployHistory:del')")
     public Object deleteDeployHistory(Set<Long> ids) {
         deployhistoryService.delete(ids);

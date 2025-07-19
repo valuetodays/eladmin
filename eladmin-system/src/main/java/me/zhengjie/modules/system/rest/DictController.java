@@ -1,17 +1,10 @@
 package me.zhengjie.modules.system.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -28,6 +21,11 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -75,7 +73,7 @@ public class DictController extends BaseController {
     @Log("新增字典")
     @Operation(summary = "新增字典")
     @POST
-    @Path("")
+    @Path("add")
     @PreAuthorize("@el.check('dict:add')")
     public Object createDict(@Valid Dict resources) {
         if (resources.getId() != null) {
@@ -87,8 +85,8 @@ public class DictController extends BaseController {
 
     @Log("修改字典")
     @Operation(summary = "修改字典")
-    @PUT
-    @Path("")
+    @POST
+    @Path("edit")
     @PreAuthorize("@el.check('dict:edit')")
     public Object updateDict(/*@Validated(Dict.Update.class)  */Dict resources) {
         dictService.update(resources);
@@ -97,8 +95,8 @@ public class DictController extends BaseController {
 
     @Log("删除字典")
     @Operation(summary = "删除字典")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('dict:del')")
     public Object deleteDict(Set<Long> ids) {
         dictService.delete(ids);

@@ -24,7 +24,6 @@ public class SecurityUtils extends BaseAuthorizationController {
     @Context
     HttpHeaders headers;
 
-
     public static String header;
 
     public static String tokenStartWith;

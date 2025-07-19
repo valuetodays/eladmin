@@ -57,7 +57,7 @@ public Object create${className}(@Valid  ${className} resources){
 return 1;
     }
 
-@PUT
+@POST
 @Path("")
     @Log("修改${apiAlias}")
 @Operation(summary = "修改${apiAlias}")

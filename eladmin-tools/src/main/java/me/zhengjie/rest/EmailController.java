@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -39,7 +38,7 @@ public class EmailController {
     }
 
     @Log("配置邮件")
-    @PUT
+    @POST
     @Path("")
     @Operation(summary = "配置邮件")
     public Object updateEmailConfig(@Valid EmailConfig emailConfig) throws Exception {

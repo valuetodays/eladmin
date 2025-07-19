@@ -7,7 +7,6 @@ import com.wf.captcha.base.Captcha;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -30,6 +29,7 @@ import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.RsaUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
@@ -75,22 +75,21 @@ public class AuthController extends BaseController {
     public Object login(@Valid AuthUserDto authUser) throws Exception {
         // 密码解密
         String password = RsaUtils.decryptByPrivateKey(rsaProperties.getPrivateKey(), authUser.getPassword());
-//        String password = authUser.getPassword();
-//        // 查询验证码
-//        String code = redisUtils.get(authUser.getUuid(), String.class);
-//        // 清除验证码
-//        redisUtils.del(authUser.getUuid());
-//        if (StringUtils.isBlank(code)) {
-//            throw new BadRequestException("验证码不存在或已过期");
-//        }
-//        if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-//            throw new BadRequestException("验证码错误");
-//        }
+        // 查询验证码
+        String code = redisUtils.get(authUser.getUuid(), String.class);
+        // 清除验证码
+        redisUtils.del(authUser.getUuid());
+        if (StringUtils.isBlank(code)) {
+            throw new BadRequestException("验证码不存在或已过期");
+        }
+        if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
+            throw new BadRequestException("验证码错误");
+        }
         // 获取用户信息
         JwtUserDto jwtUser = userDetailsService.loadUserByUsername(authUser.getUsername());
         // 验证用户密码
         if (!BCryptUtils.checkpw(password, jwtUser.getPassword())) {
-            throw new BadRequestException("登录密码错误");
+            throw new BadRequestException("账号或密码错误");
         }
         // fixme:
         // 生成令牌
@@ -117,11 +116,13 @@ public class AuthController extends BaseController {
     }
 
     @Operation(summary = "获取用户信息")
-    @GET
+    @POST
     @Path(value = "/info")
-    public AuthUser getUserInfo() {
+    public JwtUserDto getUserInfo() {
         AuthUser currentAccount = getCurrentAccount();
-        return currentAccount;
+        String username = currentAccount.getEmail();
+        JwtUserDto jwtUser = userDetailsService.loadUserByUsername(username);
+        return jwtUser;
     }
 
     @Operation(summary = "获取验证码")

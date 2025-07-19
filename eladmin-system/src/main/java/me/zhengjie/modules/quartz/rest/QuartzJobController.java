@@ -1,16 +1,10 @@
 package me.zhengjie.modules.quartz.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -29,6 +23,10 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -85,7 +83,7 @@ public class QuartzJobController extends BaseController {
     @Log("新增定时任务")
     @Operation(summary = "新增定时任务")
     @POST
-    @Path("")
+    @Path("/add")
     @PreAuthorize("@el.check('timing:add')")
     public Object createQuartzJob(@Valid QuartzJob resources) {
         if (resources.getId() != null) {
@@ -99,8 +97,8 @@ public class QuartzJobController extends BaseController {
 
     @Log("修改定时任务")
     @Operation(summary = "修改定时任务")
-    @PUT
-    @Path("")
+    @POST
+    @Path("/edit")
     @PreAuthorize("@el.check('timing:edit')")
     public Object updateQuartzJob(/*@Validated(QuartzJob.Update.class)*/ QuartzJob resources) {
         // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @ApplicationScoped 定义
@@ -111,7 +109,7 @@ public class QuartzJobController extends BaseController {
 
     @Log("更改定时任务状态")
     @Operation(summary = "更改定时任务状态")
-    @PUT
+    @POST
     @Path("/{id}")
     @PreAuthorize("@el.check('timing:edit')")
     public Object updateQuartzJobStatus(@PathParam("id") Long id) {
@@ -121,7 +119,7 @@ public class QuartzJobController extends BaseController {
 
     @Log("执行定时任务")
     @Operation(summary = "执行定时任务")
-    @PUT
+    @POST
     @Path("/exec/{id}")
     @PreAuthorize("@el.check('timing:edit')")
     public Object executionQuartzJob(@PathParam("id") Long id) {
@@ -131,8 +129,8 @@ public class QuartzJobController extends BaseController {
 
     @Log("删除定时任务")
     @Operation(summary = "删除定时任务")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('timing:del')")
     public Object deleteQuartzJob(Set<Long> ids) {
         quartzJobService.delete(ids);

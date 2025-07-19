@@ -68,7 +68,7 @@ public class VtServerController {
         return 1;
     }
 
-    @PUT
+    @POST
     @Path("")
     @Log("修改VtServerController")
     @Operation(summary = "修改VtServerController")
@@ -78,8 +78,8 @@ public class VtServerController {
         return 1;
     }
 
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @Log("删除VtServerController")
     @Operation(summary = "删除VtServerController")
     @PreAuthorize("@el.check('vtServer:del')")

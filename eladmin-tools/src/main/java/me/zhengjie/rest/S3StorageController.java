@@ -1,14 +1,7 @@
 package me.zhengjie.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -28,6 +21,12 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * amz S3 协议云存储管理
@@ -95,8 +94,8 @@ public class S3StorageController extends BaseController {
     }
 
     @Log("删除多个文件")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @Operation(summary = "删除多个文件")
     @PreAuthorize("@el.check('storage:del')")
     public Object deleteAllS3Storage(List<Long> ids) {

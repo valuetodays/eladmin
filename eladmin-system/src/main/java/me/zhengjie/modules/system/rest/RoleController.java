@@ -1,20 +1,12 @@
 package me.zhengjie.modules.system.rest;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.lang.Dict;
 import cn.vt.exception.CommonException;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -32,6 +24,12 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -92,7 +90,7 @@ public class RoleController extends BaseController {
     @Log("新增角色")
     @Operation(summary = "新增角色")
     @POST
-    @Path("")
+    @Path("add")
     @PreAuthorize("@el.check('roles:add')")
     public Object createRole(@Valid Role resources) {
         if (resources.getId() != null) {
@@ -105,8 +103,8 @@ public class RoleController extends BaseController {
 
     @Log("修改角色")
     @Operation(summary = "修改角色")
-    @PUT
-    @Path("")
+    @POST
+    @Path("edit")
     @PreAuthorize("@el.check('roles:edit')")
     public Object updateRole(/*@Validated(Role.Update.class) */Role resources) {
         getLevels(resources.getLevel());
@@ -116,7 +114,7 @@ public class RoleController extends BaseController {
 
     @Log("修改角色菜单")
     @Operation(summary = "修改角色菜单")
-    @PUT
+    @POST
     @Path("/menu")
     @PreAuthorize("@el.check('roles:edit')")
     public Object updateRoleMenu(Role resources) {
@@ -128,8 +126,8 @@ public class RoleController extends BaseController {
 
     @Log("删除角色")
     @Operation(summary = "删除角色")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('roles:del')")
     public Object deleteRole(Set<Long> ids) {
         for (Long id : ids) {

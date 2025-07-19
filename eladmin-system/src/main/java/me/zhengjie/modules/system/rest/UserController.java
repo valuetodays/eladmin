@@ -1,14 +1,11 @@
 package me.zhengjie.modules.system.rest;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.vt.encrypt.BCryptUtils;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -24,9 +21,9 @@ import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.domain.UsersRole;
 import me.zhengjie.modules.system.domain.vo.UserPassVo;
 import me.zhengjie.modules.system.repository.UsersRoleRepository;
-import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.RoleService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.modules.system.service.VerifyService;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
@@ -36,17 +33,17 @@ import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RsaUtils;
 import me.zhengjie.utils.enums.CodeEnum;
+import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,7 +61,7 @@ public class UserController extends BaseController {
     @Inject
     UserService userService;
     @Inject
-    DataService dataService;
+    UserAuthCompositeService userAuthCompositeService;
     @Inject
     DeptService deptService;
     @Inject
@@ -85,11 +82,11 @@ public class UserController extends BaseController {
     }
 
     @Operation(summary = "查询用户")
-    @GET
-    @Path("")
+    @POST
+    @Path("/query")
     @PreAuthorize("@el.check('user:list')")
     public PageResult<UserDto> queryUser(UserQueryCriteria criteria) {
-        if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
+        if (Objects.nonNull(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
             // 先查找是否存在子节点
             List<Dept> data = deptService.findByPid(criteria.getDeptId());
@@ -97,18 +94,18 @@ public class UserController extends BaseController {
             criteria.getDeptIds().addAll(deptService.getDeptChildren(data));
         }
         // 数据权限
-        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(getCurrentAccount().getEmail()));
+        List<Long> dataScopes = userAuthCompositeService.findSataScopesByUserId(getCurrentAccountId());
         // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
-        if (!CollectionUtils.isEmpty(criteria.getDeptIds()) && !CollectionUtils.isEmpty(dataScopes)){
+        if (CollectionUtils.isNotEmpty(criteria.getDeptIds()) && CollectionUtils.isNotEmpty(dataScopes)) {
             // 取交集
             criteria.getDeptIds().retainAll(dataScopes);
-            if(!CollectionUtil.isEmpty(criteria.getDeptIds())){
-                return userService.queryAll(criteria, criteria.toPageRequest());
+            if (CollectionUtils.isNotEmpty(criteria.getDeptIds())) {
+                return userService.queryWithDetail(criteria, criteria.toPageRequest());
             }
         } else {
             // 否则取并集
             criteria.getDeptIds().addAll(dataScopes);
-            return userService.queryAll(criteria, criteria.toPageRequest());
+            return userService.queryWithDetail(criteria, criteria.toPageRequest());
         }
         return PageUtil.noData();
     }
@@ -116,7 +113,7 @@ public class UserController extends BaseController {
     @Log("新增用户")
     @Operation(summary = "新增用户")
     @POST
-    @Path("")
+    @Path("/add")
     @PreAuthorize("@el.check('user:add')")
     public Object createUser(@Valid User resources) {
         checkLevel(resources);
@@ -128,8 +125,8 @@ public class UserController extends BaseController {
 
     @Log("修改用户")
     @Operation(summary = "修改用户")
-    @PUT
-    @Path("")
+    @POST
+    @Path("edit")
     @PreAuthorize("@el.check('user:edit')")
     public Object updateUser(/*@Validated(User.Update.class) */User resources) throws Exception {
         checkLevel(resources);
@@ -139,7 +136,7 @@ public class UserController extends BaseController {
 
     @Log("修改用户：个人中心")
     @Operation(summary = "修改用户：个人中心")
-    @PUT
+    @POST
     @Path("center")
     public Object centerUser(/*@Validated(User.Update.class) */User resources) {
         if (!resources.getId().equals(getCurrentAccountId())) {
@@ -151,8 +148,8 @@ public class UserController extends BaseController {
 
     @Log("删除用户")
     @Operation(summary = "删除用户")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('user:del')")
     public Object deleteUser(Set<Long> ids) {
         for (Long id : ids) {
@@ -184,7 +181,7 @@ public class UserController extends BaseController {
     }
 
     @Operation(summary = "重置密码")
-    @PUT
+    @POST
     @Path("/resetPwd")
     public Object resetPwd(Set<Long> ids) {
         String pwd = BCryptUtils.hashpw("123456");

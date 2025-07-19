@@ -1,16 +1,10 @@
 package me.zhengjie.modules.system.rest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -27,6 +21,10 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
 * @author Zheng Jie
  * @since 2019-04-10
@@ -42,14 +40,14 @@ public class DictDetailController {
     private static final String ENTITY_NAME = "dictDetail";
 
     @Operation(summary = "查询字典详情")
-    @GET
-    @Path("")
+    @POST
+    @Path("/query")
     public PageResult<DictDetailDto> queryDictDetail(DictDetailQueryCriteria criteria) {
         return dictDetailService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @Operation(summary = "查询多个字典详情")
-    @GET
+    @POST
     @Path(value = "/map")
     public Object getDictDetailMaps(@QueryParam("dictName") String dictName) {
         String[] names = dictName.split("[,，]");
@@ -63,7 +61,7 @@ public class DictDetailController {
     @Log("新增字典详情")
     @Operation(summary = "新增字典详情")
     @POST
-    @Path("")
+    @Path("add")
     @PreAuthorize("@el.check('dict:add')")
     public Object createDictDetail(@Valid DictDetail resources) {
         if (resources.getId() != null) {
@@ -75,8 +73,8 @@ public class DictDetailController {
 
     @Log("修改字典详情")
     @Operation(summary = "修改字典详情")
-    @PUT
-    @Path("")
+    @POST
+    @Path("edit")
     @PreAuthorize("@el.check('dict:edit')")
     public Object updateDictDetail(/*@Validated(DictDetail.Update.class) */ DictDetail resources) {
         dictDetailService.update(resources);

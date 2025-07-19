@@ -1,16 +1,10 @@
 package me.zhengjie.modules.system.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -26,6 +20,10 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -61,7 +59,7 @@ public class JobController extends BaseController {
     @Log("新增岗位")
     @Operation(summary = "新增岗位")
     @POST
-    @Path("")
+    @Path("add")
     @PreAuthorize("@el.check('job:add')")
     public Object createJob(@Valid Job resources) {
         if (resources.getId() != null) {
@@ -73,8 +71,8 @@ public class JobController extends BaseController {
 
     @Log("修改岗位")
     @Operation(summary = "修改岗位")
-    @PUT
-    @Path("")
+    @POST
+    @Path("edit")
     @PreAuthorize("@el.check('job:edit')")
     public Object updateJob(/*@Validated(Job.Update.class)*/  Job resources) {
         jobService.update(resources);
@@ -83,8 +81,8 @@ public class JobController extends BaseController {
 
     @Log("删除岗位")
     @Operation(summary = "删除岗位")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('job:del')")
     public Object deleteJob(Set<Long> ids) {
         // 验证是否被用户关联

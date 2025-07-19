@@ -1,16 +1,16 @@
 package me.zhengjie.modules.system.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
 import me.zhengjie.utils.PageResult;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -87,14 +87,14 @@ public interface UserService {
      * @param pageable 分页参数
      * @return /
      */
-    PageResult<UserDto> queryAll(UserQueryCriteria criteria, Page pageable);
+    PageResult<UserDto> queryWithDetail(UserQueryCriteria criteria, Page pageable);
 
     /**
      * 查询全部不分页
      * @param criteria 条件
      * @return /
      */
-    List<UserDto> queryAll(UserQueryCriteria criteria);
+    List<UserDto> queryWithDetail(UserQueryCriteria criteria);
 
     /**
      * 导出数据

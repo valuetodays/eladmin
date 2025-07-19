@@ -7,16 +7,20 @@ import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.RolesDepts;
 import me.zhengjie.modules.system.domain.RolesMenus;
+import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.domain.UsersRole;
 import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.repository.MenuRepository;
 import me.zhengjie.modules.system.repository.RoleRepository;
 import me.zhengjie.modules.system.repository.RolesDeptsRepository;
 import me.zhengjie.modules.system.repository.RolesMenusRepository;
+import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.repository.UsersRoleRepository;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +44,10 @@ public class UserAuthCompositeService {
     RolesMenusRepository rolesMenusRepository;
     @Inject
     RolesDeptsRepository rolesDeptsRepository;
+    @Inject
+    UserRepository userRepository;
+    @Inject
+    DataService dataService;
 
     public List<Role> findRolesByUserId(Long userId) {
         List<UsersRole> usersRoles = usersRoleRepository.findByUserId(userId);
@@ -74,6 +82,18 @@ public class UserAuthCompositeService {
         return deptRepository.findById(deptId);
     }
 
+    public List<Dept> findDeptsByIds(Collection<Long> deptIds) {
+        return deptRepository.findByIds(deptIds);
+    }
+
+    public Map<Long, Dept> findDeptsMapByIds(Collection<Long> deptIds) {
+        List<Dept> depts = deptRepository.findByIds(deptIds);
+        if (CollectionUtils.isEmpty(deptIds)) {
+            return Map.of();
+        }
+        return depts.stream().collect(Collectors.toMap(Dept::getId, e -> e));
+    }
+
     public List<Menu> findMenusByRoleIdsAndTypeNot(Set<Long> roleIds, int i) {
         List<RolesMenus> list = rolesMenusRepository.findByRoleIds(roleIds);
         if (CollectionUtils.isEmpty(list)) {
@@ -84,5 +104,11 @@ public class UserAuthCompositeService {
             return List.of();
         }
         return menuRepository.findByIdsAndTypeNotAndSortable(menuIds, i);
+    }
+
+    public List<Long> findSataScopesByUserId(Long currentAccountId) {
+        User user = userRepository.findById(currentAccountId);
+        List<Long> dataScopes = dataService.getDeptIds(user);
+        return dataScopes;
     }
 }

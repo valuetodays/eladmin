@@ -4,11 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
@@ -20,6 +18,7 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.service.DeptService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
 import me.zhengjie.utils.PageResult;
@@ -49,6 +48,9 @@ public class DeptController extends BaseController {
 
     @Inject
     DeptService deptService;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
+
     private static final String ENTITY_NAME = "dept";
 
     @Operation(summary = "导出部门数据")
@@ -59,16 +61,17 @@ public class DeptController extends BaseController {
     public Response exportDept(DeptQueryCriteria criteria) throws Exception {
         List<DeptDto> deptDtos = deptService.queryAll(criteria, false);
         File file = deptService.download(deptDtos);
-
         return super.download(file);
     }
 
     @Operation(summary = "查询部门")
-    @GET
-    @Path("")
+    @POST
+    @Path("/query")
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public PageResult<DeptDto> queryDept(DeptQueryCriteria criteria) throws Exception {
-        List<DeptDto> depts = deptService.queryAll(criteria, true);
+    public PageResult<DeptDto> queryDept(DeptQueryCriteria criteria) {
+        List<Long> dataScopes = userAuthCompositeService.findSataScopesByUserId(getCurrentAccountId());
+
+        List<DeptDto> depts = deptService.queryAll(criteria, true, dataScopes);
         return PageUtil.toPage(depts, depts.size());
     }
 
@@ -99,7 +102,7 @@ public class DeptController extends BaseController {
     @Log("新增部门")
     @Operation(summary = "新增部门")
     @POST
-    @Path("")
+    @Path("/add")
     @PreAuthorize("@el.check('dept:add')")
     public Object createDept(@Valid Dept resources) {
         if (resources.getId() != null) {
@@ -111,8 +114,8 @@ public class DeptController extends BaseController {
 
     @Log("修改部门")
     @Operation(summary = "修改部门")
-    @PUT
-    @Path("")
+    @POST
+    @Path("/edit")
     @PreAuthorize("@el.check('dept:edit')")
     public Object updateDept(/*@Validated(Dept.Update.class) */ Dept resources) {
         deptService.update(resources);
@@ -121,8 +124,8 @@ public class DeptController extends BaseController {
 
     @Log("删除部门")
     @Operation(summary = "删除部门")
-    @DELETE
-    @Path("")
+    @POST
+    @Path("/delete")
     @PreAuthorize("@el.check('dept:del')")
     public Object deleteDept(Set<Long> ids) {
         Set<DeptDto> deptDtos = new HashSet<>();
