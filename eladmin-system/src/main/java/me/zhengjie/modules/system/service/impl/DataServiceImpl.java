@@ -3,16 +3,14 @@ package me.zhengjie.modules.system.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.User;
+import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
-import me.zhengjie.utils.CacheKey;
-import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.enums.DataScopeEnum;
 
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Zheng Jie
@@ -28,11 +25,10 @@ import java.util.concurrent.TimeUnit;
  * @since 2020-05-07
  **/
 @ApplicationScoped
-@RequiredArgsConstructor
 public class DataServiceImpl implements DataService {
 
     @Inject
-    RedisUtils redisUtils;
+    UserRepository userRepository;
     @Inject
     RoleService roleService;
     @Inject
@@ -42,36 +38,31 @@ public class DataServiceImpl implements DataService {
 
     /**
      * 用户角色和用户部门改变时需清理缓存
-     * @param user /
+     * @param userId /
      * @return /
      */
     @Override
-    public List<Long> getDeptIds(User user) {
-        String key = CacheKey.DATA_USER + user.getId();
-        List<Long> ids = redisUtils.getList(key, Long.class);
-        if (CollUtil.isEmpty(ids)) {
-            // 用于存储部门id
-            Set<Long> deptIds = new HashSet<>();
-            // 查询用户角色
-            List<RoleSmallDto> roleSet = roleService.findByUsersId(user.getId());
-            // 获取对应的部门ID
-            for (RoleSmallDto role : roleSet) {
-                DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
-                switch (Objects.requireNonNull(dataScopeEnum)) {
-                    case THIS_LEVEL:
-                        deptIds.add(user.getDeptId());
-                        break;
-                    case CUSTOMIZE:
-                        deptIds.addAll(getCustomize(deptIds, role));
-                        break;
-                    default:
-                        return new ArrayList<>();
-                }
+    public List<Long> getDeptIds(Long userId) {
+        User user = userRepository.findById(userId);
+        // 用于存储部门id
+        Set<Long> deptIds = new HashSet<>();
+        // 查询用户角色
+        List<RoleSmallDto> roleSet = roleService.findByUsersId(userId);
+        // 获取对应的部门ID
+        for (RoleSmallDto role : roleSet) {
+            DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
+            switch (Objects.requireNonNull(dataScopeEnum)) {
+                case THIS_LEVEL:
+                    deptIds.add(user.getDeptId());
+                    break;
+                case CUSTOMIZE:
+                    deptIds.addAll(getCustomize(deptIds, role));
+                    break;
+                default:
+                    return new ArrayList<>();
             }
-            ids = new ArrayList<>(deptIds);
-            redisUtils.set(key, ids, 1, TimeUnit.DAYS);
         }
-        return new ArrayList<>(ids);
+        return new ArrayList<>(deptIds);
     }
 
     /**

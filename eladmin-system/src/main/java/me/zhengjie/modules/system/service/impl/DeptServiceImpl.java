@@ -3,6 +3,9 @@ package me.zhengjie.modules.system.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,9 +28,10 @@ import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SecurityUtils;
-import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.enums.DataScopeEnum;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -67,9 +72,9 @@ public class DeptServiceImpl implements DeptService {
 
     @SneakyThrows
     @Override
-    public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery, List<Long> dataScopes) {
+    public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery, Long userId) {
         Sort sort = Sort.ascending("deptSort");
-        String dataScopeType = securityUtils.getDataScopeType();
+        String dataScopeType = userAuthCompositeService.findDataScopesTypeByUserId(userId);
         if (isQuery) {
             if(dataScopeType.equals(DataScopeEnum.ALL.getValue())){
                 criteria.setPidIsNull(true);
@@ -89,9 +94,16 @@ public class DeptServiceImpl implements DeptService {
                 }
             }
         }
-        List<Dept> deptList = deptRepository.findAll(sort).list();
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Dept.class);
+        PanacheQuery<Dept> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = deptRepository.findAll(sort);
+        } else {
+            panacheQuery = deptRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+        List<Dept> deptList = panacheQuery.list();
         List<DeptDto> list = deptMapper.toDto(deptList);
-        // fixme: 条件查询        List<DeptDto> list = deptMapper.toDto(deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
         // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
         if(StringUtils.isBlank(dataScopeType)){
             return deduplication(list);

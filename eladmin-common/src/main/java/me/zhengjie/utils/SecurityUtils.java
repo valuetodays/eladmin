@@ -1,6 +1,5 @@
 package me.zhengjie.utils;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import cn.valuetodays.quarkus.commons.base.BaseAuthorizationController;
@@ -9,7 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.utils.enums.DataScopeEnum;
 
 import java.util.List;
 
@@ -59,18 +57,6 @@ public class SecurityUtils extends BaseAuthorizationController {
 //        JSONArray jsonArray = jsonObject.getJSONArray("dataScopes");
 //        return JSON.parseArray(jsonArray.toJSONString(), Long.class);
         return List.of(); // fixme
-    }
-
-    /**
-     * 获取数据权限级别
-     * @return 级别
-     */
-    public String getDataScopeType() {
-        List<Long> dataScopes = getCurrentUserDataScope();
-        if(CollUtil.isEmpty(dataScopes)){
-            return "";
-        }
-        return DataScopeEnum.ALL.getValue();
     }
 
     /**

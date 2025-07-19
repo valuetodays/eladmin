@@ -1,7 +1,5 @@
 package me.zhengjie.modules.system.service;
 
-import me.zhengjie.modules.system.domain.User;
-
 import java.util.List;
 
 /**
@@ -13,8 +11,8 @@ public interface DataService {
 
     /**
      * 获取数据权限
-     * @param user /
+     * @param userId /
      * @return /
      */
-    List<Long> getDeptIds(User user);
+    List<Long> getDeptIds(Long userId);
 }

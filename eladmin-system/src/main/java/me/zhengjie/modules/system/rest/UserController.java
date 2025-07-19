@@ -94,7 +94,7 @@ public class UserController extends BaseController {
             criteria.getDeptIds().addAll(deptService.getDeptChildren(data));
         }
         // 数据权限
-        List<Long> dataScopes = userAuthCompositeService.findSataScopesByUserId(getCurrentAccountId());
+        List<Long> dataScopes = userAuthCompositeService.findDataScopesByUserId(getCurrentAccountId());
         // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
         if (CollectionUtils.isNotEmpty(criteria.getDeptIds()) && CollectionUtils.isNotEmpty(dataScopes)) {
             // 取交集

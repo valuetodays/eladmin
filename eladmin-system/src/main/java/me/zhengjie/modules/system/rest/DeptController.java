@@ -18,7 +18,6 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.service.DeptService;
-import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
 import me.zhengjie.utils.PageResult;
@@ -48,8 +47,6 @@ public class DeptController extends BaseController {
 
     @Inject
     DeptService deptService;
-    @Inject
-    UserAuthCompositeService userAuthCompositeService;
 
     private static final String ENTITY_NAME = "dept";
 
@@ -59,7 +56,7 @@ public class DeptController extends BaseController {
     @PreAuthorize("@el.check('dept:list')")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response exportDept(DeptQueryCriteria criteria) throws Exception {
-        List<DeptDto> deptDtos = deptService.queryAll(criteria, false);
+        List<DeptDto> deptDtos = deptService.queryAll(criteria, false, getCurrentAccountId());
         File file = deptService.download(deptDtos);
         return super.download(file);
     }
@@ -69,9 +66,9 @@ public class DeptController extends BaseController {
     @Path("/query")
     @PreAuthorize("@el.check('user:list','dept:list')")
     public PageResult<DeptDto> queryDept(DeptQueryCriteria criteria) {
-        List<Long> dataScopes = userAuthCompositeService.findSataScopesByUserId(getCurrentAccountId());
-
-        List<DeptDto> depts = deptService.queryAll(criteria, true, dataScopes);
+        // fixme queryObj中要继承BaseAccountableReq
+        Long currentAccountId = getCurrentAccountId();
+        List<DeptDto> depts = deptService.queryAll(criteria, true, currentAccountId);
         return PageUtil.toPage(depts, depts.size());
     }
 

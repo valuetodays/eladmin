@@ -1,7 +1,5 @@
 package me.zhengjie.modules.security.service;
 
-import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +11,9 @@ import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.modules.system.service.dto.UserDto;
+import org.apache.commons.lang3.BooleanUtils;
+
+import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -38,13 +39,13 @@ public class UserDetailsServiceImpl {
             if (user == null) {
                 throw new BadRequestException("用户不存在");
             } else {
-                if (!user.getEnabled()) {
+                if (BooleanUtils.isNotTrue(user.getEnabled())) {
                     throw new BadRequestException("账号未激活！");
                 }
                 // 获取用户的权限
                 List<AuthorityDto> authorities = roleService.buildPermissions(user);
                 // 初始化JwtUserDto
-                jwtUserDto = new JwtUserDto(user, dataService.getDeptIds(user), authorities);
+                jwtUserDto = new JwtUserDto(user, dataService.getDeptIds(user.getId()), authorities);
                 // 添加缓存数据
                 userCacheManager.addUserCache(username, jwtUserDto);
             }

@@ -1,5 +1,6 @@
 package me.zhengjie.modules.system.service;
 
+import cn.hutool.core.collection.CollUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import me.zhengjie.modules.system.domain.Dept;
@@ -7,7 +8,6 @@ import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.RolesDepts;
 import me.zhengjie.modules.system.domain.RolesMenus;
-import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.domain.UsersRole;
 import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.repository.MenuRepository;
@@ -16,6 +16,7 @@ import me.zhengjie.modules.system.repository.RolesDeptsRepository;
 import me.zhengjie.modules.system.repository.RolesMenusRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.repository.UsersRoleRepository;
+import me.zhengjie.utils.enums.DataScopeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
@@ -106,9 +107,21 @@ public class UserAuthCompositeService {
         return menuRepository.findByIdsAndTypeNotAndSortable(menuIds, i);
     }
 
-    public List<Long> findSataScopesByUserId(Long currentAccountId) {
-        User user = userRepository.findById(currentAccountId);
-        List<Long> dataScopes = dataService.getDeptIds(user);
+    public List<Long> findDataScopesByUserId(Long userId) {
+        List<Long> dataScopes = dataService.getDeptIds(userId);
         return dataScopes;
+    }
+
+    /**
+     * 获取数据权限级别
+     *
+     * @return 级别
+     */
+    public String findDataScopesTypeByUserId(Long userId) {
+        List<Long> dataScopes = findDataScopesByUserId(userId);
+        if (CollUtil.isEmpty(dataScopes)) {
+            return "";
+        }
+        return DataScopeEnum.ALL.getValue();
     }
 }

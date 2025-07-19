@@ -56,7 +56,7 @@ public class LocalStorageController extends BaseController {
     }
 
     @POST
-    @Path("")
+    @Path("createFile")
     @Operation(summary = "上传文件")
     @PreAuthorize("@el.check('storage:add')")
     public Object createFile(/*@RequestParam */String name /*,@RequestParam("file") File file*/) {
@@ -78,7 +78,7 @@ public class LocalStorageController extends BaseController {
     }
 
     @POST
-    @Path("")
+    @Path("updateFile")
     @Log("修改文件")
     @Operation(summary = "修改文件")
     @PreAuthorize("@el.check('storage:edit')")
