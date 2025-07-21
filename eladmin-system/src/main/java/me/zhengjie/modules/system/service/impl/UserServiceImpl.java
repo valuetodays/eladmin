@@ -1,7 +1,10 @@
 package me.zhengjie.modules.system.service.impl;
 
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -31,6 +34,7 @@ import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,8 +76,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageResult<UserDto> queryWithDetail(UserQueryCriteria criteria, Page pageable) {
-        //   fixme:条件查询     Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        PanacheQuery<User> all = userRepository.findAll().page(pageable);
+//   fixme:条件查询     Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        Sort sort = Sort.descending("id");
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, User.class);
+        PanacheQuery<User> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = userRepository.findAll(sort);
+        } else {
+            panacheQuery = userRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+
+        PanacheQuery<User> all = panacheQuery.page(pageable);
         List<UserDto> list = userMapper.toDto(all.list());
         fillDept(list);
         return PageUtil.toPage(list, all.count());

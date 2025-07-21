@@ -73,14 +73,16 @@ public class DeptServiceImpl implements DeptService {
     @SneakyThrows
     @Override
     public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery, Long userId) {
-        Sort sort = Sort.ascending("deptSort");
         String dataScopeType = userAuthCompositeService.findDataScopesTypeByUserId(userId);
         if (isQuery) {
             if(dataScopeType.equals(DataScopeEnum.ALL.getValue())){
                 criteria.setPidIsNull(true);
             }
             List<Field> fields = QueryHelp.getAllFields(criteria.getClass(), new ArrayList<>());
-            List<String> fieldNames = new ArrayList<String>(){{ add("pidIsNull");add("enabled");}};
+            List<String> fieldNames = new ArrayList<>() {{
+                add("pidIsNull");
+                add("enabled");
+            }};
             for (Field field : fields) {
                 //设置对象的访问权限，保证对private的属性的访问
                 field.setAccessible(true);
@@ -94,6 +96,7 @@ public class DeptServiceImpl implements DeptService {
                 }
             }
         }
+        Sort sort = Sort.ascending("deptSort");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
         Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Dept.class);
         PanacheQuery<Dept> panacheQuery;
