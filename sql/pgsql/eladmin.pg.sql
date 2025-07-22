@@ -930,7 +930,7 @@ BEGIN;
 INSERT INTO sys_user (user_id, dept_id, username, nick_name, gender, phone, email, avatar_name, avatar_path, password, is_admin, enabled, create_by, update_by, pwd_reset_time, create_time, update_time) VALUES (1, 2, 'admin', '管理员', '男', '18888888888', '201507802@qq.com', 'avatar-20250122102642222.png', '/Users/jie/Documents/work/private/eladmin/~/avatar/avatar-20250122102642222.png', '$2a$10$Egp1/gvFlt7zhlXVfEFw4OfWQCGPw0ClmMcc6FjTnvXNRVf9zdMRa', true, true, NULL, 'admin', '2020-05-03 16:38:31', '2018-08-23 09:11:56', '2025-01-22 10:26:42');
 INSERT INTO sys_user (user_id, dept_id, username, nick_name, gender, phone, email, avatar_name, avatar_path, password, is_admin, enabled, create_by, update_by, pwd_reset_time, create_time, update_time) VALUES (2, 7, 'test', '测试', '男', '19999999999', '231@qq.com', NULL, NULL, '$2a$10$4XcyudOYTSz6fue6KFNMHeUQnCX5jbBQypLEnGk1PmekXt5c95JcK', false, true, 'admin', 'admin', NULL, '2020-05-05 11:15:49', '2025-01-21 14:53:04');
 COMMIT;
-
+ALTER TABLE sys_user ALTER COLUMN "user_id" RESTART WITH 3;
 -- ----------------------------
 -- Table structure for sys_users_jobs
 -- ----------------------------
