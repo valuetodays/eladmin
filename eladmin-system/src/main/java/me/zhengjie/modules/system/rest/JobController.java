@@ -50,7 +50,8 @@ public class JobController extends BaseController {
     }
 
     @Operation(summary = "查询岗位")
-    @GET
+    @POST
+    @Path("queryJob")
     @PreAuthorize("@el.check('job:list','user:list')")
     public PageResult<JobDto> queryJob(JobQueryCriteria criteria) {
         return jobService.queryAll(criteria, criteria.toPageRequest());

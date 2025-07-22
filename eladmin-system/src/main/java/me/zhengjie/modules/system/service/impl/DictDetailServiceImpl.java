@@ -1,8 +1,11 @@
 package me.zhengjie.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -20,8 +23,10 @@ import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,12 +48,23 @@ public class DictDetailServiceImpl implements DictDetailService {
 
     @Override
     public PageResult<DictDetailDto> queryAll(DictDetailQueryCriteria criteria, Page pageable) {
-        // fixme 先不用条件
-        PanacheQuery<DictDetail> paged = dictDetailRepository.findAll().page(pageable);
+        Sort sort = Sort.descending("dictSort");
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, DictDetail.class);
+        PanacheQuery<DictDetail> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = dictDetailRepository.findAll(sort);
+        } else {
+            panacheQuery = dictDetailRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+
+        PanacheQuery<DictDetail> page = panacheQuery.page(pageable);
+
+//        PanacheQuery<DictDetail> paged = dictDetailRepository.findAll().page(pageable);
 //        Page<DictDetail> page = dictDetailRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        List<DictDetail> list = paged.list();
+        List<DictDetail> list = page.list();
         List<DictDetailDto> dto = dictDetailMapper.toDto(list);
-        return PageUtil.toPage(dto, paged.count());
+        return PageUtil.toPage(dto, page.count());
     }
 
     @Override
@@ -91,7 +107,7 @@ public class DictDetailServiceImpl implements DictDetailService {
     }
 
     public void delCaches(DictDetail dictDetail){
-        Dict dict = dictRepository.findById(dictDetail.getDict().getId());
+        Dict dict = dictRepository.findById(dictDetail.getDictId());
         redisUtils.del(CacheKey.DICT_NAME + dict.getName());
     }
 }

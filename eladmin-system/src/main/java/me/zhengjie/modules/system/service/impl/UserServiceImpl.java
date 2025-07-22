@@ -76,7 +76,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageResult<UserDto> queryWithDetail(UserQueryCriteria criteria, Page pageable) {
-//   fixme:条件查询     Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
         Sort sort = Sort.descending("id");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
         Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, User.class);

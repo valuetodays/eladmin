@@ -48,7 +48,7 @@ public class RoleController extends BaseController {
     private static final String ENTITY_NAME = "role";
 
     @Operation(summary = "获取单个role")
-    @GET
+    @POST
     @Path(value = "/{id}")
     @PreAuthorize("@el.check('roles:list')")
     public RoleDto findRoleById(@PathParam("id") Long id) {
@@ -65,7 +65,7 @@ public class RoleController extends BaseController {
     }
 
     @Operation(summary = "返回全部的角色")
-    @GET
+    @POST
     @Path(value = "/all")
     @PreAuthorize("@el.check('roles:list','user:add','user:edit')")
     public List<RoleDto> queryAllRole() {
@@ -81,7 +81,7 @@ public class RoleController extends BaseController {
     }
 
     @Operation(summary = "获取用户级别")
-    @GET
+    @POST
     @Path(value = "/level")
     public Object getRoleLevel() {
         return Dict.create().set("level", getLevels(null));
@@ -115,7 +115,7 @@ public class RoleController extends BaseController {
     @Log("修改角色菜单")
     @Operation(summary = "修改角色菜单")
     @POST
-    @Path("/menu")
+    @Path("/updateRoleMenu")
     @PreAuthorize("@el.check('roles:edit')")
     public Object updateRoleMenu(Role resources) {
         RoleDto role = roleService.findById(resources.getId());
