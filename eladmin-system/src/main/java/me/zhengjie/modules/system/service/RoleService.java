@@ -9,6 +9,7 @@ import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.utils.PageResult;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -66,10 +67,10 @@ public interface RoleService {
 
     /**
      * 修改绑定的菜单
-     * @param resources /
+     * @param menuIds /
      * @param roleDTO /
      */
-    void updateMenu(Role resources, RoleDto roleDTO);
+    void updateMenu(Set<Long> menuIds, RoleDto roleDTO);
 
     /**
      * 解绑菜单
@@ -97,7 +98,7 @@ public interface RoleService {
      * @param queryAll 待导出的数据
      * @throws IOException /
      */
-    void download(List<RoleDto> queryAll) throws IOException;
+    File download(List<RoleDto> queryAll) throws IOException;
 
     /**
      * 获取用户权限信息

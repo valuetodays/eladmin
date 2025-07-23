@@ -1,7 +1,6 @@
 package me.zhengjie.modules.system.rest;
 
 import cn.hutool.core.lang.Dict;
-import cn.vt.exception.CommonException;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -11,11 +10,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Role;
+import me.zhengjie.modules.system.req.LongIdBase;
+import me.zhengjie.modules.system.req.UpdateRoleMenu;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.dto.RoleDto;
 import me.zhengjie.modules.system.service.dto.RoleQueryCriteria;
@@ -25,6 +27,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -59,9 +62,9 @@ public class RoleController extends BaseController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('role:list')")
-    public void exportRole(RoleQueryCriteria criteria) throws IOException {
-        throw new CommonException("not support");
-//    fixme:    roleService.download(roleService.queryAll(criteria), response);
+    public Response exportRole(RoleQueryCriteria criteria) throws IOException {
+        File file = roleService.download(roleService.queryAll(criteria));
+        return super.download(file);
     }
 
     @Operation(summary = "返回全部的角色")
@@ -73,8 +76,8 @@ public class RoleController extends BaseController {
     }
 
     @Operation(summary = "查询角色")
-    @GET
-    @Path("")
+    @POST
+    @Path("query")
     @PreAuthorize("@el.check('roles:list')")
     public PageResult<RoleDto> queryRole(RoleQueryCriteria criteria) {
         return roleService.queryAll(criteria, criteria.toPageRequest());
@@ -117,10 +120,10 @@ public class RoleController extends BaseController {
     @POST
     @Path("/updateRoleMenu")
     @PreAuthorize("@el.check('roles:edit')")
-    public Object updateRoleMenu(Role resources) {
+    public Object updateRoleMenu(UpdateRoleMenu resources) {
         RoleDto role = roleService.findById(resources.getId());
         getLevels(role.getLevel());
-        roleService.updateMenu(resources,role);
+        roleService.updateMenu(resources.getMenus().stream().map(LongIdBase::getId).collect(Collectors.toSet()), role);
         return 1;
     }
 

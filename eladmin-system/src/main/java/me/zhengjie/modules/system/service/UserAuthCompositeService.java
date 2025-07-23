@@ -3,6 +3,7 @@ package me.zhengjie.modules.system.service;
 import cn.hutool.core.collection.CollUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.Role;
@@ -123,5 +124,17 @@ public class UserAuthCompositeService {
             return "";
         }
         return DataScopeEnum.ALL.getValue();
+    }
+
+    @Transactional
+    public void updateRoleMenus(Long roleId, Set<Long> menuIds) {
+        rolesMenusRepository.deleteByRole(roleId);
+        List<RolesMenus> toSave = menuIds.stream().map(e -> {
+            RolesMenus rm = new RolesMenus();
+            rm.setRoleId(roleId);
+            rm.setMenuId(e);
+            return rm;
+        }).toList();
+        rolesMenusRepository.persist(toSave);
     }
 }

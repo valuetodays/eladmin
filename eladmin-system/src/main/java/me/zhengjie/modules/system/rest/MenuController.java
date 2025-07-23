@@ -8,6 +8,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -71,18 +72,18 @@ public class MenuController extends BaseController {
     }
 
     @Operation(summary = "返回全部的菜单")
-    @GET
+    @POST
     @Path(value = "/lazy")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public List<MenuDto> queryAllMenu(/*@RequestParam */Long pid) {
+    public List<MenuDto> queryAllMenu(@QueryParam("pid") Long pid) {
         return menuService.getMenus(pid);
     }
 
     @Operation(summary = "根据菜单ID返回所有子节点ID，包含自身ID")
-    @GET
+    @POST
     @Path(value = "/child")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public Object childMenu(/*@RequestParam */Long id) {
+    public Object childMenu(@QueryParam("id") Long id) {
         Set<Menu> menuSet = new HashSet<>();
         List<MenuDto> menuList = menuService.getMenus(id);
         menuSet.add(menuService.findOne(id));

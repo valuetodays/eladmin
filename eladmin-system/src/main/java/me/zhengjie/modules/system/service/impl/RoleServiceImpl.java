@@ -2,6 +2,8 @@ package me.zhengjie.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -12,6 +14,7 @@ import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.modules.security.service.UserCacheManager;
 import me.zhengjie.modules.security.service.dto.AuthorityDto;
+import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.User;
@@ -23,6 +26,8 @@ import me.zhengjie.modules.system.service.dto.RoleDto;
 import me.zhengjie.modules.system.service.dto.RoleQueryCriteria;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
+import me.zhengjie.modules.system.service.mapstruct.DeptMapper;
+import me.zhengjie.modules.system.service.mapstruct.MenuMapper;
 import me.zhengjie.modules.system.service.mapstruct.RoleMapper;
 import me.zhengjie.modules.system.service.mapstruct.RoleSmallMapper;
 import me.zhengjie.utils.CacheKey;
@@ -32,7 +37,10 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +48,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -55,6 +64,10 @@ public class RoleServiceImpl implements RoleService {
     RoleRepository roleRepository;
     @Inject
     RoleMapper roleMapper;
+    @Inject
+    MenuMapper menuMapper;
+    @Inject
+    DeptMapper deptMapper;
     @Inject
     RoleSmallMapper roleSmallMapper;
     @Inject
@@ -75,18 +88,33 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleDto> queryAll(RoleQueryCriteria criteria) {
-//   fixme:条件查询      return roleMapper.toDto(roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
-        PanacheQuery<Role> all = roleRepository.findAll();
-        return roleMapper.toDto(all.list());
+        return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
     @Override
     public PageResult<RoleDto> queryAll(RoleQueryCriteria criteria, Page pageable) {
-        //   fixme:条件查询         Page<Role> page = roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        PanacheQuery<Role> paged = roleRepository.findAll().page(pageable);
-        List<Role> list = paged.list();
-        long count = paged.count();
-        return PageUtil.toPage(roleMapper.toDto(list), count);
+        Sort sort = Sort.descending("id");
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Role.class);
+        PanacheQuery<Role> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = roleRepository.findAll(sort);
+        } else {
+            panacheQuery = roleRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+        List<Role> list = panacheQuery.list();
+        long count = panacheQuery.count();
+        List<RoleDto> dtoList = roleMapper.toDto(list);
+        if (CollectionUtils.isNotEmpty(dtoList)) {
+            for (RoleDto roleDto : dtoList) {
+                List<Long> roleIds = List.of(roleDto.getId());
+                List<Menu> menusByRoleIds = userAuthCompositeService.findMenusByRoleIds(roleIds);
+                roleDto.setMenus(new HashSet<>(menuMapper.toDto(menusByRoleIds)));
+                List<Dept> deptsByRoleIds = userAuthCompositeService.findDeptsByRoleIds(roleIds);
+                roleDto.setDepts(new HashSet<>(deptMapper.toDto(deptsByRoleIds)));
+            }
+        }
+        return PageUtil.toPage(dtoList, count);
     }
 
     @Override
@@ -132,13 +160,13 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void updateMenu(Role resources, RoleDto roleDTO) {
+    @Transactional
+    public void updateMenu(Set<Long> menuIds, RoleDto roleDTO) {
         Role role = roleMapper.toEntity(roleDTO);
         List<User> users = userRepository.findByRoleId(role.getId());
         // 更新菜单
-// fixme        role.setMenus(resources.getMenus());
-        delCaches(resources.getId(), users);
-        roleRepository.save(role);
+        userAuthCompositeService.updateRoleMenus(role.getId(), menuIds);
+        delCaches(role.getId(), users);
     }
 
     @Override
@@ -210,7 +238,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void download(List<RoleDto> roles) throws IOException {
+    public File download(List<RoleDto> roles) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (RoleDto role : roles) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -220,7 +248,7 @@ public class RoleServiceImpl implements RoleService {
             map.put("创建日期", role.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list);
+        return FileUtil.downloadExcel(list);
     }
 
     @Override
