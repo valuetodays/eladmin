@@ -1,7 +1,7 @@
 # for gitee
 kind: pipeline
 type: docker
-name: eladmin-ci/cd
+name: eladmin-tmp-ci/cd
 
 workspace:
   path: /drone/src

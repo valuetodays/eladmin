@@ -112,7 +112,7 @@
 
     <!-- 打包 -->
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>eladmin-tmp-system</finalName>
         <plugins>
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>
