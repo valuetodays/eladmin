@@ -12,7 +12,7 @@ quarkus:
     limits:
       max-body-size: 12M
     cors: true
-    cors.origins: *
+    cors.origins: '*'
     cors.methods: GET,POST
     cors.headers: accept,authorization,content-type,x-requested-with
     cors.exposed-headers: location,info
