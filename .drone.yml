@@ -18,6 +18,8 @@ steps:
     volumes:
       - name: maven_m2_dir
         path: /root/.m2   # path in the container
+      - name: maven_m2_repo_dir
+        path: /opt/maven-m2/repository   # path in the container
       - name: workbench_dir
         path: /root/workbench_dir
     commands:
@@ -73,6 +75,9 @@ volumes:
   - name: maven_m2_dir
     host:
       path: /opt/maven-m2 # path in host machine
+  - name: maven_m2_repo_dir
+    host:
+      path: /opt/maven-m2/repository # path in host machine
   - name: workbench_dir
     host:
       path: /opt/workbench
