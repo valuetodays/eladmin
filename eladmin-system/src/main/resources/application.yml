@@ -11,6 +11,13 @@ quarkus:
     #    root-path: "/api"
     limits:
       max-body-size: 12M
+    cors: true
+    cors.origins: *
+    cors.methods: GET,POST
+    cors.headers: accept,authorization,content-type,x-requested-with
+    cors.exposed-headers: location,info
+    cors.access-control-max-age: 24H
+    cors.access-control-allow-credentials: true
   # https://quarkus.io/guides/datasource
   datasource:
     db-kind: postgresql
