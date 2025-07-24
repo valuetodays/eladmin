@@ -1,9 +1,10 @@
 package me.zhengjie.modules.mybiz.service.dto;
 
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import lombok.Data;
 
 /**
 * @description /

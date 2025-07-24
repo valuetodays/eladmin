@@ -37,8 +37,8 @@ public class OnlineController extends BaseController {
     OnlineUserService onlineUserService;
 
     @Operation(summary = "查询在线用户")
-    @GET
-    @Path("")
+    @POST
+    @Path("query")
     @PreAuthorize("@el.check()")
     // fixme
     public PageResult<OnlineUserDto> queryOnlineUser(String username/*, Page pageable*/) {

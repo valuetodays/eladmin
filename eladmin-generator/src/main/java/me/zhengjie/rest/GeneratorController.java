@@ -3,7 +3,6 @@ package me.zhengjie.rest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -47,14 +46,14 @@ public class GeneratorController extends BaseController {
     private Boolean generatorEnabled;
 
     @Operation(summary = "查询数据库数据")
-    @GET
+    @POST
     @Path(value = "/tables/all")
     public Object queryAllTables() {
         return generatorService.getTables();
     }
 
     @Operation(summary = "查询数据库数据")
-    @GET
+    @POST
     @Path(value = "/tables")
     public PageResult<TableInfo> queryTables(@QueryParam("name") String name,
                                              @QueryParam("page") @DefaultValue("0") Integer page,
@@ -64,7 +63,7 @@ public class GeneratorController extends BaseController {
     }
 
     @Operation(summary = "查询字段数据")
-    @GET
+    @POST
     @Path(value = "/columns")
     public PageResult<ColumnInfo> queryColumns(@QueryParam("tableName") String tableName) {
         List<ColumnInfo> columnInfos = generatorService.getColumns(tableName);
@@ -73,7 +72,7 @@ public class GeneratorController extends BaseController {
 
     @Operation(summary = "保存字段数据")
     @POST
-    @Path("")
+    @Path("save")
     public Object saveColumn(List<ColumnInfo> columnInfos) {
         generatorService.save(columnInfos);
         return 1;

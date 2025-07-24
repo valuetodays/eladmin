@@ -1,13 +1,14 @@
 package me.zhengjie.modules.mybiz.service;
 
-import java.io.IOException;
-import java.util.List;
-
 import io.quarkus.panache.common.Page;
 import me.zhengjie.modules.mybiz.domain.NationCode;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeDto;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeQueryCriteria;
 import me.zhengjie.utils.PageResult;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
 * @description 服务接口
@@ -59,8 +60,7 @@ public interface NationCodeService {
     /**
     * 导出数据
     * @param all 待导出的数据
-    * @param response /
     * @throws IOException /
     */
-    void download(List<NationCodeDto> all) throws IOException;
+    File download(List<NationCodeDto> all) throws IOException;
 }

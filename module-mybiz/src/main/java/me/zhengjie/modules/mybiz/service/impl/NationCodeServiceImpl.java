@@ -1,15 +1,13 @@
 package me.zhengjie.modules.mybiz.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.mybiz.domain.NationCode;
 import me.zhengjie.modules.mybiz.repository.NationCodeRepository;
 import me.zhengjie.modules.mybiz.service.NationCodeService;
@@ -19,8 +17,16 @@ import me.zhengjie.modules.mybiz.service.mapstruct.NationCodeMapper;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
 * @description 服务实现
@@ -28,7 +34,6 @@ import me.zhengjie.utils.ValidationUtil;
 * @since 2025-07-14 22:15
 **/
 @ApplicationScoped
-@RequiredArgsConstructor
 public class NationCodeServiceImpl implements NationCodeService {
 
     @Inject
@@ -38,19 +43,29 @@ public class NationCodeServiceImpl implements NationCodeService {
 
     @Override
     public PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Page pageable) {
-        Page<NationCode> page = nationCodeRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page.map(nationCodeMapper::toDto));
+        Sort sort = Sort.descending("id");
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, NationCode.class);
+        PanacheQuery<NationCode> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = nationCodeRepository.findAll(sort);
+        } else {
+            panacheQuery = nationCodeRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+        PanacheQuery<NationCode> all = panacheQuery.page(pageable);
+        List<NationCodeDto> list = nationCodeMapper.toDto(all.list());
+        return PageUtil.toPage(list, all.count());
     }
 
     @Override
     public List<NationCodeDto> queryAll(NationCodeQueryCriteria criteria){
-        return nationCodeMapper.toDto(nationCodeRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
     @Override
     @Transactional
     public NationCodeDto findById(Long id) {
-        NationCode nationCode = nationCodeRepository.findById(id).orElseGet(NationCode::new);
+        NationCode nationCode = nationCodeRepository.findById(id);
         ValidationUtil.isNull(nationCode.getId(),"NationCode","id",id);
         return nationCodeMapper.toDto(nationCode);
     }
@@ -64,7 +79,7 @@ public class NationCodeServiceImpl implements NationCodeService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(NationCode resources) {
-        NationCode nationCode = nationCodeRepository.findById(resources.getId()).orElseGet(NationCode::new);
+        NationCode nationCode = nationCodeRepository.findById(resources.getId());
         ValidationUtil.isNull( nationCode.getId(),"NationCode","id",resources.getId());
         nationCode.copy(resources);
         nationCodeRepository.save(nationCode);
@@ -78,7 +93,7 @@ public class NationCodeServiceImpl implements NationCodeService {
     }
 
     @Override
-    public void download(List<NationCodeDto> all) throws IOException {
+    public File download(List<NationCodeDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (NationCodeDto nationCode : all) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -96,6 +111,6 @@ public class NationCodeServiceImpl implements NationCodeService {
             map.put(" updateTime",  nationCode.getUpdateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 }

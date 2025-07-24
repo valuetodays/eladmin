@@ -8,7 +8,7 @@ import org.mapstruct.ReportingPolicy;
 
 /**
  * @author vt
- * @website https://eladmin.vip
+
  * @since 2025-07-11
  **/
 @Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)

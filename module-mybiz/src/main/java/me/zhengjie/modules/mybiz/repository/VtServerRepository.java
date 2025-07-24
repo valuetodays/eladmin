@@ -1,13 +1,14 @@
 package me.zhengjie.modules.mybiz.repository;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.mybiz.domain.VtServer;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * @author vt
- * @website https://eladmin.vip
+
  * @since 2025-07-11
  **/
-public interface VtServerRepository extends JpaRepository<VtServer, Long>, JpaSpecificationExecutor<VtServer> {
+@ApplicationScoped
+public class VtServerRepository extends MyPanacheRepository<VtServer> {
 }

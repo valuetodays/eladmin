@@ -31,7 +31,7 @@
         <module>eladmin-system</module>
         <module>eladmin-tools</module>
         <module>eladmin-generator</module>
-        <!--        <module>module-mybiz</module>-->
+        <module>module-mybiz</module>
     </modules>
 
     <description>ELADMIN 后台管理</description>

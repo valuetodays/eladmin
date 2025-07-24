@@ -1,9 +1,13 @@
 package me.zhengjie.modules.mybiz.service.impl;
 
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.mybiz.domain.VtServer;
 import me.zhengjie.modules.mybiz.repository.VtServerRepository;
 import me.zhengjie.modules.mybiz.service.VtServerService;
@@ -13,23 +17,24 @@ import me.zhengjie.modules.mybiz.service.mapstruct.VtServerMapper;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author vt
- * @website https://eladmin.vip
+
  * @description 服务实现
  * @since 2025-07-11
  **/
 @ApplicationScoped
-@RequiredArgsConstructor
 public class VtServerServiceImpl implements VtServerService {
 
     @Inject
@@ -39,19 +44,30 @@ public class VtServerServiceImpl implements VtServerService {
 
     @Override
     public PageResult<VtServerDto> queryAll(VtServerQueryCriteria criteria, Page pageable) {
-        Page<VtServer> page = vtServerRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        return PageUtil.toPage(page.map(vtServerMapper::toDto));
+        Sort sort = Sort.descending("id");
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, VtServer.class);
+        PanacheQuery<VtServer> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = vtServerRepository.findAll(sort);
+        } else {
+            panacheQuery = vtServerRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+
+        PanacheQuery<VtServer> all = panacheQuery.page(pageable);
+        List<VtServerDto> list = vtServerMapper.toDto(all.list());
+        return PageUtil.toPage(list, all.count());
     }
 
     @Override
     public List<VtServerDto> queryAll(VtServerQueryCriteria criteria) {
-        return vtServerMapper.toDto(vtServerRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
+        return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
     @Override
     @Transactional
     public VtServerDto findById(Long id) {
-        VtServer vtServer = vtServerRepository.findById(id).orElseGet(VtServer::new);
+        VtServer vtServer = vtServerRepository.findById(id);
         ValidationUtil.isNull(vtServer.getId(), "VtServer", "id", id);
         return vtServerMapper.toDto(vtServer);
     }
@@ -65,7 +81,7 @@ public class VtServerServiceImpl implements VtServerService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(VtServer resources) {
-        VtServer vtServer = vtServerRepository.findById(resources.getId()).orElseGet(VtServer::new);
+        VtServer vtServer = vtServerRepository.findById(resources.getId());
         ValidationUtil.isNull(vtServer.getId(), "VtServer", "id", resources.getId());
         vtServer.copy(resources);
         vtServerRepository.save(vtServer);
@@ -79,7 +95,7 @@ public class VtServerServiceImpl implements VtServerService {
     }
 
     @Override
-    public void download(List<VtServerDto> all) throws IOException {
+    public File download(List<VtServerDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (VtServerDto vtServer : all) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -96,6 +112,6 @@ public class VtServerServiceImpl implements VtServerService {
             map.put("更新时间", vtServer.getUpdateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list);
     }
 }

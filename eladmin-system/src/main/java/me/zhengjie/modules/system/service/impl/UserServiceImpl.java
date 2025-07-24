@@ -103,9 +103,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> queryWithDetail(UserQueryCriteria criteria) {
-        //   fixme:条件查询        List<User> users = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
-        List<User> users = userRepository.findAll().list();
-        return userMapper.toDto(users);
+        return this.queryWithDetail(criteria, Page.ofSize(10000)).getContent();
     }
 
     @Override

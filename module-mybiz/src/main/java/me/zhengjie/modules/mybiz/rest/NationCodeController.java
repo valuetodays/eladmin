@@ -1,27 +1,28 @@
 package me.zhengjie.modules.mybiz.rest;
 
 import cn.vt.auth.AuthUser;
-import io.quarkus.panache.common.Page;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.mybiz.domain.NationCode;
 import me.zhengjie.modules.mybiz.service.NationCodeService;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeDto;
 import me.zhengjie.modules.mybiz.service.dto.NationCodeQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SecurityUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -34,7 +35,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Tag(name = "国家编码")
 @Path("/api/nationCode")
-public class NationCodeController {
+public class NationCodeController extends BaseController {
 
     @Inject
     NationCodeService nationCodeService;
@@ -43,25 +44,26 @@ public class NationCodeController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('nationCode:list')")
-    public void exportNationCode(NationCodeQueryCriteria criteria) throws IOException {
-        nationCodeService.download(nationCodeService.queryAll(criteria), response);
-    }
-
-    @GET
-    @Path
-    @Operation(summary = "查询国家编码")
-    @PreAuthorize("@el.check('nationCode:list')")
-    public ResponseEntity<PageResult<NationCodeDto>> queryNationCode(NationCodeQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(nationCodeService.queryAll(criteria,pageable),HttpStatus.OK);
+    public Response exportNationCode(NationCodeQueryCriteria criteria) throws IOException {
+        File file = nationCodeService.download(nationCodeService.queryAll(criteria));
+        return super.download(file);
     }
 
     @POST
-    @Path("")
+    @Path("query")
+    @Operation(summary = "查询国家编码")
+    @PreAuthorize("@el.check('nationCode:list')")
+    public PageResult<NationCodeDto> queryNationCode(NationCodeQueryCriteria criteria) {
+        return nationCodeService.queryAll(criteria, criteria.toPageRequest());
+    }
+
+    @POST
+    @Path("save")
     @Log("新增国家编码")
     @Operation(summary = "新增国家编码")
     @PreAuthorize("@el.check('nationCode:add')")
     public Object createNationCode(@Valid NationCode resources) {
-        AuthUser currentUser = SecurityUtils.getCurrentUser();
+        AuthUser currentUser = getCurrentAccount();
         String username = currentUser.getEmail();
         resources.setCreateBy(username);
         resources.setUpdateBy(username);
@@ -72,7 +74,7 @@ public class NationCodeController {
     }
 
     @POST
-    @Path("")
+    @Path("edit")
     @Log("修改国家编码")
     @Operation(summary = "修改国家编码")
     @PreAuthorize("@el.check('nationCode:edit')")

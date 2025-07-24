@@ -2,7 +2,7 @@ package me.zhengjie.modules.system.rest;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -26,8 +26,8 @@ public class MonitorController {
     @Inject
     MonitorService serverService;
 
-    @GET
-    @Path("")
+    @POST
+    @Path("/query")
     @Operation(summary = "查询服务监控")
     @PreAuthorize("@el.check('monitor:list')")
     public Object queryMonitor() {

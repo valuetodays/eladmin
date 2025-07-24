@@ -45,8 +45,8 @@ public class QuartzJobController extends BaseController {
     QuartzJobService quartzJobService;
 
     @Operation(summary = "查询定时任务")
-    @GET
-    @Path("")
+    @POST
+    @Path("/query")
     @PreAuthorize("@el.check('timing:list')")
     public PageResult<QuartzJob> queryQuartzJob(JobQueryCriteria criteria) {
         return quartzJobService.queryAll(criteria, criteria.toPageRequest());
@@ -73,7 +73,7 @@ public class QuartzJobController extends BaseController {
     }
 
     @Operation(summary = "查询任务执行日志")
-    @GET
+    @POST
     @Path(value = "/logs")
     @PreAuthorize("@el.check('timing:list')")
     public PageResult<QuartzLog> queryQuartzJobLog(JobQueryCriteria criteria) {

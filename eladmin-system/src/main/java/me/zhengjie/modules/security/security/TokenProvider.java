@@ -1,9 +1,5 @@
 package me.zhengjie.modules.security.security;
 
-import java.util.Date;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Date;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author /
@@ -73,6 +73,7 @@ public class TokenProvider {
     }
 
     public String getToken() {
+        // fixme
         String aaa = headers.getHeaderString("aaa");
         return aaa;
     }

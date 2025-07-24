@@ -1,15 +1,23 @@
 package me.zhengjie.modules.mybiz.service.dto;
 
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.zhengjie.QuerySearchable;
 import me.zhengjie.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.util.List;
 
 /**
  * @author vt
- * @website https://eladmin.vip
+
  * @since 2025-07-11
  **/
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class VtServerQueryCriteria {
+public class VtServerQueryCriteria extends PageIO implements QuerySearchable {
 
     /**
      * 精确
@@ -52,4 +60,9 @@ public class VtServerQueryCriteria {
     @Query
     @Schema(description = "状态：1启用、0禁用")
     private Integer enabled;
+
+    @Override
+    public List<QuerySearch> toQuerySearches() {
+        return null;
+    }
 }

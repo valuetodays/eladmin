@@ -10,6 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
@@ -77,8 +78,10 @@ public class UserController extends BaseController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('user:list')")
-    public void exportUser(UserQueryCriteria criteria) throws IOException {
-//  fixme:      userService.download(userService.queryAll(criteria), response);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportUser(UserQueryCriteria criteria) throws IOException {
+        File file = userService.download(userService.queryWithDetail(criteria));
+        return super.download(file);
     }
 
     @Operation(summary = "查询用户")

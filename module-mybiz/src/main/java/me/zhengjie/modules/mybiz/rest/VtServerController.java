@@ -1,29 +1,34 @@
 package me.zhengjie.modules.mybiz.rest;
 
-import io.quarkus.panache.common.Page;
-import io.swagger.annotations.ApiParam;
+import cn.vt.auth.AuthUser;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.BaseController;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.mybiz.domain.VtServer;
 import me.zhengjie.modules.mybiz.service.VtServerService;
 import me.zhengjie.modules.mybiz.service.dto.VtServerDto;
 import me.zhengjie.modules.mybiz.service.dto.VtServerQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SecurityUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
  * @author vt
- * @website https://eladmin.vip
+
  * @since 2025-07-11
  **/
 @Produces({MediaType.APPLICATION_JSON})
@@ -31,7 +36,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Tag(name = "VtServerController")
 @Path("/api/vtServer")
-public class VtServerController {
+public class VtServerController extends BaseController {
 
     @Inject
     VtServerService vtServerService;
@@ -40,26 +45,27 @@ public class VtServerController {
     @GET
     @Path(value = "/download")
     @PreAuthorize("@el.check('vtServer:list')")
-    public void exportVtServer(VtServerQueryCriteria criteria) throws IOException {
-        vtServerService.download(vtServerService.queryAll(criteria), response);
-    }
-
-    @GET
-    @Path
-    @Operation(summary = "查询VtServerController")
-    @PreAuthorize("@el.check('vtServer:list')")
-    public ResponseEntity<PageResult<VtServerDto>> queryVtServer(VtServerQueryCriteria criteria, Page pageable) {
-        return new ResponseEntity<>(vtServerService.queryAll(criteria, pageable), HttpStatus.OK);
+    public Response exportVtServer(VtServerQueryCriteria criteria) throws IOException {
+        File file = vtServerService.download(vtServerService.queryAll(criteria));
+        return super.download(file);
     }
 
     @POST
-    @Path("")
+    @Path("query")
+    @Operation(summary = "查询VtServerController")
+    @PreAuthorize("@el.check('vtServer:list')")
+    public PageResult<VtServerDto> queryVtServer(VtServerQueryCriteria criteria) {
+        return vtServerService.queryAll(criteria, criteria.toPageRequest());
+    }
+
+    @POST
+    @Path("add")
     @Log("新增VtServerController")
     @Operation(summary = "新增VtServerController")
     @PreAuthorize("@el.check('vtServer:add')")
     public Object createVtServer(@Valid VtServer resources) {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-        String username = currentUser.getUsername();
+        AuthUser currentUser = getCurrentAccount();
+        String username = currentUser.getEmail();
         resources.setCreateBy(username);
         resources.setUpdateBy(username);
         resources.setCreateTime(LocalDateTime.now());
@@ -69,7 +75,7 @@ public class VtServerController {
     }
 
     @POST
-    @Path("")
+    @Path("edit")
     @Log("修改VtServerController")
     @Operation(summary = "修改VtServerController")
     @PreAuthorize("@el.check('vtServer:edit')")
@@ -83,7 +89,7 @@ public class VtServerController {
     @Log("删除VtServerController")
     @Operation(summary = "删除VtServerController")
     @PreAuthorize("@el.check('vtServer:del')")
-    public Object deleteVtServer(@ApiParam(value = "传ID数组[]") Long[] ids) {
+    public Object deleteVtServer(Long[] ids) {
         vtServerService.deleteAll(ids);
         return 1;
     }

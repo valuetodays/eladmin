@@ -92,7 +92,7 @@ public class MenuController extends BaseController {
         return ids;
     }
 
-    @GET
+    @POST
     @Path("/query")
     @Operation(summary = "查询菜单")
     @PreAuthorize("@el.check('menu:list')")

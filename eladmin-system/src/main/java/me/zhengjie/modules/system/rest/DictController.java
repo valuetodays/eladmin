@@ -54,17 +54,17 @@ public class DictController extends BaseController {
         return super.download(file);
     }
 
-    @Operation(summary = "查询字典")
-    @GET
+    @Operation(summary = "查询字典(所有)")
+    @POST
     @Path(value = "/all")
     @PreAuthorize("@el.check('dict:list')")
     public List<DictDto> queryAllDict() {
         return dictService.queryAll(new DictQueryCriteria());
     }
 
-    @Operation(summary = "查询字典")
-    @GET
-    @Path("")
+    @Operation(summary = "查询字典(分页)")
+    @POST
+    @Path("query")
     @PreAuthorize("@el.check('dict:list')")
     public PageResult<DictDto> queryDict(DictQueryCriteria resources) {
         return dictService.queryAll(resources, resources.toPageRequest());

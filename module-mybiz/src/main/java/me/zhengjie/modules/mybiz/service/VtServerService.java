@@ -6,12 +6,13 @@ import me.zhengjie.modules.mybiz.service.dto.VtServerDto;
 import me.zhengjie.modules.mybiz.service.dto.VtServerQueryCriteria;
 import me.zhengjie.utils.PageResult;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * @author vt
- * @website https://eladmin.vip
+
  * @description 服务接口
  * @since 2025-07-11
  **/
@@ -67,8 +68,7 @@ public interface VtServerService {
      * 导出数据
      *
      * @param all      待导出的数据
-     * @param response /
      * @throws IOException /
      */
-    void download(List<VtServerDto> all) throws IOException;
+    File download(List<VtServerDto> all) throws IOException;
 }
