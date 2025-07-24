@@ -1,19 +1,8 @@
 quarkus:
-  application:
-    name: eladmin
-  profile: dev
   http:
-    # 不配置host，只能 localhost 访问
-    # 因为 前端页面是在另一个服务器上（使用vscode + remote development），要访问本服务
-    host: 0.0.0.0
-    #    port: 20008
-    port: 8000
-    #    root-path: "/api"
-    limits:
-      max-body-size: 12M
     cors: true
     cors.origins: http://tmp.eladmin.valuetodays.cn,http://tmp.eladminapi.valuetodays.cn
-    cors.methods: '*'
+    cors.methods: GET,POST,OPTIONS
     cors.headers: '*'
     #    cors.exposed-headers: location,info
     #    cors.access-control-max-age: 24H
