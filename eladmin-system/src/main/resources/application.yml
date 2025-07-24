@@ -12,12 +12,12 @@ quarkus:
     limits:
       max-body-size: 12M
     cors: true
-    cors.origins: '*'
+    cors.origins: http://tmp.eladmin.valuetodays.cn,http://tmp.eladminapi.valuetodays.cn
     cors.methods: '*'
     cors.headers: '*'
     #    cors.exposed-headers: location,info
     #    cors.access-control-max-age: 24H
-  #    cors.access-control-allow-credentials: true
+    cors.access-control-allow-credentials: true
   # https://quarkus.io/guides/datasource
   datasource:
     db-kind: postgresql
