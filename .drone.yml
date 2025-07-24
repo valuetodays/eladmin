@@ -64,6 +64,7 @@ trigger:
     - master
     - main
     - dev
+    - dev-quarkus
   event:
     - push
     - custom
