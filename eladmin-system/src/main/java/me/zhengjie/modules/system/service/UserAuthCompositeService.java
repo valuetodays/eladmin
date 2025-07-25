@@ -60,7 +60,7 @@ public class UserAuthCompositeService {
         return roleRepository.findAllById(roleIds);
     }
 
-    public List<Menu> findMenusByRoleIds(List<Long> roleIds) {
+    public List<Menu> findMenusByRoleIds(Set<Long> roleIds) {
         List<RolesMenus> list = rolesMenusRepository.findByRoleIds(roleIds);
         if (CollectionUtils.isEmpty(list)) {
             return List.of();

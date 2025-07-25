@@ -108,7 +108,7 @@ public class RoleServiceImpl implements RoleService {
         if (CollectionUtils.isNotEmpty(dtoList)) {
             for (RoleDto roleDto : dtoList) {
                 List<Long> roleIds = List.of(roleDto.getId());
-                List<Menu> menusByRoleIds = userAuthCompositeService.findMenusByRoleIds(roleIds);
+                List<Menu> menusByRoleIds = userAuthCompositeService.findMenusByRoleIds(new HashSet<>(roleIds));
                 roleDto.setMenus(new HashSet<>(menuMapper.toDto(menusByRoleIds)));
                 List<Dept> deptsByRoleIds = userAuthCompositeService.findDeptsByRoleIds(roleIds);
                 roleDto.setDepts(new HashSet<>(deptMapper.toDto(deptsByRoleIds)));
@@ -223,8 +223,8 @@ public class RoleServiceImpl implements RoleService {
                         .collect(Collectors.toList());
             }
             List<Role> roles = userAuthCompositeService.findRolesByUserId(user.getId());
-            final List<Long> roleIds = roles.stream().map(Role::getId).toList();
-            List<Menu> menus = userAuthCompositeService.findMenusByRoleIds(roleIds);
+            final List<Long> roleIds = roles.stream().map(Role::getId).distinct().toList();
+            List<Menu> menus = userAuthCompositeService.findMenusByRoleIds(new HashSet<>(roleIds));
             permissions = menus.stream()
                 .map(Menu::getPermission)
                 .filter(StringUtils::isNotBlank)
