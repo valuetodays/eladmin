@@ -35,5 +35,5 @@ public class LoginProperties {
      */
     private boolean singleLogin = false;
 
-    public static final String cacheKey = "user-login-cache:";
+    public static final String cacheKey = "user-login-cache-2:";
 }
