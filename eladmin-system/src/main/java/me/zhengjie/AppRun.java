@@ -15,12 +15,14 @@
  */
 package me.zhengjie;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.rest.AnonymousGetMapping;
 import me.zhengjie.utils.SpringBeanHolder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -55,6 +57,8 @@ public class AppRun {
         log.info("Local: http://localhost:{}", port);
         log.info("Swagger: http://localhost:{}/doc.html", port);
         log.info("---------------------------------------------");
+        RedisProperties redisProperties = context.getBean(RedisProperties.class);
+        log.info("redisProperties:{}", JSON.toJSONString(redisProperties));
     }
 
     @Bean
