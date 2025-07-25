@@ -17,4 +17,8 @@ public class UsersRoleRepository extends MyPanacheRepository<UsersRole> {
     public List<UsersRole> findByUserId(Long userId) {
         return find("userId = ?1", userId).list();
     }
+
+    public List<UsersRole> findByRoleIds(List<Long> roleIds) {
+        return find("roleId in ?1", roleIds).list();
+    }
 }

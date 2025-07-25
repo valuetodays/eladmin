@@ -3,7 +3,6 @@ package me.zhengjie.modules.system.rest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -83,8 +82,8 @@ public class DictDetailController {
 
     @Log("删除字典详情")
     @Operation(summary = "删除字典详情")
-    @DELETE
-    @Path(value = "/{id}")
+    @POST
+    @Path(value = "/delete/{id}")
     @PreAuthorize("@el.check('dict:del')")
     public Object deleteDictDetail(@PathParam("id") Long id) {
         dictDetailService.delete(id);

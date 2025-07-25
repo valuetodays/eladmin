@@ -1,5 +1,13 @@
 package me.zhengjie.utils;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.exception.BadRequestException;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,14 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.poi.excel.BigExcelWriter;
-import cn.hutool.poi.excel.ExcelUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.exception.BadRequestException;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 /**
  * File工具类，扩展 hutool 工具包
@@ -43,7 +43,8 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
      *       linux: /temp
      * </pre>
      */
-    public static final String SYS_TEM_DIR = System.getProperty("java.io.tmpdir") + File.separator;
+//    public static final String SYS_TEM_DIR = System.getProperty("java.io.tmpdir") + File.separator;
+    public static final String SYS_TEM_DIR = "/tmp" + File.separator;
     /**
      * 定义GB的计算常量
      */
@@ -201,6 +202,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         sheet.trackAllColumnsForAutoSizing();
         //列宽自适应
         writer.autoSizeColumnAll();
+        writer.flush();
         // 终止后删除临时文件
         file.deleteOnExit();
         return file;

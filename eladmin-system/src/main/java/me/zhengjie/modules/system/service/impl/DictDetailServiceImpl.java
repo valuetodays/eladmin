@@ -80,8 +80,10 @@ public class DictDetailServiceImpl implements DictDetailService {
     public void update(DictDetail resources) {
         DictDetail dictDetail = dictDetailRepository.findById(resources.getId());
         ValidationUtil.isNull( dictDetail.getId(),"DictDetail","id",resources.getId());
-        resources.setId(dictDetail.getId());
-        dictDetailRepository.save(resources);
+        dictDetail.setDictSort(resources.getDictSort());
+        dictDetail.setLabel(resources.getLabel());
+        dictDetail.setValue(resources.getValue());
+        dictDetailRepository.save(dictDetail);
         // 清理缓存
         delCaches(resources);
     }

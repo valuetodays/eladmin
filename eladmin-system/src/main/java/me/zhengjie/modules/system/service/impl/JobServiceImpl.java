@@ -97,7 +97,7 @@ public class JobServiceImpl implements JobService {
         }
         ValidationUtil.isNull( job.getId(),"Job","id",resources.getId());
         resources.setId(job.getId());
-        jobRepository.save(resources);
+        jobRepository.update(resources);
         // 删除缓存
         delCaches(resources.getId());
     }

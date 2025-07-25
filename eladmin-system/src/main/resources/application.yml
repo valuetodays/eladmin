@@ -13,7 +13,7 @@ quarkus:
       max-body-size: 12M
     cors:
       enabled: true
-      origins: http://tmp.eladmin.valuetodays.cn,http://tmp.eladminapi.valuetodays.cn,http://127.0.0.1
+      origins: http://tmp.eladmin.valuetodays.cn,http://tmp.eladminapi.valuetodays.cn,http://127.0.0.1,http://v66:8013
       methods: GET,POST,OPTIONS
       headers: '*'
     #    cors.exposed-headers: location,info

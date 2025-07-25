@@ -1,8 +1,11 @@
 package me.zhengjie.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,6 +22,7 @@ import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +30,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -43,13 +48,20 @@ public class DictServiceImpl implements DictService {
     RedisUtils redisUtils;
 
     @Override
-    public PageResult<DictDto> queryAll(DictQueryCriteria dict, Page pageable) {
-        // fixme 先不用条件
-        PanacheQuery<Dict> paged = dictRepository.findAll().page(pageable);
-//        Page<Dict> page = dictRepository.findAll((root, query, cb) -> QueryHelp.getPredicate(root, dict, cb), pageable);
-        List<Dict> list = paged.list();
+    public PageResult<DictDto> queryAll(DictQueryCriteria criteria, Page pageable) {
+        Sort sort = Sort.descending("id");
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Dict.class);
+        PanacheQuery<Dict> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = dictRepository.findAll(sort);
+        } else {
+            panacheQuery = dictRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
+        }
+
+        List<Dict> list = panacheQuery.list();
         List<DictDto> dto = dictMapper.toDto(list);
-        return PageUtil.toPage(dto, paged.count());
+        return PageUtil.toPage(dto, panacheQuery.count());
     }
 
     @Override

@@ -5,17 +5,22 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.domain.Job;
 import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.RolesDepts;
 import me.zhengjie.modules.system.domain.RolesMenus;
+import me.zhengjie.modules.system.domain.User;
+import me.zhengjie.modules.system.domain.UsersJob;
 import me.zhengjie.modules.system.domain.UsersRole;
 import me.zhengjie.modules.system.repository.DeptRepository;
+import me.zhengjie.modules.system.repository.JobRepository;
 import me.zhengjie.modules.system.repository.MenuRepository;
 import me.zhengjie.modules.system.repository.RoleRepository;
 import me.zhengjie.modules.system.repository.RolesDeptsRepository;
 import me.zhengjie.modules.system.repository.RolesMenusRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
+import me.zhengjie.modules.system.repository.UsersJobRepository;
 import me.zhengjie.modules.system.repository.UsersRoleRepository;
 import me.zhengjie.utils.enums.DataScopeEnum;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,6 +42,8 @@ public class UserAuthCompositeService {
     @Inject
     RoleRepository roleRepository;
     @Inject
+    JobRepository jobRepository;
+    @Inject
     MenuRepository menuRepository;
     @Inject
     DeptRepository deptRepository;
@@ -50,6 +57,8 @@ public class UserAuthCompositeService {
     UserRepository userRepository;
     @Inject
     DataService dataService;
+    @Inject
+    UsersJobRepository usersJobRepository;
 
     public List<Role> findRolesByUserId(Long userId) {
         List<UsersRole> usersRoles = usersRoleRepository.findByUserId(userId);
@@ -58,6 +67,15 @@ public class UserAuthCompositeService {
         }
         List<Long> roleIds = usersRoles.stream().map(UsersRole::getRoleId).distinct().toList();
         return roleRepository.findAllById(roleIds);
+    }
+
+    public List<Job> findJobsByUserId(Long userId) {
+        List<UsersJob> usersJobList = usersJobRepository.findByUserIds(List.of(userId));
+        if (CollectionUtils.isEmpty(usersJobList)) {
+            return List.of();
+        }
+        List<Long> jobIds = usersJobList.stream().map(UsersJob::getJobId).distinct().toList();
+        return jobRepository.findAllById(jobIds);
     }
 
     public List<Menu> findMenusByRoleIds(Set<Long> roleIds) {
@@ -137,4 +155,22 @@ public class UserAuthCompositeService {
         }).toList();
         rolesMenusRepository.persist(toSave);
     }
+
+    /**
+     * 根据角色中的部门查询
+     *
+     * @param deptId /
+     * @return /
+     */
+    public List<User> findUsersByRoleDeptId(Long deptId) {
+        List<RolesDepts> rolesDepts = rolesDeptsRepository.findByDeptIds(List.of(deptId));
+        List<Long> roleIds = rolesDepts.stream().map(RolesDepts::getRoleId).distinct().toList();
+        List<UsersRole> usersRoles = usersRoleRepository.findByRoleIds(roleIds);
+        List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
+        return userRepository.findAllByIds(userIds);
+//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE " +
+//            "u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = ?1 group by u.user_id", nativeQuery = true)
+    }
+
+
 }

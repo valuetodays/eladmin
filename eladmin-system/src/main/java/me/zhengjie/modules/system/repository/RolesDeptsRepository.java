@@ -17,4 +17,8 @@ public class RolesDeptsRepository extends MyPanacheRepository<RolesDepts> {
     public List<RolesDepts> findByRoleIds(List<Long> roleIds) {
         return find("roleId in ?1", roleIds).list();
     }
+
+    public List<RolesDepts> findByDeptIds(List<Long> deptIds) {
+        return find("deptId in ?1", deptIds).list();
+    }
 }

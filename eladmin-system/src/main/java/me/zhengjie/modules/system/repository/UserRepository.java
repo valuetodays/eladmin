@@ -1,13 +1,13 @@
 package me.zhengjie.modules.system.repository;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.User;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -74,17 +74,6 @@ public class UserRepository extends MyPanacheRepository<User> {
 //    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r WHERE" +
 //            " u.user_id = r.user_id AND r.role_id = ?1", nativeQuery = true)
     public List<User> findByRoleId(Long roleId) {
-        return null;
-    }
-
-    /**
-     * 根据角色中的部门查询
-     * @param deptId /
-     * @return /
-     */
-//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE " +
-//            "u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = ?1 group by u.user_id", nativeQuery = true)
-    public List<User> findByRoleDeptId(Long deptId) {
         return null;
     }
 

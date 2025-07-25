@@ -16,6 +16,8 @@ import me.zhengjie.exception.EntityNotFoundException;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.UserCacheManager;
 import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.domain.Job;
+import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.UserAuthCompositeService;
@@ -25,6 +27,8 @@ import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.DeptSmallMapper;
+import me.zhengjie.modules.system.service.mapstruct.JobSmallMapper;
+import me.zhengjie.modules.system.service.mapstruct.RoleSmallMapper;
 import me.zhengjie.modules.system.service.mapstruct.UserMapper;
 import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
@@ -34,6 +38,7 @@ import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -41,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +69,10 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
     @Inject
     DeptSmallMapper deptSmallMapper;
+    @Inject
+    RoleSmallMapper roleSmallMapper;
+    @Inject
+    JobSmallMapper jobSmallMapper;
     @Inject
     FileProperties properties;
     @Inject
@@ -89,7 +99,31 @@ public class UserServiceImpl implements UserService {
         PanacheQuery<User> all = panacheQuery.page(pageable);
         List<UserDto> list = userMapper.toDto(all.list());
         fillDept(list);
+        fillRoles(list);
+        fillJobs(list);
         return PageUtil.toPage(list, all.count());
+    }
+
+    private void fillJobs(List<UserDto> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        for (UserDto userDto : list) {
+            List<Job> jobs = userAuthCompositeService.findJobsByUserId(userDto.getId());
+            List<JobSmallDto> jobSmallDtos = jobSmallMapper.toDto(jobs);
+            userDto.setJobs(new HashSet<>(jobSmallDtos));
+        }
+    }
+
+    private void fillRoles(List<UserDto> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        for (UserDto userDto : list) {
+            List<Role> roles = userAuthCompositeService.findRolesByUserId(userDto.getId());
+            List<RoleSmallDto> roleDtos = roleSmallMapper.toDto(roles);
+            userDto.setRoles(new HashSet<>(roleDtos));
+        }
     }
 
     private void fillDept(List<UserDto> list) {
@@ -103,6 +137,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> queryWithDetail(UserQueryCriteria criteria) {
+        criteria = ObjectUtils.defaultIfNull(criteria, new UserQueryCriteria());
         return this.queryWithDetail(criteria, Page.ofSize(10000)).getContent();
     }
 
@@ -164,7 +199,7 @@ public class UserServiceImpl implements UserService {
             redisUtils.del(CacheKey.DATA_USER + resources.getId());
         }
         // 如果用户被禁用，则清除用户登录信息
-        if(!resources.getEnabled()){
+        if (!resources.getEnabled()) {
             onlineUserService.kickOutForUsername(resources.getUsername());
         }
         user.setUsername(resources.getUsername());
@@ -254,8 +289,8 @@ public class UserServiceImpl implements UserService {
         // 验证文件上传的格式
         String image = "gif jpg png jpeg";
         String fileType = FileUtil.getExtensionName(originalFilename);
-        if(fileType != null && !image.contains(fileType)){
-            throw new BadRequestException("文件格式错误！, 仅支持 " + image +" 格式");
+        if (fileType != null && !image.contains(fileType)) {
+            throw new BadRequestException("文件格式错误！, 仅支持 " + image + " 格式");
         }
         User user = userRepository.findById(userId);
         String oldPath = user.getAvatarPath();

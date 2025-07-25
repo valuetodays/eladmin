@@ -46,8 +46,8 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
      * @param pid /
      * @return /
      */
-    public int countByPid(Long pid) {
-        return find("SELECT COUNT(DISTINCT e.id) FROM Dept e where e.pid = ?1", pid).project(Integer.class).firstResult();
+    public long countByPid(Long pid) {
+        return find("SELECT COUNT(DISTINCT e.id) FROM Dept e where e.pid = ?1", pid).project(Long.class).firstResult();
     }
 
     /**

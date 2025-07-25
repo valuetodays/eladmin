@@ -30,6 +30,7 @@ import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.enums.DataScopeEnum;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -276,8 +277,8 @@ public class DeptServiceImpl implements DeptService {
 
     private void updateSubCnt(Long deptId){
         if(deptId != null){
-            int count = deptRepository.countByPid(deptId);
-            deptRepository.updateSubCntById(count, deptId);
+            long count = deptRepository.countByPid(deptId);
+            deptRepository.updateSubCntById((int) count, deptId);
         }
     }
 
@@ -303,7 +304,13 @@ public class DeptServiceImpl implements DeptService {
      * @param id /
      */
     public void delCaches(Long id){
-        List<User> users = userRepository.findByRoleDeptId(id);
+        if (Objects.isNull(id)) {
+            return;
+        }
+        List<User> users = userAuthCompositeService.findUsersByRoleDeptId(id);
+        if (CollectionUtils.isEmpty(users)) {
+            return;
+        }
         // 删除数据权限
         redisUtils.delByKeys(CacheKey.DATA_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
         redisUtils.del(CacheKey.DEPT_ID + id);
