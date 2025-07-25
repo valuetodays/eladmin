@@ -21,5 +21,5 @@ public interface LoginProperties {
 
     int userCacheIdleTime();
 
-    public static final String cacheKey = "user-login-cache:";
+    public static final String cacheKey = "user-login-cache-q:";
 }
