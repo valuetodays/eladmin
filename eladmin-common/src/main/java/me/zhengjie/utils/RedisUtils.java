@@ -55,7 +55,7 @@ public class RedisUtils {
     public RedisUtils(RedisTemplate<Object, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.redisTemplate.setKeySerializer(StringRedisSerializer.UTF_8);
-        this.redisTemplate.setValueSerializer(StringRedisSerializer.UTF_8);
+//        this.redisTemplate.setValueSerializer(StringRedisSerializer.UTF_8);
         this.redisTemplate.setHashKeySerializer(StringRedisSerializer.UTF_8);
     }
 
