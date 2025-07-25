@@ -56,6 +56,7 @@ steps:
     commands:
       - docker info
       - docker ps -a
+      - docker compose version
       - docker version --format '{{.Client.Version}} -> {{.Server.Version}}'
       - sh /drone/src/docs/scripts-for-drone-ci/ci-restart-docker.sh
 
