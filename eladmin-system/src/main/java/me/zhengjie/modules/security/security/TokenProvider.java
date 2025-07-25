@@ -51,7 +51,7 @@ public class TokenProvider {
      * @return /
      */
     public String createToken(JwtUserDto user) {
-        String r = RandomStringUtils.secureStrong().nextAlphanumeric(8);
+        String r = RandomStringUtils.insecure().nextAlphanumeric(8);
         return UUID.randomUUID().toString().replace("-", "") + "-" + r;
     }
 
