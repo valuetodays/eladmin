@@ -1,7 +1,7 @@
 package me.zhengjie.config.properties;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import lombok.Data;
 import lombok.Getter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -15,40 +15,21 @@ public class FileProperties {
     @ConfigProperty(name = "file.avatar-max-size")
     Long avatarMaxSize;
 
-    @Inject
-    ElPathConfig mac;
-
-    @Inject
-    ElPathConfig linux;
-
-    @Inject
-    ElPathConfig windows;
+    @ConfigProperty(name = "file.path")
+    String path;
+    @ConfigProperty(name = "file.avatar")
+    String avatar;
 
     public ElPathConfig getPath() {
-        String os = System.getProperty("os.name");
-        if (os.toLowerCase().startsWith("win")) {
-            return windows;
-        } else if (os.toLowerCase().startsWith("mac")) {
-            return mac;
-        }
-        return linux;
+        ElPathConfig elPathConfig = new ElPathConfig();
+        elPathConfig.setAvatar(avatar);
+        elPathConfig.setPath(path);
+        return elPathConfig;
     }
 
-    @ApplicationScoped
+    @Data
     public static class ElPathConfig {
-
-        @ConfigProperty(name = "file.mac.path", defaultValue = "")
-        String path;
-
-        @ConfigProperty(name = "file.mac.avatar", defaultValue = "")
-        String avatar;
-
-        public String getPath() {
-            return path;
-        }
-
-        public String getAvatar() {
-            return avatar;
-        }
+        private String path;
+        private String avatar;
     }
 }

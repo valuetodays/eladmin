@@ -294,7 +294,6 @@ public class UserServiceImpl implements UserService {
         }
         User user = userRepository.findById(userId);
         String oldPath = user.getAvatarPath();
-        // fixme: 上传文件到目录下
         File file = FileUtil.upload(multipartFile, originalFilename, properties.getPath().getAvatar());
         user.setAvatarPath(Objects.requireNonNull(file).getPath());
         user.setAvatarName(file.getName());
