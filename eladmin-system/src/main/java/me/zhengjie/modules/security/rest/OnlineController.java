@@ -3,7 +3,6 @@ package me.zhengjie.modules.security.rest;
 import cn.valuetodays.quarkus.commons.base.PageIO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -11,6 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.BaseController;
+import me.zhengjie.modules.security.req.OnlineUserQueryReq;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
 import me.zhengjie.utils.EncryptUtils;
@@ -41,17 +41,17 @@ public class OnlineController extends BaseController {
     @Path("query")
     @PreAuthorize("@el.check()")
     // fixme
-    public PageResult<OnlineUserDto> queryOnlineUser(String username/*, Page pageable*/) {
-        return onlineUserService.getAll(username, new PageIO().toPageRequest());
+    public PageResult<OnlineUserDto> queryOnlineUser(OnlineUserQueryReq req) {
+        return onlineUserService.getAll(req.getUsername(), new PageIO().toPageRequest());
     }
 
     @Operation(summary = "导出数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check()")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response exportOnlineUser(String username) throws IOException {
-        File file = onlineUserService.download(onlineUserService.getAll(username));
+    public Response exportOnlineUser(OnlineUserQueryReq req) throws IOException {
+        File file = onlineUserService.download(onlineUserService.getAll(req.getUsername()));
         return super.download(file);
     }
 

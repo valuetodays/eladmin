@@ -1,5 +1,6 @@
 package me.zhengjie.service;
 
+import cn.hutool.core.lang.Dict;
 import io.quarkus.panache.common.Page;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.service.dto.SysLogQueryCriteria;
@@ -54,7 +55,7 @@ public interface SysLogService {
      * @param id 日志ID
      * @return Object
      */
-    Object findByErrDetail(Long id);
+    Dict findByErrDetail(Long id);
 
     /**
      * 导出日志

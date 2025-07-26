@@ -3,6 +3,9 @@ package me.zhengjie.modules.system.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,20 +28,20 @@ import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.mapstruct.MenuMapper;
 import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -71,24 +74,15 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuDto> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception {
         Sort sort = Sort.ascending("menuSort");
-        if(Boolean.TRUE.equals(isQuery)){
-            criteria.setPidIsNull(true);
-            List<Field> fields = QueryHelp.getAllFields(criteria.getClass(), new ArrayList<>());
-            for (Field field : fields) {
-                //设置对象的访问权限，保证对private的属性的访问
-                field.setAccessible(true);
-                Object val = field.get(criteria);
-                if("pidIsNull".equals(field.getName())){
-                    continue;
-                }
-                if (ObjectUtil.isNotNull(val)) {
-                    criteria.setPidIsNull(null);
-                    break;
-                }
-            }
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Menu.class);
+        PanacheQuery<Menu> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = menuRepository.findAll(sort);
+        } else {
+            panacheQuery = menuRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
         }
-        //   fixme: 条件查询          return menuMapper.toDto(menuRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
-        List<Menu> all = menuRepository.findAll(sort).list();
+        List<Menu> all = panacheQuery.list();
         return menuMapper.toDto(all);
     }
 

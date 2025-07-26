@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -53,7 +52,7 @@ public class MenuController extends BaseController {
     private static final String ENTITY_NAME = "menu";
 
     @Operation(summary = "导出菜单数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check('menu:list')")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

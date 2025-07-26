@@ -91,7 +91,6 @@ public class AuthController extends BaseController {
         if (!BCryptUtils.checkpw(password, jwtUser.getPassword())) {
             throw new BadRequestException("账号或密码错误");
         }
-        // fixme:
         // 生成令牌
         String token = tokenProvider.createToken(jwtUser);
         AuthUser authUserToPut = new AuthUser();

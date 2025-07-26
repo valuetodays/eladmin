@@ -17,7 +17,6 @@ public class LogRepository extends MyPanacheRepository<SysLog> {
      * @param logType 日志类型
      */
     @Transactional
-//    @Query(value = "delete from sys_log where log_type = ?1", nativeQuery = true)
     public void deleteByLogType(String logType) {
         delete("where logType=?1", logType);
     }

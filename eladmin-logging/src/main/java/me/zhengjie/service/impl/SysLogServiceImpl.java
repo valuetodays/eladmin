@@ -1,7 +1,8 @@
 package me.zhengjie.service.impl;
 
 import cn.hutool.core.lang.Dict;
-import cn.hutool.core.util.ObjectUtil;
+import cn.valuetodays.quarkus.commons.QueryPart;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,8 +19,9 @@ import me.zhengjie.service.mapstruct.LogSmallMapper;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Zheng Jie
@@ -47,27 +50,47 @@ public class SysLogServiceImpl implements SysLogService {
 
     @Override
     public Object queryAll(SysLogQueryCriteria criteria, Page pageable) {
-        //   fixme: 条件查询    Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
-        PanacheQuery<SysLog> paged = logRepository.findAll().page(pageable);
-        long count = paged.count();
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, SysLog.class);
+        PanacheQuery<SysLog> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = logRepository.findAll();
+        } else {
+            panacheQuery = logRepository.find(hqlAndParams.getLeft(), hqlAndParams.getRight());
+        }
+
+        long count = panacheQuery.count();
         String status = "ERROR";
         if (status.equals(criteria.getLogType())) {
-            return PageUtil.toPage(logErrorMapper.toDto(paged.list()), count);
+            return PageUtil.toPage(logErrorMapper.toDto(panacheQuery.list()), count);
         }
-        return PageUtil.toPage(paged);
+        return PageUtil.toPage(panacheQuery);
     }
 
     @Override
     public List<SysLog> queryAll(SysLogQueryCriteria criteria) {
-        //   fixme: 条件查询        return logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)));
-        return logRepository.findAll().list();
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, SysLog.class);
+        PanacheQuery<SysLog> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = logRepository.findAll();
+        } else {
+            panacheQuery = logRepository.find(hqlAndParams.getLeft(), hqlAndParams.getRight());
+        }
+        return panacheQuery.list();
     }
 
     @Override
     public PageResult<SysLogSmallDto> queryAllByUser(SysLogQueryCriteria criteria, Page pageable) {
-        //   fixme: 条件查询      Page<SysLog> page = logRepository.findAll(((root, criteriaQuery, cb) -> QueryHelp.getPredicate(root, criteria, cb)), pageable);
-        PanacheQuery<SysLog> paged = logRepository.findAll().page(pageable);
-        return PageUtil.toPage(logSmallMapper.toDto(paged.list()), paged.count());
+        List<QuerySearch> querySearchList = criteria.toQuerySearches();
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, SysLog.class);
+        PanacheQuery<SysLog> panacheQuery;
+        if (Objects.isNull(hqlAndParams)) {
+            panacheQuery = logRepository.findAll();
+        } else {
+            panacheQuery = logRepository.find(hqlAndParams.getLeft(), hqlAndParams.getRight());
+        }
+        return PageUtil.toPage(logSmallMapper.toDto(panacheQuery.list()), panacheQuery.count());
     }
 
     @Override
@@ -79,7 +102,9 @@ public class SysLogServiceImpl implements SysLogService {
 
         // 填充基本信息
         sysLog.setRequestIp(ip);
-        sysLog.setAddress(StringUtils.getCityInfo(sysLog.getRequestIp()));
+        // fixme
+        sysLog.setAddress("StringUtils.getCityInfo(sysLog.getRequestIp())");
+//        sysLog.setAddress(StringUtils.getCityInfo(sysLog.getRequestIp()));
         sysLog.setUsername(username);
         sysLog.setBrowser(browser);
 
@@ -89,11 +114,11 @@ public class SysLogServiceImpl implements SysLogService {
 
 
     @Override
-    public Object findByErrDetail(Long id) {
+    public Dict findByErrDetail(Long id) {
         SysLog sysLog = logRepository.findById(id);
         ValidationUtil.isNull(sysLog.getId(), "Log", "id", id);
-        byte[] details = sysLog.getExceptionDetail();
-        return Dict.create().set("exception", new String(ObjectUtil.isNotNull(details) ? details : "".getBytes()));
+        String exceptionDetail = sysLog.getExceptionDetail();
+        return Dict.create().set("exception", StringUtils.trimToEmpty(exceptionDetail));
     }
 
     @Override
@@ -107,7 +132,7 @@ public class SysLogServiceImpl implements SysLogService {
             map.put("描述", sysLog.getDescription());
             map.put("浏览器", sysLog.getBrowser());
             map.put("请求耗时/毫秒", sysLog.getTime());
-            map.put("异常详情", new String(ObjectUtil.isNotNull(sysLog.getExceptionDetail()) ? sysLog.getExceptionDetail() : "".getBytes()));
+            map.put("异常详情", org.apache.commons.lang3.StringUtils.trimToEmpty(sysLog.getExceptionDetail()));
             map.put("创建日期", sysLog.getCreateTime());
             list.add(map);
         }

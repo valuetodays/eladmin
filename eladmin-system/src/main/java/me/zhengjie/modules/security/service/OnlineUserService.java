@@ -58,7 +58,12 @@ public class OnlineUserService {
         String address = "none";// fixme StringUtils.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
-            onlineUserDto = new OnlineUserDto(id, jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), dept, browser , ip, address, EncryptUtils.desEncrypt(token), new Date());
+            onlineUserDto = new OnlineUserDto(id,
+                jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(),
+                dept,
+                browser, ip, address,
+                EncryptUtils.desEncrypt(token),
+                new Date());
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }

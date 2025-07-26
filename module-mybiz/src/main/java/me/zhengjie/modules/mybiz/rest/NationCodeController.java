@@ -4,7 +4,6 @@ import cn.vt.auth.AuthUser;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -41,7 +40,7 @@ public class NationCodeController extends BaseController {
     NationCodeService nationCodeService;
 
     @Operation(summary = "导出数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check('nationCode:list')")
     public Response exportNationCode(NationCodeQueryCriteria criteria) throws IOException {

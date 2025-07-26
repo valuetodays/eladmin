@@ -57,7 +57,7 @@ public class SysLog implements Serializable {
     private Long time;
 
     @Schema(description = "异常详细")
-    private byte[] exceptionDetail;
+    private String exceptionDetail;
 
     /** 创建日期 */
     @CreationTimestamp

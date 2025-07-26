@@ -1,13 +1,10 @@
 package me.zhengjie.rest;
 
-import java.io.File;
-import java.io.IOException;
-
+import cn.hutool.core.lang.Dict;
 import cn.vt.auth.AuthUser;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -23,6 +20,9 @@ import me.zhengjie.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Zheng Jie
@@ -40,7 +40,7 @@ public class SysLogController extends BaseController {
 
     @Log("导出数据")
     @Operation(summary = "导出数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check()")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -52,7 +52,7 @@ public class SysLogController extends BaseController {
 
     @Log("导出错误数据")
     @Operation(summary = "导出错误数据")
-    @GET
+    @POST
     @Path(value = "/error/download")
     @PreAuthorize("@el.check()")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -62,8 +62,8 @@ public class SysLogController extends BaseController {
         return super.download(file);
     }
 
-    @GET
-    @Path("")
+    @POST
+    @Path("query")
     @Operation(summary = "日志查询")
     @PreAuthorize("@el.check()")
     public Object queryLog(SysLogQueryCriteria criteria) {
@@ -71,7 +71,7 @@ public class SysLogController extends BaseController {
         return sysLogService.queryAll(criteria, criteria.toPageRequest());
     }
 
-    @GET
+    @POST
     @Path(value = "/user")
     @Operation(summary = "用户日志查询")
     public PageResult<SysLogSmallDto> queryUserLog(SysLogQueryCriteria criteria) {
@@ -81,7 +81,7 @@ public class SysLogController extends BaseController {
         return sysLogService.queryAllByUser(criteria, criteria.toPageRequest());
     }
 
-    @GET
+    @POST
     @Path(value = "/error")
     @Operation(summary = "错误日志查询")
     @PreAuthorize("@el.check()")
@@ -90,30 +90,30 @@ public class SysLogController extends BaseController {
         return sysLogService.queryAll(criteria, criteria.toPageRequest());
     }
 
-    @GET
+    @POST
     @Path(value = "/error/{id}")
     @Operation(summary = "日志异常详情查询")
     @PreAuthorize("@el.check()")
-    public Object queryErrorLogDetail(@PathParam("id") Long id) {
+    public Dict queryErrorLogDetail(@PathParam("id") Long id) {
         return sysLogService.findByErrDetail(id);
     }
 
-    @DELETE
+    @POST
     @Path(value = "/del/error")
     @Log("删除所有ERROR日志")
     @Operation(summary = "删除所有ERROR日志")
     @PreAuthorize("@el.check()")
-    public Object delAllErrorLog() {
+    public Integer delAllErrorLog() {
         sysLogService.delAllByError();
         return 1;
     }
 
-    @DELETE
+    @POST
     @Path(value = "/del/info")
     @Log("删除所有INFO日志")
     @Operation(summary = "删除所有INFO日志")
     @PreAuthorize("@el.check()")
-    public Object delAllInfoLog() {
+    public Integer delAllInfoLog() {
         sysLogService.delAllByInfo();
         return 1;
     }

@@ -596,6 +596,8 @@ INSERT INTO sys_menu (menu_id, pid, sub_count, type, title, name, component, men
 INSERT INTO sys_menu (menu_id, pid, sub_count, type, title, name, component, menu_sort, icon, path, i_frame, cache, hidden, permission, create_by, update_by, create_time, update_time) VALUES (116, 36, 0, 1, '生成预览', 'Preview', 'generator/preview', 999, 'java', 'generator/preview/:tableName', false, true, true, NULL, NULL, NULL, '2019-11-26 14:54:36', NULL);
 COMMIT;
 
+ALTER TABLE sys_menu ALTER COLUMN "menu_id" RESTART WITH 120;
+
 -- ----------------------------
 -- Table structure for sys_quartz_job
 -- ----------------------------
