@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.GenConfig;
 import me.zhengjie.reqresp.GenPreviewResp;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.File;
@@ -191,10 +192,10 @@ public class GenUtil {
         // 小写开头的类名
         String changeClassName = StringExUtils.toCamelCase(genConfig.getTableName());
         // 判断是否去除表前缀
-        if (StringExUtils.isNotEmpty(genConfig.getPrefix())) {
+        if (StringUtils.isNotEmpty(genConfig.getPrefix())) {
             className = StringExUtils.toCapitalizeCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
             changeClassName = StringExUtils.toCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
-            changeClassName = StringExUtils.uncapitalize(changeClassName);
+            changeClassName = StringUtils.uncapitalize(changeClassName);
         }
         // 保存类名
         genMap.put("className", className);
@@ -260,7 +261,7 @@ public class GenUtil {
                 genMap.put("auto", true);
             }
             // 主键存在字典
-            if (StringExUtils.isNotBlank(column.getDictName())) {
+            if (StringUtils.isNotBlank(column.getDictName())) {
                 genMap.put("hasDict", true);
                 if(!dicts.contains(column.getDictName()))
                     dicts.add(column.getDictName());
@@ -277,7 +278,7 @@ public class GenUtil {
             // 表单显示
             listMap.put("formShow", column.getFormShow());
             // 表单组件类型
-            listMap.put("formType", StringExUtils.isNotBlank(column.getFormType()) ? column.getFormType() : "Input");
+            listMap.put("formType", StringUtils.isNotBlank(column.getFormType()) ? column.getFormType() : "Input");
             // 小写开头的字段名称
             listMap.put("changeColumnName", changeColumnName);
             //大写开头的字段名称
@@ -286,7 +287,7 @@ public class GenUtil {
             listMap.put("dictName", column.getDictName());
             // 日期注解
             listMap.put("dateAnnotation", column.getDateAnnotation());
-            if (StringExUtils.isNotBlank(column.getDateAnnotation())) {
+            if (StringUtils.isNotBlank(column.getDateAnnotation())) {
                 genMap.put("hasDateAnnotation", true);
             }
             // 添加非空字段信息
@@ -294,7 +295,7 @@ public class GenUtil {
                 isNotNullColumns.add(listMap);
             }
             // 判断是否有查询，如有则把查询的字段set进columnQuery
-            if (!StringExUtils.isBlank(column.getQueryType())) {
+            if (StringUtils.isNotBlank(column.getQueryType())) {
                 // 查询类型
                 listMap.put("queryType", column.getQueryType());
                 // 是否存在查询

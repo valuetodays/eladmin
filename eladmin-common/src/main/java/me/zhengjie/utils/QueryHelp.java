@@ -13,6 +13,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.DataPermission;
 import me.zhengjie.annotation.Query;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -47,10 +48,10 @@ public class QueryHelp {
             // 获取数据权限
             List<Long> dataScopes = securityUtils.getCurrentUserDataScope();
             if(CollectionUtil.isNotEmpty(dataScopes)){
-                if (StringExUtils.isNotBlank(permission.joinName()) && StringExUtils.isNotBlank(permission.fieldName())) {
+                if (StringUtils.isNotBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
                     Join join = root.join(permission.joinName(), JoinType.LEFT);
                     list.add(getExpression(permission.fieldName(),join, root).in(dataScopes));
-                } else if (StringExUtils.isBlank(permission.joinName()) && StringExUtils.isNotBlank(permission.fieldName())) {
+                } else if (StringUtils.isBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
                     list.add(getExpression(permission.fieldName(),null, root).in(dataScopes));
                 }
             }

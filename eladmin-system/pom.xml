@@ -58,12 +58,7 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-redis-cache</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/p6spy/p6spy -->
-        <dependency>
-            <groupId>p6spy</groupId>
-            <artifactId>p6spy</artifactId>
-            <version>3.9.1</version>
-        </dependency>
+
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-postgresql</artifactId>
@@ -103,10 +98,6 @@
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
             <version>6.6.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
         </dependency>
     </dependencies>
 

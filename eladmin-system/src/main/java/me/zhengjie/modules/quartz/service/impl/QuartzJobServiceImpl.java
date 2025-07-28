@@ -17,8 +17,8 @@ import me.zhengjie.modules.quartz.service.dto.JobQueryCriteria;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringExUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +93,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
 //        if (!org.quartz.CronExpression.isValidExpression(resources.getCronExpression())){
 //            throw new BadRequestException("cron表达式格式错误");
 //        }
-        if (StringExUtils.isNotBlank(resources.getSubTask())) {
+        if (StringUtils.isNotBlank(resources.getSubTask())) {
             List<String> tasks = Arrays.asList(resources.getSubTask().split("[,，]"));
             if (tasks.contains(resources.getId().toString())) {
                 throw new BadRequestException("子任务中不能添加当前任务ID");

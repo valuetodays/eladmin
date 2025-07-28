@@ -20,7 +20,7 @@ import me.zhengjie.service.GeneratorService;
 import me.zhengjie.utils.GenUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.StringExUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         Query query = em.createNativeQuery(sqlForTablesForQuery);
         query.setFirstResult(startEnd[0]);
         query.setMaxResults(startEnd[1] - startEnd[0]);
-        query.setParameter("table", StringExUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
+        query.setParameter("table", StringUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
         List result = query.getResultList();
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Object obj : result) {
@@ -76,7 +76,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
         String countSql = "select count(1) from (" + sqlForTablesForQuery + ") tmp";
         Query queryCount = em.createNativeQuery(countSql);
-        queryCount.setParameter("table", StringExUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
+        queryCount.setParameter("table", StringUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
         BigInteger totalElements = (BigInteger) queryCount.getSingleResult();
         return PageUtil.toPage(tableInfos, totalElements.longValue());
     }
@@ -129,7 +129,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                 column.setColumnType(columnInfo.getColumnType());
                 column.setExtra(columnInfo.getExtra());
                 column.setKeyType(columnInfo.getKeyType());
-                if (StringExUtils.isBlank(column.getRemark())) {
+                if (StringUtils.isBlank(column.getRemark())) {
                     column.setRemark(columnInfo.getRemark());
                 }
                 columnInfoRepository.save(column);

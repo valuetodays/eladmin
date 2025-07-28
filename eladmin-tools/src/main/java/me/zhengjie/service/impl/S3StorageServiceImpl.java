@@ -32,8 +32,8 @@ import me.zhengjie.service.dto.S3StorageQueryCriteria;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.StringExUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
@@ -144,7 +144,7 @@ public class S3StorageServiceImpl implements S3StorageService {
         String originalName = "fixme:";
         // 获取文件名
 //        String originalName = file.getOriginalFilename();
-        if (StringExUtils.isBlank(originalName)) {
+        if (StringUtils.isBlank(originalName)) {
             throw new IllegalArgumentException("文件名不能为空");
         }
         // 生成存储路径和文件名

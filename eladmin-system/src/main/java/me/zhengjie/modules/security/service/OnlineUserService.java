@@ -16,6 +16,7 @@ import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.StringExUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public class OnlineUserService {
      */
     public List<OnlineUserDto> getAll(String username){
         String loginKey = "online_token:" +
-            (StringExUtils.isBlank(username) ? "" : "*" + username);
+            (StringUtils.isBlank(username) ? "" : "*" + username);
         List<String> keys = redisUtils.scan(loginKey + "*");
         Collections.reverse(keys);
         List<OnlineUserDto> onlineUserDtos = new ArrayList<>();
