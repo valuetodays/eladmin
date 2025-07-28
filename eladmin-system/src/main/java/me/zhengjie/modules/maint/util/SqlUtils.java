@@ -1,5 +1,9 @@
 package me.zhengjie.modules.maint.util;
 
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.utils.CloseUtil;
+
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -9,10 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
-
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.utils.CloseUtil;
 
 /**
  * @author /
@@ -37,7 +37,7 @@ public class SqlUtils {
 		} catch (SQLException e) {
 			throw new RuntimeException("Get class name error: =" + jdbcUrl);
 		}
-		if (StringUtils.isEmpty(className)) {
+		if (StringExUtils.isEmpty(className)) {
 			DataTypeEnum dataTypeEnum = DataTypeEnum.urlOf(jdbcUrl);
 			if (null == dataTypeEnum) {
 				throw new RuntimeException("Not supported data type: jdbcUrl=" + jdbcUrl);
@@ -178,7 +178,7 @@ public class SqlUtils {
 					sb.append(" ");
 				}
 			}
-			if (sb.length() > 0) {
+			if (!sb.isEmpty()) {
 				sqlList.add(sb.toString().trim());
 			}
 		} catch (Exception e) {

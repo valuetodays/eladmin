@@ -42,8 +42,7 @@ public class SecurityUtils extends BaseAuthorizationController {
      */
     public AuthUser getCurrentUser() {
         // 从header中取出token，再从redis中取出用户信息
-        AuthUser currentAccount = super.getCurrentAccount();
-        return currentAccount;
+        return super.getCurrentAccount();
     }
 
     /**

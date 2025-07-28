@@ -1,15 +1,5 @@
 package me.zhengjie.modules.maint.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import io.quarkus.panache.common.Page;
@@ -39,6 +29,16 @@ import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.ValidationUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhanghouying
@@ -198,7 +198,7 @@ public class DeployServiceImpl implements DeployService {
 		sb.append("mkdir -p ").append(backupPath);
 		sb.append("mv -f ").append(fileSavePath);
 		sb.append(appName).append(" ").append(backupPath);
-		log.info("备份应用脚本:" + sb.toString());
+        log.info("备份应用脚本:" + sb);
 		executeShellUtil.execute(sb.toString());
 		//还原信息入库
 		DeployHistory deployHistory = new DeployHistory();

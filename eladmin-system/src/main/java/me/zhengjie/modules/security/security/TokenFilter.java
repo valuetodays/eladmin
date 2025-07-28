@@ -8,7 +8,7 @@
 //import org.slf4j.LoggerFactory;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.util.StringUtils;
+//import org.springframework.util.StringExUtils;
 //import org.springframework.web.filter.GenericFilterBean;
 //
 //import javax.servlet.FilterChain;
@@ -73,7 +73,7 @@
 //     */
 //    private String resolveToken(HttpServletRequest request) {
 //        String bearerToken = request.getHeader(properties.getHeader());
-//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(properties.getTokenStartWith())) {
+//        if (StringExUtils.hasText(bearerToken) && bearerToken.startsWith(properties.getTokenStartWith())) {
 //            // 去掉令牌前缀
 //            return bearerToken.replace(properties.getTokenStartWith(), "");
 //        } else {

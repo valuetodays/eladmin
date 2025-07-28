@@ -127,8 +127,7 @@ public class UserAuthCompositeService {
     }
 
     public List<Long> findDataScopesByUserId(Long userId) {
-        List<Long> dataScopes = dataService.getDeptIds(userId);
-        return dataScopes;
+        return dataService.getDeptIds(userId);
     }
 
     /**

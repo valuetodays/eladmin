@@ -44,7 +44,7 @@ public class MenuQueryCriteria implements QuerySearchable {
             querySearches.add(QuerySearch.of("pid", String.valueOf(pid), Operator.EQ));
         }
         // fixme createTime between
-//        if (StringUtils.isNotBlank(dictName)) {
+//        if (StringExUtils.isNotBlank(dictName)) {
 //            querySearches.add(QuerySearch.of("dictId#id#Dict#name", dictName, Operator.JOIN));
 //        }
         return querySearches;

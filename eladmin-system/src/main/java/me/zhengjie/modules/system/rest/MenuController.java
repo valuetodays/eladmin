@@ -82,13 +82,12 @@ public class MenuController extends BaseController {
     @POST
     @Path(value = "/child")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public Object childMenu(@QueryParam("id") Long id) {
+    public Set<Long> childMenu(@QueryParam("id") Long id) {
         Set<Menu> menuSet = new HashSet<>();
         List<MenuDto> menuList = menuService.getMenus(id);
         menuSet.add(menuService.findOne(id));
         menuSet = menuService.getChildMenus(menuMapper.toEntity(menuList), menuSet);
-        Set<Long> ids = menuSet.stream().map(Menu::getId).collect(Collectors.toSet());
-        return ids;
+        return menuSet.stream().map(Menu::getId).collect(Collectors.toSet());
     }
 
     @POST

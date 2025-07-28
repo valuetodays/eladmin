@@ -90,8 +90,7 @@ public abstract class BaseController /*extends BaseCrudController */ {
         if (Objects.isNull(cached)) {
             throw new CommonException("login timeout #2");
         }
-        AuthUser authUser = JsonUtils.fromJson(cached.toString(), AuthUser.class);
-        return authUser;
+        return JsonUtils.fromJson(cached.toString(), AuthUser.class);
     }
 
     protected void putLoginAccount(AuthUser authUser) {

@@ -14,7 +14,7 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.service.SysLogService;
 import me.zhengjie.utils.SecurityUtils;
-import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.StringExUtils;
 
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -55,7 +55,7 @@ public class LogAspect {
         sysLog.setMethod(methodName);
         me.zhengjie.annotation.Log aopLog = method.getAnnotation(me.zhengjie.annotation.Log.class);
         sysLog.setDescription(aopLog.value());
-        sysLogService.save(getUsername(), StringUtils.getBrowser(headers.getHeaderString("User-Agent")), getIp(), sysLog);
+        sysLogService.save(getUsername(), StringExUtils.getBrowser(headers.getHeaderString("User-Agent")), getIp(), sysLog);
         log.info("方法执行完毕: {}", method.getName());
         return result;
     }

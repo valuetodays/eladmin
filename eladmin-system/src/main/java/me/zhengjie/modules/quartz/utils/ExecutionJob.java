@@ -12,7 +12,7 @@
 //import me.zhengjie.service.EmailService;
 //import me.zhengjie.utils.RedisUtils;
 //import me.zhengjie.utils.SpringBeanHolder;
-//import me.zhengjie.utils.StringUtils;
+//import me.zhengjie.utils.StringExUtils;
 //import me.zhengjie.utils.ThrowableUtil;
 //import org.quartz.JobExecutionContext;
 //import org.slf4j.Logger;
@@ -67,20 +67,20 @@
 //            future.get();
 //            long times = System.currentTimeMillis() - startTime;
 //            log.setTime(times);
-//            if(StringUtils.isNotBlank(uuid)) {
+//            if(StringExUtils.isNotBlank(uuid)) {
 //                redisUtils.set(uuid, true);
 //            }
 //            // 任务状态
 //            log.setIsSuccess(true);
 //            logger.info("任务执行成功，任务名称：{}, 执行时间：{}毫秒", quartzJob.getJobName(), times);
 //            // 判断是否存在子任务
-//            if(StringUtils.isNotBlank(quartzJob.getSubTask())){
+//            if(StringExUtils.isNotBlank(quartzJob.getSubTask())){
 //                String[] tasks = quartzJob.getSubTask().split("[,，]");
 //                // 执行子任务
 //                quartzJobService.executionSubJob(tasks);
 //            }
 //        } catch (Exception e) {
-//            if(StringUtils.isNotBlank(uuid)) {
+//            if(StringExUtils.isNotBlank(uuid)) {
 //                redisUtils.set(uuid, false);
 //            }
 //            logger.error("任务执行失败，任务名称：{}", quartzJob.getJobName());
@@ -98,7 +98,7 @@
 //            if(quartzJob.getEmail() != null){
 //                EmailService emailService = SpringBeanHolder.getBean(EmailService.class);
 //                // 邮箱报警
-//                if(StringUtils.isNoneBlank(quartzJob.getEmail())){
+//                if(StringExUtils.isNoneBlank(quartzJob.getEmail())){
 //                    EmailVo emailVo = taskAlarm(quartzJob, ThrowableUtil.getStackTrace(e));
 //                    emailService.send(emailVo, emailService.find());
 //                }

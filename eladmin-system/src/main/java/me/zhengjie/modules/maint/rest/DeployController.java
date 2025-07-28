@@ -121,8 +121,7 @@ public class DeployController {
 	@Path(value = "/serverReduction")
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object serverReduction(@Valid DeployHistory resources) {
-		String result = deployService.serverReduction(resources);
-        return result;
+        return deployService.serverReduction(resources);
 	}
 
 	@Log("服务运行状态")
@@ -131,8 +130,7 @@ public class DeployController {
 	@Path(value = "/serverStatus")
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object serverStatus(@Valid Deploy resources) {
-		String result = deployService.serverStatus(resources);
-        return result;
+        return deployService.serverStatus(resources);
 	}
 
 	@Log("启动服务")
@@ -141,8 +139,7 @@ public class DeployController {
 	@Path(value = "/startServer")
 	@PreAuthorize("@el.check('deploy:edit')")
 	public Object startServer(@Valid Deploy resources) {
-		String result = deployService.startServer(resources);
-        return result;
+        return deployService.startServer(resources);
 	}
 
 	@Log("停止服务")

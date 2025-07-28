@@ -29,8 +29,8 @@ import me.zhengjie.modules.system.service.mapstruct.MenuMapper;
 import me.zhengjie.utils.CacheKey;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;

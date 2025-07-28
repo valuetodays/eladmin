@@ -47,10 +47,10 @@ public class QueryHelp {
             // 获取数据权限
             List<Long> dataScopes = securityUtils.getCurrentUserDataScope();
             if(CollectionUtil.isNotEmpty(dataScopes)){
-                if(StringUtils.isNotBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
+                if (StringExUtils.isNotBlank(permission.joinName()) && StringExUtils.isNotBlank(permission.fieldName())) {
                     Join join = root.join(permission.joinName(), JoinType.LEFT);
                     list.add(getExpression(permission.fieldName(),join, root).in(dataScopes));
-                } else if (StringUtils.isBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
+                } else if (StringExUtils.isBlank(permission.joinName()) && StringExUtils.isNotBlank(permission.fieldName())) {
                     list.add(getExpression(permission.fieldName(),null, root).in(dataScopes));
                 }
             }

@@ -103,8 +103,8 @@ public class SysLogServiceImpl implements SysLogService {
         // 填充基本信息
         sysLog.setRequestIp(ip);
         // fixme
-        sysLog.setAddress("StringUtils.getCityInfo(sysLog.getRequestIp())");
-//        sysLog.setAddress(StringUtils.getCityInfo(sysLog.getRequestIp()));
+        sysLog.setAddress("StringExUtils.getCityInfo(sysLog.getRequestIp())");
+//        sysLog.setAddress(StringExUtils.getCityInfo(sysLog.getRequestIp()));
         sysLog.setUsername(username);
         sysLog.setBrowser(browser);
 

@@ -15,7 +15,7 @@ import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.StringExUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,8 +54,8 @@ public class OnlineUserService {
         Dept deptObj = userAuthCompositeService.findDeptById(deptId);
         String dept = deptObj.getName();
         String id = tokenProvider.getId(token);
-        String browser = StringUtils.getBrowser(ua);
-        String address = "none";// fixme StringUtils.getCityInfo(ip);
+        String browser = StringExUtils.getBrowser(ua);
+        String address = "none";// fixme StringExUtils.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
             onlineUserDto = new OnlineUserDto(id,
@@ -92,7 +92,7 @@ public class OnlineUserService {
      */
     public List<OnlineUserDto> getAll(String username){
         String loginKey = "online_token:" +
-                (StringUtils.isBlank(username) ? "" : "*" + username);
+            (StringExUtils.isBlank(username) ? "" : "*" + username);
         List<String> keys = redisUtils.scan(loginKey + "*");
         Collections.reverse(keys);
         List<OnlineUserDto> onlineUserDtos = new ArrayList<>();

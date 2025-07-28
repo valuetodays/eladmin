@@ -25,7 +25,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class VerifyServiceImpl implements VerifyService {
 
-    // fixme   @ConfigProperty("code.expiration")
     private Long expiration = 30000L;
     @Inject
     RedisUtils redisUtils;

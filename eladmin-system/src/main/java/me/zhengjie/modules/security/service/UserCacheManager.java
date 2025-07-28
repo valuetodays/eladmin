@@ -6,7 +6,7 @@ import jakarta.inject.Inject;
 import me.zhengjie.modules.security.config.LoginProperties;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**

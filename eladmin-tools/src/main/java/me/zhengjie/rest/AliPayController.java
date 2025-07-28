@@ -59,8 +59,7 @@ public class AliPayController {
     public String toPayAsPc(@Valid TradeVo trade) throws Exception {
         AlipayConfig aliPay = alipayService.find();
         trade.setOutTradeNo(alipayUtils.getOrderCode());
-        String payUrl = alipayService.toPayAsPc(aliPay, trade);
-        return payUrl;
+        return alipayService.toPayAsPc(aliPay, trade);
     }
 
     @Log("支付宝手机网页支付")
@@ -70,8 +69,7 @@ public class AliPayController {
     public String toPayAsWeb(@Valid TradeVo trade) throws Exception {
         AlipayConfig alipay = alipayService.find();
         trade.setOutTradeNo(alipayUtils.getOrderCode());
-        String payUrl = alipayService.toPayAsWeb(alipay, trade);
-        return payUrl;
+        return alipayService.toPayAsWeb(alipay, trade);
     }
 
     @AnonymousGetMapping("/return")

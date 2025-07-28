@@ -27,7 +27,6 @@ public interface JobService {
     /**
      * 创建
      * @param resources /
-     * @return /
      */
     void create(Job resources);
 
@@ -61,7 +60,6 @@ public interface JobService {
     /**
      * 导出数据
      * @param queryAll 待导出的数据
-     * @param response /
      * @throws IOException /
      */
     File download(List<JobDto> queryAll) throws IOException;

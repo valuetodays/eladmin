@@ -49,8 +49,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Tag(name = "系统：系统授权接口")
 public class AuthController extends BaseController {
-    //    @Inject
-//    SecurityProperties properties;
     @Inject
     RedisUtils redisUtils;
     @Inject
@@ -92,7 +90,7 @@ public class AuthController extends BaseController {
             throw new BadRequestException("账号或密码错误");
         }
         // 生成令牌
-        String token = tokenProvider.createToken(jwtUser);
+        String token = tokenProvider.createToken();
         AuthUser authUserToPut = new AuthUser();
         authUserToPut.setUserId(jwtUser.getUser().getId().toString());
         authUserToPut.setEmail(jwtUser.getUser().getUsername());
@@ -100,7 +98,7 @@ public class AuthController extends BaseController {
         authUserToPut.setLoginToken(token);
         putLoginAccount(authUserToPut);
         // 返回 token 与 用户信息
-        Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
+        Map<String, Object> authInfo = new HashMap<>(2) {{
             put("token", token);
             put("user", jwtUser);
         }};
@@ -120,8 +118,7 @@ public class AuthController extends BaseController {
     public JwtUserDto getUserInfo() {
         AuthUser currentAccount = getCurrentAccount();
         String username = currentAccount.getEmail();
-        JwtUserDto jwtUser = userDetailsService.loadUserByUsername(username);
-        return jwtUser;
+        return userDetailsService.loadUserByUsername(username);
     }
 
     @Operation(summary = "获取验证码")
@@ -139,11 +136,10 @@ public class AuthController extends BaseController {
         // 保存
         redisUtils.set(uuid, captchaValue, loginProperties.captcha().expiration(), TimeUnit.MINUTES);
         // 验证码信息
-        Map<String, Object> imgResult = new HashMap<String, Object>(2) {{
+        return new HashMap<String, Object>(2) {{
             put("img", captcha.toBase64());
             put("uuid", uuid);
         }};
-        return imgResult;
     }
 
     @Operation(summary = "退出登录")

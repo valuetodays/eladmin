@@ -1,10 +1,13 @@
 package me.zhengjie.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import static me.zhengjie.utils.EncryptUtils.*;
+import static me.zhengjie.utils.EncryptUtils.desDecrypt;
+import static me.zhengjie.utils.EncryptUtils.desEncrypt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Slf4j
 public class EncryptUtilsTest {
 
     /**
@@ -15,7 +18,7 @@ public class EncryptUtilsTest {
         try {
             assertEquals("7772841DC6099402", desEncrypt("123456"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error when testDesEncrypt", e);
         }
     }
 
@@ -27,7 +30,7 @@ public class EncryptUtilsTest {
         try {
             assertEquals("123456", desDecrypt("7772841DC6099402"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error when testDesDecrypt", e);
         }
     }
 }

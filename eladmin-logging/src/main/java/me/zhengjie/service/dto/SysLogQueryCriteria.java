@@ -52,7 +52,7 @@ public class SysLogQueryCriteria extends PageIO implements QuerySearchable {
             querySearches.add(QuerySearch.of("logType", logType, Operator.EQ));
         }
         // fixme createTime between
-//        if (StringUtils.isNotBlank(dictName)) {
+//        if (StringExUtils.isNotBlank(dictName)) {
 //            querySearches.add(QuerySearch.of("dictId#id#Dict#name", dictName, Operator.JOIN));
 //        }
         return querySearches;

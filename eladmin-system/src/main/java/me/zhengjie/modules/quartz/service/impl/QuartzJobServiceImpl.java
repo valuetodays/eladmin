@@ -1,14 +1,5 @@
 package me.zhengjie.modules.quartz.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.quarkus.panache.common.Page;
@@ -26,8 +17,17 @@ import me.zhengjie.modules.quartz.service.dto.JobQueryCriteria;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.StringExUtils;
 import me.zhengjie.utils.ValidationUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -93,7 +93,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
 //        if (!org.quartz.CronExpression.isValidExpression(resources.getCronExpression())){
 //            throw new BadRequestException("cron表达式格式错误");
 //        }
-        if(StringUtils.isNotBlank(resources.getSubTask())){
+        if (StringExUtils.isNotBlank(resources.getSubTask())) {
             List<String> tasks = Arrays.asList(resources.getSubTask().split("[,，]"));
             if (tasks.contains(resources.getId().toString())) {
                 throw new BadRequestException("子任务中不能添加当前任务ID");

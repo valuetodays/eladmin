@@ -32,8 +32,6 @@ import java.lang.annotation.Target;
  * @author liaojinlong
  * @see AnonymousGetMapping
  * @see AnonymousPostMapping
- * @see AnonymousPutMapping
- * @see AnonymousDeleteMapping
  */
 @AnonymousAccess
 @Target(ElementType.METHOD)

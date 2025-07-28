@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.system.service.MonitorService;
 import me.zhengjie.utils.ElConstant;
 import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.StringUtils;
+import me.zhengjie.utils.StringExUtils;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
@@ -35,7 +35,7 @@ import java.util.Map;
 @ApplicationScoped
 public class MonitorServiceImpl implements MonitorService {
 
-    DecimalFormat df = new DecimalFormat("0.00");
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
     public Map<String,Object> getServers(){
@@ -181,7 +181,7 @@ public class MonitorServiceImpl implements MonitorService {
         // 系统信息
         systemInfo.put("os", os.toString());
         systemInfo.put("day", formatBetween);
-        systemInfo.put("ip", StringUtils.getLocalIp());
+        systemInfo.put("ip", StringExUtils.getLocalIp());
         return systemInfo;
     }
 }

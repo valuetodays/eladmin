@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -47,10 +46,9 @@ public class TokenProvider {
      * 创建Token 设置永不过期，
      * Token 的时间有效性转到Redis 维护
      *
-     * @param user /
      * @return /
      */
-    public String createToken(JwtUserDto user) {
+    public String createToken() {
         String r = RandomStringUtils.insecure().nextAlphanumeric(8);
         return UUID.randomUUID().toString().replace("-", "") + "-" + r;
     }

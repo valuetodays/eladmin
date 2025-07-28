@@ -11,7 +11,7 @@
 //import me.zhengjie.annotation.Limit;
 //import me.zhengjie.exception.BadRequestException;
 //import me.zhengjie.utils.RequestHolder;
-//import me.zhengjie.utils.StringUtils;
+//import me.zhengjie.utils.StringExUtils;
 //import org.aspectj.lang.ProceedingJoinPoint;
 //import org.aspectj.lang.annotation.Around;
 //import org.aspectj.lang.annotation.Aspect;
@@ -48,15 +48,15 @@
 //        Limit limit = signatureMethod.getAnnotation(Limit.class);
 //        LimitType limitType = limit.limitType();
 //        String key = limit.key();
-//        if (StringUtils.isEmpty(key)) {
+//        if (StringExUtils.isEmpty(key)) {
 //            if (limitType == LimitType.IP) {
-//                key = StringUtils.getIp(request);
+//                key = StringExUtils.getIp(request);
 //            } else {
 //                key = signatureMethod.getName();
 //            }
 //        }
 //
-//        ImmutableList<Object> keys = ImmutableList.of(StringUtils.join(limit.prefix(), "_", key, "_", request.getRequestURI().replace("/","_")));
+//        ImmutableList<Object> keys = ImmutableList.of(StringExUtils.join(limit.prefix(), "_", key, "_", request.getRequestURI().replace("/","_")));
 //
 //        String luaScript = buildLuaScript();
 //        RedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);

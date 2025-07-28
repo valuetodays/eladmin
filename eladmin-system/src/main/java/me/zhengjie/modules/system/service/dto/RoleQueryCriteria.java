@@ -37,7 +37,7 @@ public class RoleQueryCriteria extends PageIO implements QuerySearchable {
             querySearches.add(QuerySearch.of("name,description", blurry, Operator.MULTI_LIKE));
         }
         // fixme createTime between
-//        if (StringUtils.isNotBlank(dictName)) {
+//        if (StringExUtils.isNotBlank(dictName)) {
 //            querySearches.add(QuerySearch.of("dictId#id#Dict#name", dictName, Operator.JOIN));
 //        }
         return querySearches;
