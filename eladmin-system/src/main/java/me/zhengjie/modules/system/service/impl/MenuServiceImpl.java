@@ -114,7 +114,7 @@ public class MenuServiceImpl implements MenuService {
             menus = new ArrayList<>(data);
             redisUtils.set(key, menus, 1, TimeUnit.DAYS);
         }
-        return menus.stream().map(menuMapper::toDto).collect(Collectors.toList());
+        return menus.stream().map(menuMapper::toDto).toList();
     }
 
     @Override

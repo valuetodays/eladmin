@@ -26,6 +26,7 @@ import me.zhengjie.utils.enums.DataScopeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,11 +104,11 @@ public class UserAuthCompositeService {
     }
 
     public List<Dept> findDeptsByIds(Collection<Long> deptIds) {
-        return deptRepository.findByIds(deptIds);
+        return deptRepository.findByIds(new HashSet<>(deptIds));
     }
 
     public Map<Long, Dept> findDeptsMapByIds(Collection<Long> deptIds) {
-        List<Dept> depts = deptRepository.findByIds(deptIds);
+        List<Dept> depts = findDeptsByIds(deptIds);
         if (CollectionUtils.isEmpty(deptIds)) {
             return Map.of();
         }
@@ -119,7 +120,7 @@ public class UserAuthCompositeService {
         if (CollectionUtils.isEmpty(list)) {
             return List.of();
         }
-        List<Long> menuIds = list.stream().map(RolesMenus::getMenuId).toList();
+        List<Long> menuIds = list.stream().map(RolesMenus::getMenuId).distinct().toList();
         if (CollectionUtils.isEmpty(menuIds)) {
             return List.of();
         }
@@ -166,7 +167,7 @@ public class UserAuthCompositeService {
         List<Long> roleIds = rolesDepts.stream().map(RolesDepts::getRoleId).distinct().toList();
         List<UsersRole> usersRoles = usersRoleRepository.findByRoleIds(roleIds);
         List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
-        return userRepository.findAllByIds(userIds);
+        return userRepository.findAllByIds(new HashSet<>(userIds));
 //    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE " +
 //            "u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = ?1 group by u.user_id", nativeQuery = true)
     }
