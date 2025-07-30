@@ -131,7 +131,7 @@ file:
   path: /home/eladmin/file/
   avatar: /home/eladmin/avatar/
   # 文件大小 /M
-  max-size: 100
+  max-size: 10
   avatar-max-size: 2
 
 #密码加密传输，前端公钥加密，后端私钥解密
