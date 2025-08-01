@@ -162,7 +162,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public void updateMenu(Set<Long> menuIds, RoleDto roleDTO) {
         Role role = roleMapper.toEntity(roleDTO);
-        List<User> users = userRepository.findByRoleId(role.getId());
+        List<User> users = userAuthCompositeService.findUsersByRoleId(role.getId());
         // 更新菜单
         userAuthCompositeService.updateRoleMenus(role.getId(), menuIds);
         delCaches(role.getId(), users);
@@ -172,7 +172,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackOn = Exception.class)
     public void untiedMenu(Long menuId) {
         // 更新菜单
-        roleRepository.untiedMenu(menuId);
+        userAuthCompositeService.deleteRolesLinkByMenuId(menuId);
     }
 
     @Override
@@ -252,7 +252,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void verification(Set<Long> ids) {
-        if (userRepository.countByRoles(ids) > 0) {
+        int n = userAuthCompositeService.countUsersByRoleIds(ids);
+        if (n > 0) {
             throw new BadRequestException("所选角色存在用户关联，请解除关联再试！");
         }
     }
@@ -263,7 +264,7 @@ public class RoleServiceImpl implements RoleService {
      * @param id /
      */
     public void delCaches(Long id, List<User> users) {
-        users = CollectionUtils.isEmpty(users) ? userRepository.findByRoleId(id) : users;
+        users = CollectionUtils.isEmpty(users) ? userAuthCompositeService.findUsersByRoleId(id) : users;
         if (CollectionUtils.isNotEmpty(users)) {
             users.forEach(item -> userCacheManager.cleanUserCache(item.getUsername()));
             Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());

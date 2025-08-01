@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.UsersRole;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class UsersRoleRepository extends MyPanacheRepository<UsersRole> {
         return find("userId = ?1", userId).list();
     }
 
-    public List<UsersRole> findByRoleIds(List<Long> roleIds) {
+    public List<UsersRole> findByRoleIds(Collection<Long> roleIds) {
         return find("roleId in ?1", roleIds).list();
     }
 }

@@ -1,11 +1,8 @@
 package me.zhengjie.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Role;
-
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -21,39 +18,6 @@ public class RoleRepository extends MyPanacheRepository<Role> {
      */
     public Role findByName(String name) {
         return find("name = ?1", name).firstResult();
-    }
-
-    /**
-     * 根据用户ID查询
-     * @param userId 用户ID
-     * @return /
-     * @see me.zhengjie.modules.system.service.UserAuthCompositeService
-     */
-//    @Query(value = "SELECT r.* FROM sys_role r, sys_users_roles u WHERE " +
-//            "r.role_id = u.role_id AND u.user_id = ?1",nativeQuery = true)
-//    public Set<Role> findByUserId(Long userId) {
-//        return null;
-//    }
-
-    /**
-     * 解绑角色菜单
-     * @param id 菜单ID
-     */
-    @Transactional
-//    @Query(value = "delete from sys_roles_menus where menu_id = ?1",nativeQuery = true)
-    public void untiedMenu(Long id) {
-
-    }
-
-    /**
-     * 根据部门查询
-     * @param deptIds /
-     * @return /
-     */
-//    @Query(value = "select count(1) from sys_role r, sys_roles_depts d where " +
-//            "r.role_id = d.role_id and d.dept_id in ?1",nativeQuery = true)
-    public int countByDepts(Set<Long> deptIds) {
-        return 0;
     }
 
 }

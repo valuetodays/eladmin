@@ -30,16 +30,6 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
         return list("pid is null");
     }
 
-    /**
-     * 根据角色ID 查询
-     * @param roleId 角色ID
-     * @return /
-     */
-//    @Query(value = "select d.* from sys_dept d, sys_roles_depts r where " +
-//            "d.dept_id = r.dept_id and r.role_id = ?1", nativeQuery = true)
-//    public Set<Dept> findByRoleId(Long roleId) {
-//        return null;
-//    }
 
     /**
      * 判断是否存在子节点
@@ -58,6 +48,6 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
     @Transactional
 //    @Query(value = " update sys_dept set sub_count = ?1 where dept_id = ?2 ",nativeQuery = true)
     public void updateSubCntById(Integer count, Long id) {
-        update("set subCount=?1 where deptId=?1", count, id);
+        update("set subCount=?1 where id=?1", count, id);
     }
 }

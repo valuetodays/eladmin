@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.UsersJob;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class UsersJobRepository extends MyPanacheRepository<UsersJob> {
         return find("userId in ?1", userIds).list();
     }
 
-    public List<UsersJob> findByJobIds(List<Long> jobIds) {
+    public List<UsersJob> findByJobIds(Collection<Long> jobIds) {
         return find("jobId in ?1", jobIds).list();
     }
 }

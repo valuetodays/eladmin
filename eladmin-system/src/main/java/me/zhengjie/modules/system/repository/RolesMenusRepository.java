@@ -23,7 +23,11 @@ public class RolesMenusRepository extends MyPanacheRepository<RolesMenus> {
         return find("menuId in ?1", menuIds).list();
     }
 
-    public void deleteByRole(Long roleId) {
+    public void deleteByRoleId(Long roleId) {
         delete("roleId = ?1", roleId);
+    }
+
+    public void deleteByMenuId(Long menuId) {
+        delete("menuId = ?1", menuId);
     }
 }

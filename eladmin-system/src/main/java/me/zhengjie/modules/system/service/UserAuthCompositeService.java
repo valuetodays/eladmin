@@ -146,7 +146,7 @@ public class UserAuthCompositeService {
 
     @Transactional
     public void updateRoleMenus(Long roleId, Set<Long> menuIds) {
-        rolesMenusRepository.deleteByRole(roleId);
+        rolesMenusRepository.deleteByRoleId(roleId);
         List<RolesMenus> toSave = menuIds.stream().map(e -> {
             RolesMenus rm = new RolesMenus();
             rm.setRoleId(roleId);
@@ -184,6 +184,17 @@ public class UserAuthCompositeService {
         return userRepository.findAllByIds(userIds);
     }
 
+    public List<User> findUsersByRoleId(Long roleId) {
+        //    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r WHERE" +
+//            " u.user_id = r.user_id AND r.role_id = ?1", nativeQuery = true)
+        List<UsersRole> usersRoles = usersRoleRepository.findByRoleIds(List.of(roleId));
+        if (CollectionUtils.isEmpty(usersRoles)) {
+            return List.of();
+        }
+        List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
+        return userRepository.findAllByIds(userIds);
+    }
+
     private List<UsersRole> findUsersRolesByMenuIds(List<Long> menuId) {
         List<RolesMenus> rolesMenus = rolesMenusRepository.findByMenuIds(menuId);
         if (CollectionUtils.isEmpty(rolesMenus)) {
@@ -200,5 +211,47 @@ public class UserAuthCompositeService {
         }
         List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
         return roleRepository.findAllByIds(userIds);
+    }
+
+    @Transactional
+    public void deleteRolesLinkByMenuId(Long menuId) {
+        rolesMenusRepository.deleteByMenuId(menuId);
+    }
+
+
+    public int countRolesByDeptIds(Set<Long> deptIds) {
+        //    @Query(value = "select count(1) from sys_role r, sys_roles_depts d where " +
+//            "r.role_id = d.role_id and d.dept_id in ?1",nativeQuery = true)
+        List<RolesDepts> rolesDepts = rolesDeptsRepository.findByDeptIds(deptIds);
+        if (CollectionUtils.isEmpty(rolesDepts)) {
+            return 0;
+        }
+        List<Long> roleIds = rolesDepts.stream().map(RolesDepts::getRoleId).distinct().toList();
+        List<Role> roles = roleRepository.findAllByIds(roleIds);
+        return CollectionUtils.size(roles);
+    }
+
+    public int countUsersByRoleIds(Set<Long> roleIds) {
+        //    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_roles r WHERE " +
+//            "u.user_id = r.user_id AND r.role_id in ?1", nativeQuery = true)
+        List<UsersRole> usersRoles = usersRoleRepository.findByRoleIds(roleIds);
+        if (CollectionUtils.isEmpty(usersRoles)) {
+            return 0;
+        }
+        List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
+        List<User> users = userRepository.findAllByIds(userIds);
+        return CollectionUtils.size(users);
+    }
+
+    public int countUsersByJobIds(Set<Long> jobIds) {
+//    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_jobs j WHERE u.user_id = j.user_id AND j.job_id IN ?1",
+//    nativeQuery = true)
+        List<UsersJob> usersJobs = usersJobRepository.findByJobIds(jobIds);
+        if (CollectionUtils.isEmpty(usersJobs)) {
+            return 0;
+        }
+        List<Long> userIds = usersJobs.stream().map(UsersJob::getUserId).distinct().toList();
+        List<User> users = userRepository.findAllByIds(userIds);
+        return CollectionUtils.size(users);
     }
 }

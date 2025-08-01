@@ -156,8 +156,11 @@ public class DeptServiceImpl implements DeptService {
         }
         Dept dept = deptRepository.findById(resources.getId());
         ValidationUtil.isNull( dept.getId(),"Dept","id",resources.getId());
-        resources.setId(dept.getId());
-        deptRepository.save(resources);
+        dept.setDeptSort(resources.getDeptSort());
+        dept.setName(resources.getName());
+        dept.setEnabled(resources.getEnabled());
+        dept.setPid(resources.getPid());
+        deptRepository.save(dept);
         // 更新父节点中子节点数目
         updateSubCnt(oldPid);
         updateSubCnt(newPid);
@@ -270,13 +273,14 @@ public class DeptServiceImpl implements DeptService {
         if(userRepository.countByDepts(deptIds) > 0){
             throw new BadRequestException("所选部门存在用户关联，请解除后再试！");
         }
-        if(roleRepository.countByDepts(deptIds) > 0){
+        int n = userAuthCompositeService.countRolesByDeptIds(deptIds);
+        if (n > 0) {
             throw new BadRequestException("所选部门存在角色关联，请解除后再试！");
         }
     }
 
     private void updateSubCnt(Long deptId){
-        if(deptId != null){
+        if (deptId != null) {
             long count = deptRepository.countByPid(deptId);
             deptRepository.updateSubCntById((int) count, deptId);
         }

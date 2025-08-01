@@ -6,7 +6,6 @@ import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.User;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -67,57 +66,13 @@ public class UserRepository extends MyPanacheRepository<User> {
     }
 
     /**
-     * 根据角色查询用户
-     * @param roleId /
-     * @return /
-     */
-//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles r WHERE" +
-//            " u.user_id = r.user_id AND r.role_id = ?1", nativeQuery = true)
-    public List<User> findByRoleId(Long roleId) {
-        return null;
-    }
-
-    /**
-     * 根据菜单查询
-     * @param id 菜单ID
-     * @return /
-     */
-//    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE\n" +
-//            "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = ?1 group by u.user_id", nativeQuery = true)
-    public List<User> findByMenuId(Long id) {
-        return null;
-    }
-
-
-    /**
-     * 根据岗位查询
-     * @param ids /
-     * @return /
-     */
-//    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_jobs j WHERE u.user_id = j.user_id AND j.job_id IN ?1", nativeQuery = true)
-    public int countByJobs(Set<Long> ids) {
-        return -1;
-    }
-
-    /**
      * 根据部门查询
      * @param deptIds /
      * @return /
      */
 //    @Query(value = "SELECT count(1) FROM sys_user u WHERE u.dept_id IN ?1", nativeQuery = true)
     public int countByDepts(Set<Long> deptIds) {
-        return -1;
-    }
-
-    /**
-     * 根据角色查询
-     * @param ids /
-     * @return /
-     */
-//    @Query(value = "SELECT count(1) FROM sys_user u, sys_users_roles r WHERE " +
-//            "u.user_id = r.user_id AND r.role_id in ?1", nativeQuery = true)
-    public int countByRoles(Set<Long> ids) {
-        return -1;
+        return (int) find("deptId in ?1", deptIds).count();
     }
 
     /**
@@ -128,6 +83,6 @@ public class UserRepository extends MyPanacheRepository<User> {
     @Transactional
 //    @Query(value = "update sys_user set password = ?2 where user_id in ?1",nativeQuery = true)
     public void resetPwd(Set<Long> ids, String pwd) {
-        update("set password = ?2 where userId in ?1", pwd, ids);
+        update("set password = ?2 where id in ?1", pwd, ids);
     }
 }

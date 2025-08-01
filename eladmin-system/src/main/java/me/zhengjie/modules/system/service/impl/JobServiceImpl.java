@@ -12,6 +12,7 @@ import me.zhengjie.modules.system.domain.Job;
 import me.zhengjie.modules.system.repository.JobRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.JobService;
+import me.zhengjie.modules.system.service.UserAuthCompositeService;
 import me.zhengjie.modules.system.service.dto.JobDto;
 import me.zhengjie.modules.system.service.dto.JobQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.JobMapper;
@@ -47,6 +48,8 @@ public class JobServiceImpl implements JobService {
     RedisUtils redisUtils;
     @Inject
     UserRepository userRepository;
+    @Inject
+    UserAuthCompositeService userAuthCompositeService;
 
     @Override
     public PageResult<JobDto> queryAll(JobQueryCriteria criteria, Page pageable) {
@@ -125,7 +128,8 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void verification(Set<Long> ids) {
-        if(userRepository.countByJobs(ids) > 0){
+        int n = userAuthCompositeService.countUsersByJobIds(ids);
+        if (n > 0) {
             throw new BadRequestException("所选的岗位中存在用户关联，请解除关联再试！");
         }
     }

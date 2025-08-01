@@ -91,11 +91,11 @@ public class DictServiceImpl implements DictService {
     @Transactional(rollbackOn = Exception.class)
     public void delete(Set<Long> ids) {
         // 清理缓存
-        List<Dict> dicts = dictRepository.findByIdIn(ids);
+        List<Dict> dicts = dictRepository.findAllById(ids);
         for (Dict dict : dicts) {
             delCaches(dict);
         }
-        dictRepository.deleteByIdIn(ids);
+        dictRepository.deleteAllByIdIn(ids);
     }
 
     @Override

@@ -6,9 +6,7 @@ import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Menu;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -54,18 +52,6 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
     }
 
     /**
-     * 根据角色ID与菜单类型查询菜单
-     * @param roleIds roleIDs
-     * @param type 类型
-     * @return /
-     */
-//    @Query(value = "SELECT m.* FROM sys_menu m, sys_roles_menus r WHERE " +
-//            "m.menu_id = r.menu_id AND r.role_id IN ?1 AND type != ?2 order by m.menu_sort asc",nativeQuery = true)
-    public LinkedHashSet<Menu> findByRoleIdsAndTypeNot(Set<Long> roleIds, int type) {
-        return null;
-    }
-
-    /**
      * 获取节点数量
      * @param id /
      * @return /
@@ -85,7 +71,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
         update("set subCount=?1 where id=?2", count, menuId);
     }
 
-    public List<Menu> findByIdsAndTypeNotAndSortable(List<Long> menuIds, int i) {
-        return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), menuIds, i).list();
+    public List<Menu> findByIdsAndTypeNotAndSortable(List<Long> menuIds, int type) {
+        return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), menuIds, type).list();
     }
 }
