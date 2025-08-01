@@ -194,7 +194,7 @@ public class S3StorageServiceImpl implements S3StorageService {
             map.put("更新时间", s3Storage.getUpdateTime());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 
     public Map<String, String> privateDownload(Long id) {

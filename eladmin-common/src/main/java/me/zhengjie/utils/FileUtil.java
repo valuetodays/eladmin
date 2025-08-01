@@ -174,7 +174,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     /**
      * 导出excel, fixme: rename to generateExcelFile
      */
-    public static File downloadExcel(List<Map<String, Object>> list) throws IOException {
+    public static File writeToExcel(List<Map<String, Object>> list) throws IOException {
         String tempPath = SYS_TEM_DIR + IdUtil.fastSimpleUUID() + ".xlsx";
         File file = new File(tempPath);
         BigExcelWriter writer = ExcelUtil.getBigWriter(file);
@@ -182,8 +182,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         List<Map<String, Object>> sanitizedList = list.parallelStream().map(map -> {
             Map<String, Object> sanitizedMap = new LinkedHashMap<>();
             map.forEach((key, value) -> {
-                if (value instanceof String) {
-                    String strValue = (String) value;
+                if (value instanceof String strValue) {
                     // 检查并处理以特殊字符开头的值
                     if (strValue.startsWith("=") || strValue.startsWith("+") || strValue.startsWith("-") || strValue.startsWith("@")) {
                         strValue = "'" + strValue; // 添加单引号前缀

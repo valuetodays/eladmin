@@ -430,6 +430,6 @@ public class DeployServiceImpl implements DeployService {
 			map.put("部署日期", deployDto.getCreateTime());
 			list.add(map);
 		}
-		return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
 	}
 }

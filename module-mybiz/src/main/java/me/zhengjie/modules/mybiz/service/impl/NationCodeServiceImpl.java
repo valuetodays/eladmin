@@ -111,6 +111,6 @@ public class NationCodeServiceImpl implements NationCodeService {
             map.put(" updateTime",  nationCode.getUpdateTime());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 }

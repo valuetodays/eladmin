@@ -332,7 +332,7 @@ public class UserServiceImpl implements UserService {
             map.put("创建日期", userDTO.getCreateTime());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 
     /**

@@ -84,6 +84,6 @@ public class DeployHistoryServiceImpl implements DeployHistoryService {
             map.put("部署人员", deployHistoryDto.getDeployUser());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 }

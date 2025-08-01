@@ -185,11 +185,11 @@ public class DeptServiceImpl implements DeptService {
         for (DeptDto deptDTO : deptDtos) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("部门名称", deptDTO.getName());
-            map.put("部门状态", deptDTO.getEnabled() ? "启用" : "停用");
+            map.put("部门状态", Boolean.TRUE.equals(deptDTO.getEnabled()) ? "启用" : "停用");
             map.put("创建日期", deptDTO.getCreateTime());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
 
     }
 

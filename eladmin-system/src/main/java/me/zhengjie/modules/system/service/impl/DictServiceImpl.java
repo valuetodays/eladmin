@@ -122,7 +122,7 @@ public class DictServiceImpl implements DictService {
                 list.add(map);
             }
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 
     public void delCaches(Dict dict){

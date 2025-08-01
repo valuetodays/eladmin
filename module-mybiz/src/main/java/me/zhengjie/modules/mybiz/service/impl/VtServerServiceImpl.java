@@ -112,6 +112,6 @@ public class VtServerServiceImpl implements VtServerService {
             map.put("更新时间", vtServer.getUpdateTime());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 }

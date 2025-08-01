@@ -136,7 +136,7 @@ public class SysLogServiceImpl implements SysLogService {
             map.put("创建日期", sysLog.getCreateTime());
             list.add(map);
         }
-        return FileUtil.downloadExcel(list);
+        return FileUtil.writeToExcel(list);
     }
 
     @Override
