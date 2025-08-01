@@ -173,4 +173,32 @@ public class UserAuthCompositeService {
     }
 
 
+    public List<User> findUsersByMenuId(Long menuId) {
+        //    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE\n" +
+//            "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = ?1 group by u.user_id", nativeQuery = true)
+        List<UsersRole> usersRoles = findUsersRolesByMenuIds(List.of(menuId));
+        if (CollectionUtils.isEmpty(usersRoles)) {
+            return List.of();
+        }
+        List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
+        return userRepository.findAllByIds(userIds);
+    }
+
+    private List<UsersRole> findUsersRolesByMenuIds(List<Long> menuId) {
+        List<RolesMenus> rolesMenus = rolesMenusRepository.findByMenuIds(menuId);
+        if (CollectionUtils.isEmpty(rolesMenus)) {
+            return List.of();
+        }
+        List<Long> roleIds = rolesMenus.stream().map(RolesMenus::getRoleId).distinct().toList();
+        return usersRoleRepository.findByRoleIds(roleIds);
+    }
+
+    public List<Role> findRolesByMenuId(List<Long> menuId) {
+        List<UsersRole> usersRoles = findUsersRolesByMenuIds(menuId);
+        if (CollectionUtils.isEmpty(usersRoles)) {
+            return List.of();
+        }
+        List<Long> userIds = usersRoles.stream().map(UsersRole::getUserId).distinct().toList();
+        return roleRepository.findAllByIds(userIds);
+    }
 }

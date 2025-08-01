@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import me.zhengjie.MyPanacheRepository;
 import me.zhengjie.modules.system.domain.Role;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,14 +56,4 @@ public class RoleRepository extends MyPanacheRepository<Role> {
         return 0;
     }
 
-    /**
-     * 根据菜单Id查询
-     * @param menuIds /
-     * @return /
-     */
-//    @Query(value = "SELECT r.* FROM sys_role r, sys_roles_menus m WHERE " +
-//            "r.role_id = m.role_id AND m.menu_id in ?1",nativeQuery = true)
-    public List<Role> findInMenuId(List<Long> menuIds) {
-        return null;
-    }
 }

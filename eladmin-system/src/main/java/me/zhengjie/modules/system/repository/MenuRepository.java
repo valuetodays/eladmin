@@ -82,7 +82,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
     @Transactional
 //    @Query(value = " update sys_menu set sub_count = ?1 where menu_id = ?2 ",nativeQuery = true)
     public void updateSubCntById(int count, Long menuId) {
-        update("set subCount=?1 where menuId=?2", count, menuId);
+        update("set subCount=?1 where id=?2", count, menuId);
     }
 
     public List<Menu> findByIdsAndTypeNotAndSortable(List<Long> menuIds, int i) {

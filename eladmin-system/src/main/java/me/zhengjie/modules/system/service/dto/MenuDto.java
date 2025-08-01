@@ -1,14 +1,14 @@
 package me.zhengjie.modules.system.service.dto;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Zheng Jie
@@ -48,9 +48,9 @@ public class MenuDto extends BaseDTO implements Serializable {
     @Schema(description = "子节点数目")
     private Integer subCount;
 
-    @Schema(description = "是否为Iframe")
-    @JsonProperty("iFrame")
-    private Boolean iFrame;
+    @Schema(description = "是否为iframe")
+    @JsonProperty("iframe")
+    private Boolean iframe;
 
     @Schema(description = "是否缓存")
     private Boolean cache;

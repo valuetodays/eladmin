@@ -7,8 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.zhengjie.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -18,9 +18,9 @@ import java.io.Serializable;
  * @author Zheng Jie
  * @since 2018-12-17
  */
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "sys_menu")
 public class Menu extends BaseEntity implements Serializable {
 
@@ -61,11 +61,9 @@ public class Menu extends BaseEntity implements Serializable {
     @Schema(description = "菜单图标")
     private String icon;
 
-    @Column(columnDefinition = "bit(1) default 0")
     @Schema(description = "缓存")
     private Boolean cache;
 
-    @Column(columnDefinition = "bit(1) default 0")
     @Schema(description = "是否隐藏")
     private Boolean hidden;
 
@@ -76,6 +74,6 @@ public class Menu extends BaseEntity implements Serializable {
     private Integer subCount = 0;
 
     @Schema(description = "外链菜单")
-    private Boolean iFrame;
+    private Boolean iframe;
 
 }

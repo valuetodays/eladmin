@@ -1,7 +1,6 @@
 package me.zhengjie.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.valuetodays.quarkus.commons.QueryPart;
 import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -258,18 +257,14 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
-    @Override
-    public List<Role> findInMenuId(List<Long> menuIds) {
-        return roleRepository.findInMenuId(menuIds);
-    }
 
     /**
      * 清理缓存
      * @param id /
      */
     public void delCaches(Long id, List<User> users) {
-        users = CollectionUtil.isEmpty(users) ? userRepository.findByRoleId(id) : users;
-        if (CollectionUtil.isNotEmpty(users)) {
+        users = CollectionUtils.isEmpty(users) ? userRepository.findByRoleId(id) : users;
+        if (CollectionUtils.isNotEmpty(users)) {
             users.forEach(item -> userCacheManager.cleanUserCache(item.getUsername()));
             Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
             redisUtils.delByKeys(CacheKey.DATA_USER, userIds);

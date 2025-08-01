@@ -19,6 +19,10 @@ public class RolesMenusRepository extends MyPanacheRepository<RolesMenus> {
         return find("roleId in ?1", roleIds).list();
     }
 
+    public List<RolesMenus> findByMenuIds(Collection<Long> menuIds) {
+        return find("menuId in ?1", menuIds).list();
+    }
+
     public void deleteByRole(Long roleId) {
         delete("roleId = ?1", roleId);
     }
