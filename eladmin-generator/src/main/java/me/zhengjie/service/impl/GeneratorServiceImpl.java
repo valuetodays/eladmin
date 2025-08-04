@@ -50,7 +50,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @ConfigProperty(name = "generator.base-path")
     private String generatorBasePath;
 
-    private DatabaseTableInfoGatherFactory.DbType dbType = DatabaseTableInfoGatherFactory.DbType.MYSQL;
+    private DatabaseTableInfoGatherFactory.DbType dbType = DatabaseTableInfoGatherFactory.DbType.PGSQL;
 
     @Override
     public Object getTables() {
