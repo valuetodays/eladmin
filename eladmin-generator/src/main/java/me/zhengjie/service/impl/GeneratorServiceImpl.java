@@ -1,12 +1,12 @@
 package me.zhengjie.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ZipUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.GenConfig;
@@ -97,6 +97,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         return PageUtil.toPage(tableInfos, totalElements);
     }
 
+    @Transactional
     @Override
     public List<ColumnInfo> getColumns(String tableName) {
         List<ColumnInfo> columnInfos = columnInfoRepository.findByTableNameOrderByIdAsc(tableName);
@@ -125,9 +126,9 @@ public class GeneratorServiceImpl implements GeneratorService {
                     arr[0].toString(),
                     "NO".equals(arr[1]),
                     arr[2].toString(),
-                    ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
-                    ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
-                    ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null)
+                    Objects.toString(arr[3], null),
+                    Objects.toString(arr[4], null),
+                    Objects.toString(arr[5], null))
             );
         }
         return columnInfos;
