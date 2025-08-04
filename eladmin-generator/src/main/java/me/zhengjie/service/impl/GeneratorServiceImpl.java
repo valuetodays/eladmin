@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 @RequiredArgsConstructor
-@SuppressWarnings({"unchecked","all"})
+@SuppressWarnings({"unchecked", "all"})
 public class GeneratorServiceImpl implements GeneratorService {
     private static final Logger log = LoggerFactory.getLogger(GeneratorServiceImpl.class);
     private final String CONFIG_MESSAGE = "请先配置生成器";
@@ -72,7 +73,14 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Object obj : result) {
             Object[] arr = (Object[]) obj;
-            tableInfos.add(new TableInfo(arr[0], arr[1], arr[2], arr[3], ObjectUtil.isNotEmpty(arr[4]) ? arr[4] : "-"));
+            TableInfo ti = new TableInfo(
+                Objects.toString(arr[0], null),
+                Objects.toString(arr[1], null),
+                Objects.toString(arr[2], null),
+                Objects.toString(arr[3], null),
+                Objects.toString(arr[4], "-")
+            );
+            tableInfos.add(ti);
         }
         String countSql = "select count(1) from (" + sqlForTablesForQuery + ") tmp";
         Query queryCount = em.createNativeQuery(countSql);
@@ -112,14 +120,14 @@ public class GeneratorServiceImpl implements GeneratorService {
         for (Object obj : result) {
             Object[] arr = (Object[]) obj;
             columnInfos.add(
-                    new ColumnInfo(
-                            tableName,
-                            arr[0].toString(),
-                            "NO".equals(arr[1]),
-                            arr[2].toString(),
-                            ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
-                            ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
-                            ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null)
+                new ColumnInfo(
+                    tableName,
+                    arr[0].toString(),
+                    "NO".equals(arr[1]),
+                    arr[2].toString(),
+                    ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
+                    ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
+                    ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null)
             );
         }
         return columnInfos;
