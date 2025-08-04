@@ -135,6 +135,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
+    @Transactional
     public void sync(List<ColumnInfo> columnInfos, List<ColumnInfo> columnInfoList) {
         // 第一种情况，数据库类字段改变或者新增字段
         for (ColumnInfo columnInfo : columnInfoList) {
@@ -167,6 +168,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
+    @Transactional
     public void save(List<ColumnInfo> columnInfos) {
         columnInfoRepository.persist(columnInfos);
     }
