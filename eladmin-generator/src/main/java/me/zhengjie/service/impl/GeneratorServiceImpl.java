@@ -77,8 +77,16 @@ public class GeneratorServiceImpl implements GeneratorService {
         String countSql = "select count(1) from (" + sqlForTablesForQuery + ") tmp";
         Query queryCount = em.createNativeQuery(countSql);
         queryCount.setParameter("table", StringUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
-        BigInteger totalElements = (BigInteger) queryCount.getSingleResult();
-        return PageUtil.toPage(tableInfos, totalElements.longValue());
+        Object totalElementsObj = queryCount.getSingleResult();
+        Long totalElements = null;
+        if (totalElementsObj instanceof Long l) {
+            totalElements = l;
+        } else if (totalElementsObj instanceof BigInteger bi) {
+            totalElements = bi.longValue();
+        } else {
+            totalElements = Long.valueOf(totalElementsObj.toString());
+        }
+        return PageUtil.toPage(tableInfos, totalElements);
     }
 
     @Override
