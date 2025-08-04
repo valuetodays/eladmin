@@ -170,7 +170,15 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     @Transactional
     public void save(List<ColumnInfo> columnInfos) {
-        columnInfoRepository.persist(columnInfos);
+        for (ColumnInfo columnInfo : columnInfos) {
+            Long id = columnInfo.getId();
+            if (Objects.nonNull(id)) {
+                columnInfoRepository.update(columnInfo);
+            } else {
+                columnInfoRepository.save(columnInfo);
+            }
+
+        }
     }
 
     @Override
