@@ -5,8 +5,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.GenConfig;
@@ -30,8 +30,8 @@ public class GenConfigController {
 
     @Operation(summary = "查询")
     @POST
-    @Path(value = "/query")
-    public GenConfig queryGenConfig(@QueryParam("tableName") String tableName) {
+    @Path(value = "/query/{tableName}")
+    public GenConfig queryGenConfig(@PathParam("tableName") String tableName) {
         return genConfigService.find(tableName);
     }
 
