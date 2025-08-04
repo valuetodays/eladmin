@@ -1,7 +1,5 @@
 package me.zhengjie.utils;
 
-import cn.hutool.jwt.JWT;
-import cn.hutool.jwt.JWTUtil;
 import cn.valuetodays.quarkus.commons.base.BaseAuthorizationController;
 import cn.vt.auth.AuthUser;
 import jakarta.enterprise.context.ApplicationScoped;
