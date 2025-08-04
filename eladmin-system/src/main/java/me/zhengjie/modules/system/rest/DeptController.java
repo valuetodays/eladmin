@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -51,7 +50,7 @@ public class DeptController extends BaseController {
     private static final String ENTITY_NAME = "dept";
 
     @Operation(summary = "导出部门数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check('dept:list')")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

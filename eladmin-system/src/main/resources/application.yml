@@ -37,6 +37,7 @@ quarkus:
     # https://docs.jboss.org/hibernate/orm/6.6/dialect/dialect.html
     #    dialect: MySQL
     #    dialect: cn.valuetodays.api3.web.extend.NoEscapeMySQLDialect
+    dialect: org.hibernate.dialect.PostgreSQLDialect
     schema-management:
       strategy: none
     packages: me.zhengjie

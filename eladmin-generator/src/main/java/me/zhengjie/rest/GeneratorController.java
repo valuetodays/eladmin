@@ -56,7 +56,7 @@ public class GeneratorController extends BaseController {
     @POST
     @Path(value = "/tables")
     public PageResult<TableInfo> queryTables(GenQueryTablesReq req) {
-        int[] startEnd = PageUtil.transToStartEnd(req.getPageNum(), req.getPageSize());
+        int[] startEnd = new int[]{(req.getPageNum() - 1) * req.getPageSize(), (req.getPageNum()) * req.getPageSize()};
         return generatorService.getTables(req.getName(), startEnd);
     }
 
