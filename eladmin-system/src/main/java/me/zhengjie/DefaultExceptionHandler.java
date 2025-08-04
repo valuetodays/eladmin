@@ -14,6 +14,6 @@ public class DefaultExceptionHandler extends RunAsync implements ExceptionMapper
     public Response toResponse(Exception exception) {
         log.error("error", exception);
         String msg = exception.getMessage();
-        return Response.status(Response.Status.OK).entity(R.fail(msg)).build();
+        return Response.status(Response.Status.OK).entity(R.fail("404 not found")).build();
     }
 }
