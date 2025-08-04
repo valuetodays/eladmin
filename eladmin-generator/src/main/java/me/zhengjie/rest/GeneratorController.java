@@ -2,7 +2,6 @@ package me.zhengjie.rest;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -15,6 +14,7 @@ import me.zhengjie.BaseController;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.vo.TableInfo;
 import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.reqresp.GenQueryTablesReq;
 import me.zhengjie.service.GenConfigService;
 import me.zhengjie.service.GeneratorService;
 import me.zhengjie.utils.PageResult;
@@ -55,11 +55,9 @@ public class GeneratorController extends BaseController {
     @Operation(summary = "查询数据库数据")
     @POST
     @Path(value = "/tables")
-    public PageResult<TableInfo> queryTables(@QueryParam("name") String name,
-                                             @QueryParam("page") @DefaultValue("0") Integer page,
-                                             @QueryParam("size") @DefaultValue("10") Integer size) {
-        int[] startEnd = PageUtil.transToStartEnd(page, size);
-        return generatorService.getTables(name, startEnd);
+    public PageResult<TableInfo> queryTables(GenQueryTablesReq req) {
+        int[] startEnd = PageUtil.transToStartEnd(req.getPageNum(), req.getPageSize());
+        return generatorService.getTables(req.getName(), startEnd);
     }
 
     @Operation(summary = "查询字段数据")
