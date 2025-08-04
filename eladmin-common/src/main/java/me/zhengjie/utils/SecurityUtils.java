@@ -65,12 +65,14 @@ public class SecurityUtils extends BaseAuthorizationController {
     }
 
     /**
-     * 获取用户ID
-     * @return 系统用户ID
+     * 获取系统用户名称
+     *
+     * @return 系统用户名称
      */
-    public Long getCurrentUserId(String token) {
-        JWT jwt = JWTUtil.parseToken(token);
-        return Long.valueOf(jwt.getPayload("userId").toString());
+    public static String getCurrentUsername(String token) {
+//        JWT jwt = JWTUtil.parseToken(token);
+//        return jwt.getPayload("sub").toString();
+        return null;
     }
 
     /**
@@ -83,13 +85,13 @@ public class SecurityUtils extends BaseAuthorizationController {
     }
 
     /**
-     * 获取系统用户名称
-     *
-     * @return 系统用户名称
+     * 获取用户ID
+     * @return 系统用户ID
      */
-    public static String getCurrentUsername(String token) {
-        JWT jwt = JWTUtil.parseToken(token);
-        return jwt.getPayload("sub").toString();
+    public Long getCurrentUserId(String token) {
+//        JWT jwt = JWTUtil.parseToken(token);
+//        return Long.valueOf(jwt.getPayload("userId").toString());
+        return null;
     }
 
     /**
