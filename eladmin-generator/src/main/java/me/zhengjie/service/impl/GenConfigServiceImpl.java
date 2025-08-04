@@ -2,6 +2,7 @@ package me.zhengjie.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import me.zhengjie.domain.GenConfig;
 import me.zhengjie.repository.GenConfigRepository;
 import me.zhengjie.service.GenConfigService;
@@ -29,6 +30,7 @@ public class GenConfigServiceImpl implements GenConfigService {
     }
 
     @Override
+    @Transactional
     public GenConfig update(String tableName, GenConfig genConfig) {
         String separator = File.separator;
         String[] paths;
