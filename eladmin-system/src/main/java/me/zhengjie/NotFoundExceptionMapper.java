@@ -2,18 +2,24 @@ package me.zhengjie;
 
 import cn.vt.R;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
 @Provider
 @Slf4j
-public class NotFoundMapper implements ExceptionMapper<NotFoundException> {
+public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
+
+    @Context
+    UriInfo uriInfo;
 
     @Override
     public Response toResponse(NotFoundException exception) {
-        log.error("request url not found：{}", exception.getMessage(), exception);
+        String path = uriInfo != null ? uriInfo.getRequestUri().toString() : "<unknown>";
+        log.error("404 - Not Found URL: {}", path);
         return Response.status(Response.Status.OK).entity(R.fail("not found")).build();
     }
 }
