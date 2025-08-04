@@ -26,6 +26,10 @@
                     <groupId>me.zhengjie</groupId>
                     <artifactId>eladmin-common</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -39,6 +43,12 @@
             <groupId>me.zhengjie</groupId>
             <artifactId>eladmin-tools</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>me.zhengjie</groupId>
