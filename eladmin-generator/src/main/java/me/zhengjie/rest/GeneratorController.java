@@ -6,7 +6,6 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import me.zhengjie.BaseController;
 import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.vo.TableInfo;
 import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.reqresp.GenQueryColumnsReq;
 import me.zhengjie.reqresp.GenQueryTablesReq;
 import me.zhengjie.service.GenConfigService;
 import me.zhengjie.service.GeneratorService;
@@ -63,8 +63,8 @@ public class GeneratorController extends BaseController {
     @Operation(summary = "查询字段数据")
     @POST
     @Path(value = "/columns")
-    public PageResult<ColumnInfo> queryColumns(@QueryParam("tableName") String tableName) {
-        List<ColumnInfo> columnInfos = generatorService.getColumns(tableName);
+    public PageResult<ColumnInfo> queryColumns(GenQueryColumnsReq req) {
+        List<ColumnInfo> columnInfos = generatorService.getColumns(req.getTableName());
         return PageUtil.toPage(columnInfos, columnInfos.size());
     }
 
