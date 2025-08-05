@@ -75,10 +75,10 @@ public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, 
     public void create(${className} resources) {
 <#if !auto && pkColumnType = 'Long'>
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
-        resources.set${pkCapitalColName}(snowflake.nextId()); 
+resources.set${pkCapitalColName}(snowflake.nextId());
 </#if>
 <#if !auto && pkColumnType = 'String'>
-        resources.set${pkCapitalColName}(IdUtil.simpleUUID()); 
+resources.set${pkCapitalColName}(IdUtil.simpleUUID());
 </#if>
 <#if columns??>
     <#list columns as column>
@@ -122,7 +122,7 @@ public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, 
     }
 
     @Override
-public void download(List<${className}Dto> all) throws IOException {
+public File download(List<${className}Dto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (${className}Dto ${changeClassName} : all) {
             Map<String,Object> map = new LinkedHashMap<>();

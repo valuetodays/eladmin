@@ -1,21 +1,25 @@
 package ${package}.rest;
 
 import me.zhengjie.annotation.Log;
+import me.zhengjie.BaseController;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
 import io.quarkus.panache.common.Page;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
+import java.io.File;
 import java.io.IOException;
-
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import me.zhengjie.utils.PageResult;
 import ${package}.service.dto.${className}Dto;
+
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 
 /**
 * @author ${author}
@@ -26,54 +30,57 @@ import ${package}.service.dto.${className}Dto;
 @RequiredArgsConstructor
 @Tag(name = "${apiAlias}")
 @Path("/api/${changeClassName}")
-public class ${className}Controller {
+public class ${className}Controller extends BaseController {
 
-@Inject ${className}Service ${changeClassName}Service;
+@Inject
+${className}Service ${changeClassName}Service;
 
 @Operation(summary = "导出数据")
-@GET
+@POST
 @Path(value = "/download")
     @PreAuthorize("@el.check('${changeClassName}:list')")
-public void export${className}(${className}QueryCriteria criteria) throws IOException {
-        ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria), response);
-    }
-
-@GET
-@Path
-@Operation(summary = "查询${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-public ResponseEntity
-<PageResult<${className}Dto>> query${className}(${className}QueryCriteria criteria, Page pageable){
-        return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,pageable),HttpStatus.OK);
+@Produces(MediaType.APPLICATION_OCTET_STREAM)
+public Response export(${className}QueryCriteria criteria) throws IOException {
+File file = ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria));
+return super.download(file);
     }
 
 @POST
-@Path("")
+@Path(value = "/query")
+@Operation(summary = "查询${apiAlias}")
+    @PreAuthorize("@el.check('${changeClassName}:list')")
+public PageResult<${className}Dto> query(${className}QueryCriteria criteria, Page pageable){
+return ${changeClassName}Service.queryAll(criteria,pageable);
+    }
+
+@POST
+@Path("/add")
     @Log("新增${apiAlias}")
 @Operation(summary = "新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-public Object create${className}(@Valid  ${className} resources){
-        ${changeClassName}Service.create(resources);
+public Object create(${className} resources){
+${changeClassName}Service.create(resources);
 return 1;
     }
 
 @POST
-@Path("")
+@Path("/edit")
     @Log("修改${apiAlias}")
 @Operation(summary = "修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
-public Object update${className}(@Valid  ${className} resources){
+public Object update(${className} resources){
         ${changeClassName}Service.update(resources);
 return 1;
     }
 
-@DELETE
-@Path("")
+@POST
+@Path("delete")
     @Log("删除${apiAlias}")
 @Operation(summary = "删除${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:del')")
-public Object delete${className}(@ApiParam(value = "传ID数组[]")  ${pkColumnType}[] ids) {
-        ${changeClassName}Service.deleteAll(ids);
-return 1;
+public Object delete${className}(Set
+<Long> ids) {
+    ${changeClassName}Service.delete(ids);
+    return 1;
     }
 }

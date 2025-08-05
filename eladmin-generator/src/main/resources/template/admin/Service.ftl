@@ -63,5 +63,5 @@ PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pa
     * @param response /
     * @throws IOException /
     */
-void download(List<${className}Dto> all) throws IOException;
+File download(List<${className}Dto> all) throws IOException;
 }
