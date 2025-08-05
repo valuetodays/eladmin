@@ -9,44 +9,63 @@ package me.zhengjie.service;
 public class PgSqlTableInfoGather implements DatabaseTableInfoGather {
     @Override
     public String getSqlForTables() {
-        return "SELECT \n"
-               + "    c.relname AS table_name,\n"
-               + "    obj_description(c.oid) AS table_comment\n"
-               + "FROM pg_class c\n"
-               + "JOIN  pg_namespace n ON n.oid = c.relnamespace\n"
-               + "WHERE  c.relkind = 'r'  AND n.nspname = 'public' \n"
-               + "ORDER BY  c.oid DESC ";
+        return """
+                SELECT
+                    c.relname AS table_name,
+                    obj_description(c.oid) AS table_comment
+                FROM pg_class c
+                JOIN  pg_namespace n ON n.oid = c.relnamespace
+                WHERE  c.relkind = 'r'  AND n.nspname = 'public'
+                ORDER BY  c.oid DESC
+                """;
     }
 
     @Override
     public String getSqlForTablesForQuery() {
-        return "SELECT \n"
-                          + "    c.relname AS table_name,\n"
-                          + "    null as create_time, null as engine, null as table_collation, "
-                          + "    obj_description(c.oid) AS table_comment\n"
-                          + "FROM  pg_class c\n"
-                          + "JOIN  pg_namespace n ON n.oid = c.relnamespace\n"
-                          + "WHERE \n"
-                          + "    c.relkind = 'r' \n"
-                          + "    AND n.nspname = 'public' "
-                          + "    AND c.relname like :table "
-                          + "ORDER BY  c.oid DESC ";
+        return """
+                SELECT
+                    c.relname AS table_name,
+                    null as create_time, null as engine, null as table_collation,     obj_description(c.oid) AS table_comment
+                FROM  pg_class c
+                JOIN  pg_namespace n ON n.oid = c.relnamespace
+                WHERE
+                    c.relkind = 'r'
+                    AND n.nspname = 'public'     AND c.relname like :table ORDER BY  c.oid DESC
+                """;
     }
 
     @Override
     public String getSqlForColumns(String name) {
-        return "SELECT \n"
-               + "    column_name,\n"
-               + "    is_nullable,\n"
-               + "    data_type,\n"
-               + "    col_description(format('%s.%s', table_schema, table_name)::regclass::oid, ordinal_position) AS column_comment,\n"
-               + "    '' AS column_key, "
-               + "    CASE \n"
-               + "        WHEN is_identity = 'YES' THEN 'auto_increment'\n"
-               + "        ELSE ''\n"
-               + "    END AS extra\n"
-               + "FROM  information_schema.columns\n"
-               + "WHERE table_name = ? AND table_schema = current_schema()\n"
-               + "ORDER BY  ordinal_position";
+        return """
+            SELECT
+                cols.column_name,
+                cols.is_nullable,
+                cols.data_type,
+                pgd.description AS column_comment,
+                CASE
+                    WHEN tc.constraint_type = 'PRIMARY KEY' THEN 'PRI'
+                    ELSE ''
+                END AS column_key,
+                CASE
+                    WHEN is_identity = 'YES' THEN 'auto_increment'
+                    ELSE ''
+                END AS extra
+            FROM information_schema.columns cols
+            LEFT JOIN pg_catalog.pg_statio_all_tables as st
+                ON st.relname = cols.table_name
+            LEFT JOIN pg_catalog.pg_description pgd
+                ON pgd.objoid = st.relid
+                AND pgd.objsubid = cols.ordinal_position
+            LEFT JOIN information_schema.key_column_usage kcu
+                ON cols.table_name = kcu.table_name
+                AND cols.column_name = kcu.column_name
+                AND cols.table_schema = kcu.table_schema
+            LEFT JOIN information_schema.table_constraints tc
+                ON tc.constraint_name = kcu.constraint_name
+                AND tc.table_schema = kcu.table_schema
+                AND tc.constraint_type = 'PRIMARY KEY'
+            WHERE cols.table_name = ?
+            ORDER BY cols.ordinal_position;
+            """;
     }
 }

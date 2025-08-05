@@ -12,7 +12,6 @@ import me.zhengjie.exception.EntityExistException;
 </#if>
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.FileUtil;
-import lombok.RequiredArgsConstructor;
 import ${package}.repository.${className}Repository;
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}Dto;
@@ -27,7 +26,6 @@ import cn.hutool.core.util.IdUtil;
 <#if !auto && pkColumnType = 'String'>
 import cn.hutool.core.util.IdUtil;
 </#if>
-import org.springframework.data.domain.Page;
 import io.quarkus.panache.common.Page;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
@@ -40,19 +38,19 @@ import java.util.LinkedHashMap;
 import me.zhengjie.utils.PageResult;
 
 /**
-* @description 服务实现
 * @author ${author}
 * @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @ApplicationScoped
-@RequiredArgsConstructor
 public class ${className}ServiceImpl implements ${className}Service {
 
-@Inject ${className}Repository ${changeClassName}Repository;
-@Inject ${className}Mapper ${changeClassName}Mapper;
+    @Inject
+    ${className}Repository ${changeClassName}Repository;
+    @Inject
+    ${className}Mapper ${changeClassName}Mapper;
 
     @Override
-public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable){
+    public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable) {
         Page<${className}> page = ${changeClassName}Repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(${changeClassName}Mapper::toDto));
     }
@@ -63,15 +61,14 @@ public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, 
     }
 
     @Override
-    @Transactional
     public ${className}Dto findById(${pkColumnType} ${pkChangeColName}) {
-        ${className} ${changeClassName} = ${changeClassName}Repository.findById(${pkChangeColName}).orElseGet(${className}::new);
+        ${className} ${changeClassName} = ${changeClassName}Repository.findById(${pkChangeColName});
         ValidationUtil.isNull(${changeClassName}.get${pkCapitalColName}(),"${className}","${pkChangeColName}",${pkChangeColName});
         return ${changeClassName}Mapper.toDto(${changeClassName});
     }
 
     @Override
-@Transactional(rollbackOn = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void create(${className} resources) {
 <#if !auto && pkColumnType = 'Long'>
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
@@ -83,7 +80,7 @@ resources.set${pkCapitalColName}(IdUtil.simpleUUID());
 <#if columns??>
     <#list columns as column>
     <#if column.columnKey = 'UNI'>
-        if(${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}()) != null){
+        if(${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}()) != null) {
             throw new EntityExistException(${className}.class,"${column.columnName}",resources.get${column.capitalColumnName}());
         }
     </#if>
@@ -93,9 +90,9 @@ resources.set${pkCapitalColName}(IdUtil.simpleUUID());
     }
 
     @Override
-@Transactional(rollbackOn = Exception.class)
+    @Transactional(rollbackOn = Exception.class)
     public void update(${className} resources) {
-        ${className} ${changeClassName} = ${changeClassName}Repository.findById(resources.get${pkCapitalColName}()).orElseGet(${className}::new);
+        ${className} ${changeClassName} = ${changeClassName}Repository.findById(resources.get${pkCapitalColName}());
         ValidationUtil.isNull( ${changeClassName}.get${pkCapitalColName}(),"${className}","id",resources.get${pkCapitalColName}());
 <#if columns??>
     <#list columns as column>
@@ -115,14 +112,15 @@ resources.set${pkCapitalColName}(IdUtil.simpleUUID());
     }
 
     @Override
-    public void deleteAll(${pkColumnType}[] ids) {
+    @Transactional
+    public void delete(Set<Long> ids) {
         for (${pkColumnType} ${pkChangeColName} : ids) {
             ${changeClassName}Repository.deleteById(${pkChangeColName});
         }
     }
 
     @Override
-public File download(List<${className}Dto> all) throws IOException {
+    public File download(List<${className}Dto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (${className}Dto ${changeClassName} : all) {
             Map<String,Object> map = new LinkedHashMap<>();
@@ -137,6 +135,6 @@ public File download(List<${className}Dto> all) throws IOException {
         </#list>
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        return FileUtil.downloadExcel(list, response);
     }
 }

@@ -21,9 +21,8 @@ public interface ${className}Service {
     * 查询数据分页
     * @param criteria 条件
     * @param pageable 分页参数
-    * @return Map<String,Object>
     */
-PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable);
+    PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable);
 
     /**
     * 查询所有数据不分页
@@ -55,13 +54,12 @@ PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pa
     * 多选删除
     * @param ids /
     */
-    void deleteAll(${pkColumnType}[] ids);
+    void delete(Set<Long> ids);
 
     /**
     * 导出数据
     * @param all 待导出的数据
-    * @param response /
     * @throws IOException /
     */
-File download(List<${className}Dto> all) throws IOException;
+    File download(List<${className}Dto> all) throws IOException;
 }

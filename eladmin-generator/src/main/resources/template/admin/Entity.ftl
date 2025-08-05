@@ -2,16 +2,15 @@ package ${package}.domain;
 
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
-import io.swagger.annotations.ApiModelProperty;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import cn.hutool.core.bean.copier.CopyOptions;
-import javax.persistence.*;
-<#if isNotNullColumns??>
-import javax.validation.constraints.*;
-</#if>
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 <#if hasDateAnnotation>
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import org.hibernate.annotations.*;
 </#if>
 <#if hasTimestamp>
 import java.sql.Timestamp;
@@ -33,15 +32,14 @@ import java.math.BigDecimal;
     </#list>
 </#if>
 <#if notBlankUsed>
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 </#if>
 <#if notNullUsed>
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 </#if>
 import java.io.Serializable;
 
 /**
-* @description /
 * @author ${author}
 * @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
@@ -74,15 +72,15 @@ public class ${className} implements Serializable {
     </#if>
     </#if>
     <#if column.remark != ''>
-@Schema(description = "${column.remark}")
+    @Schema(description = "${column.remark}")
     <#else>
-@Schema(description = "${column.changeColumnName}")
+    @Schema(description = "${column.changeColumnName}")
     </#if>
     private ${column.columnType} ${column.changeColumnName};
     </#list>
 </#if>
 
-    public void copy(${className} source){
+    public void copy(${className} source) {
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

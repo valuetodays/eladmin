@@ -22,9 +22,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 
 /**
-* @author ${author}
-* @since ${.now?string("yyyy-MM-dd HH:mm")}
-**/
+ * @author ${author}
+ * @since ${.now?string("yyyy-MM-dd HH:mm")}
+ **/
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
@@ -32,55 +32,54 @@ import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 @Path("/api/${changeClassName}")
 public class ${className}Controller extends BaseController {
 
-@Inject
-${className}Service ${changeClassName}Service;
+    @Inject
+    ${className}Service ${changeClassName}Service;
 
-@Operation(summary = "导出数据")
-@POST
-@Path(value = "/download")
+    @Operation(summary = "导出数据")
+    @POST
+    @Path(value = "/download")
     @PreAuthorize("@el.check('${changeClassName}:list')")
-@Produces(MediaType.APPLICATION_OCTET_STREAM)
-public Response export(${className}QueryCriteria criteria) throws IOException {
-File file = ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria));
-return super.download(file);
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response export(${className}QueryCriteria criteria) throws IOException {
+        File file = ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria));
+        return super.download(file);
     }
 
-@POST
-@Path(value = "/query")
-@Operation(summary = "查询${apiAlias}")
+    @POST
+    @Path(value = "/query")
+    @Operation(summary = "查询${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:list')")
-public PageResult<${className}Dto> query(${className}QueryCriteria criteria, Page pageable){
-return ${changeClassName}Service.queryAll(criteria,pageable);
+    public PageResult<${className}Dto> query(${className}QueryCriteria criteria, Page pageable) {
+        return ${changeClassName}Service.queryAll(criteria,pageable);
     }
 
-@POST
-@Path("/add")
+    @POST
+    @Path("/add")
     @Log("新增${apiAlias}")
-@Operation(summary = "新增${apiAlias}")
+    @Operation(summary = "新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-public Object create(${className} resources){
-${changeClassName}Service.create(resources);
-return 1;
+    public Object create(${className} resources) {
+        ${changeClassName}Service.create(resources);
+        return 1;
     }
 
-@POST
-@Path("/edit")
+    @POST
+    @Path("/edit")
     @Log("修改${apiAlias}")
-@Operation(summary = "修改${apiAlias}")
+    @Operation(summary = "修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
-public Object update(${className} resources){
+    public Object update(${className} resources) {
         ${changeClassName}Service.update(resources);
-return 1;
+        return 1;
     }
 
-@POST
-@Path("delete")
+    @POST
+    @Path("delete")
     @Log("删除${apiAlias}")
-@Operation(summary = "删除${apiAlias}")
+    @Operation(summary = "删除${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:del')")
-public Object delete${className}(Set
-<Long> ids) {
-    ${changeClassName}Service.delete(ids);
-    return 1;
+    public Object delete${className}(Set<Long> ids) {
+        ${changeClassName}Service.delete(ids);
+        return 1;
     }
 }
