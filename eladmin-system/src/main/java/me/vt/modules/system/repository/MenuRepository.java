@@ -1,5 +1,6 @@
 package me.vt.modules.system.repository;
 
+import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -20,6 +21,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
      * 根据菜单标题查询
+     *
      * @param title 菜单标题
      * @return /
      */
@@ -29,6 +31,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
      * 根据组件名称查询
+     *
      * @param name 组件名称
      * @return /
      */
@@ -38,6 +41,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
      * 根据菜单的 PID 查询
+     *
      * @param pid /
      * @return /
      */
@@ -47,6 +51,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
      * 查询顶级菜单
+     *
      * @return /
      */
     public List<Menu> findByPidIsNullOrderByMenuSort() {
@@ -56,6 +61,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
      * 获取节点数量
+     *
      * @param id /
      * @return /
      */
@@ -65,7 +71,8 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
      * 更新节点数目
-     * @param count /
+     *
+     * @param count  /
      * @param menuId /
      */
     @Transactional
@@ -77,6 +84,8 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
     public List<Menu> findByIdsAndTypeNotAndSortable(Set<Long> menuIds, int type) {
         log.info("#3 menuIds={}", menuIds);
         List<Long> ids = menuIds.stream().distinct().sorted().toList();
-        return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), ids, type).list();
+        return find("id in (:ids) and type != :type",
+            Sort.ascending("menuSort"),
+            Parameters.with("ids", ids).and("type", type)).list();
     }
 }
