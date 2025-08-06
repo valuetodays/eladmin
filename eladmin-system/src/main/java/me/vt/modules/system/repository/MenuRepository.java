@@ -3,6 +3,7 @@ package me.vt.modules.system.repository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import me.vt.MyPanacheRepository;
 import me.vt.modules.system.domain.Menu;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @since 2018-12-17
  */
 @ApplicationScoped
+@Slf4j
 public class MenuRepository extends MyPanacheRepository<Menu> {
 
     /**
@@ -72,6 +74,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
     }
 
     public List<Menu> findByIdsAndTypeNotAndSortable(List<Long> menuIds, int type) {
+        log.info("#3 menuIds={}", menuIds);
         return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), menuIds, type).list();
     }
 }

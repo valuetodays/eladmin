@@ -268,7 +268,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuDto> buildTree(List<MenuDto> menuDtos) {
         List<MenuDto> trees = new ArrayList<>();
-        Set<Long> ids = new HashSet<>();
+        final Set<Long> ids = new HashSet<>();
         for (MenuDto menuDTO : menuDtos) {
             if (menuDTO.getPid() == null) {
                 trees.add(menuDTO);
