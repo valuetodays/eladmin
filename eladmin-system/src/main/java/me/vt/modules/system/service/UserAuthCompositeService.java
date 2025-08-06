@@ -122,11 +122,13 @@ public class UserAuthCompositeService {
         if (CollectionUtils.isEmpty(list)) {
             return List.of();
         }
-        Set<Long> menuIds = list.stream().map(RolesMenus::getMenuId).distinct().collect(Collectors.toSet());
+        Set<Long> menuIds = list.stream().map(RolesMenus::getMenuId).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(menuIds)) {
             return List.of();
         }
-        log.info("#2 menuIds={}", menuIds);
+        long distinctCount = menuIds.stream().distinct().count();
+        log.info("#2 menuIds size={} distinctCount={} values={}",
+            menuIds.size(), distinctCount, menuIds);
         return menuRepository.findByIdsAndTypeNotAndSortable(menuIds, i);
     }
 
