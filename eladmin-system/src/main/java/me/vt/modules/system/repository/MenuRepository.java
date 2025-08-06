@@ -85,6 +85,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
         log.info("#3 menuIds={}", menuIds);
         List<Long> ids = menuIds.stream().distinct().sorted().toList();
         String idsStr = "(" + StringUtils.join(ids, ",") + ")";
+        log.info("idsStr={}", idsStr);
         return find("id in " + idsStr + " and type != ?1", Sort.ascending("menuSort"), type).list();
     }
 }
