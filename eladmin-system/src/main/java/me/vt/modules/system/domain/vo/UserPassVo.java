@@ -1,0 +1,19 @@
+package me.vt.modules.system.domain.vo;
+
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+/**
+ * 修改密码的 Vo 类
+ * @author Zheng Jie
+ * @since 2019年7月11日13:59:49
+ */
+@Data
+public class UserPassVo {
+
+    @Schema(description = "旧密码")
+    private String oldPass;
+
+    @Schema(description = "新密码")
+    private String newPass;
+}

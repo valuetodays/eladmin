@@ -1,7 +1,7 @@
 package ${package}.rest;
 
-import me.zhengjie.annotation.Log;
-import me.zhengjie.BaseController;
+import me.vt.annotation.Log;
+import me.vt.BaseController;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import me.zhengjie.utils.PageResult;
+import me.vt.utils.PageResult;
 import ${package}.service.dto.${className}Dto;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;

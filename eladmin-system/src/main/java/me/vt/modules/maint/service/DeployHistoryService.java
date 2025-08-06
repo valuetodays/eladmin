@@ -1,0 +1,59 @@
+package me.vt.modules.maint.service;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import io.quarkus.panache.common.Page;
+import me.vt.modules.maint.domain.DeployHistory;
+import me.vt.modules.maint.service.dto.DeployHistoryDto;
+import me.vt.modules.maint.service.dto.DeployHistoryQueryCriteria;
+import me.vt.utils.PageResult;
+
+/**
+ * @author zhanghouying
+ */
+public interface DeployHistoryService {
+
+    /**
+     * 分页查询
+     * @param criteria 条件
+     * @param pageable 分页参数
+     * @return /
+     */
+    PageResult<DeployHistoryDto> queryAll(DeployHistoryQueryCriteria criteria, Page pageable);
+
+    /**
+     * 查询全部
+     * @param criteria 条件
+     * @return /
+     */
+    List<DeployHistoryDto> queryAll(DeployHistoryQueryCriteria criteria);
+
+    /**
+     * 根据ID查询
+     * @param id /
+     * @return /
+     */
+    DeployHistoryDto findById(Long id);
+
+    /**
+     * 创建
+     * @param resources /
+     */
+    void create(DeployHistory resources);
+
+    /**
+     * 删除
+     * @param ids /
+     */
+    void delete(Set<Long> ids);
+
+    /**
+     * 导出数据
+     * @param queryAll /
+     * @throws IOException /
+     */
+    File download(List<DeployHistoryDto> queryAll) throws IOException;
+}

@@ -1,0 +1,25 @@
+package me.vt.modules.system.repository;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import me.vt.MyPanacheRepository;
+import me.vt.modules.system.domain.UsersRole;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * .
+ *
+ * @author lei.liu
+ * @since 2025-07-19
+ */
+@ApplicationScoped
+public class UsersRoleRepository extends MyPanacheRepository<UsersRole> {
+    public List<UsersRole> findByUserId(Long userId) {
+        return find("userId = ?1", userId).list();
+    }
+
+    public List<UsersRole> findByRoleIds(Collection<Long> roleIds) {
+        return find("roleId in ?1", roleIds).list();
+    }
+}

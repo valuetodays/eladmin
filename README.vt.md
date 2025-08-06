@@ -12,7 +12,7 @@
 - 方法重命名
   + [x] downloadExcel -> writeExcel
 - [ ] 修改ftl文件内容
-- [ ] me.zhengjie -> me.vt
+- [ ] me.vt -> me.vt
 - [ ] remove hutool
 ## todo
 

@@ -5,13 +5,13 @@ import ${package}.domain.${className};
     <#list columns as column>
         <#if column.columnKey = 'UNI'>
             <#if column_index = 1>
-import me.zhengjie.exception.EntityExistException;
+import me.vt.exception.EntityExistException;
             </#if>
         </#if>
     </#list>
 </#if>
-import me.zhengjie.utils.ValidationUtil;
-import me.zhengjie.utils.FileUtil;
+import me.vt.utils.ValidationUtil;
+import me.vt.utils.FileUtil;
 import ${package}.repository.${className}Repository;
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}Dto;
@@ -27,15 +27,15 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.IdUtil;
 </#if>
 import io.quarkus.panache.common.Page;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
+import me.vt.utils.PageUtil;
+import me.vt.utils.QueryHelp;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
+import me.vt.utils.PageResult;
 
 /**
 * @author ${author}

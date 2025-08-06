@@ -1,7 +1,7 @@
 package ${package}.service.mapstruct;
 
-import me.zhengjie.MapStructMapperConfig;
-import me.zhengjie.base.BaseMapper;
+import me.vt.MapStructMapperConfig;
+import me.vt.base.BaseMapper;
 import ${package}.domain.${className};
 import ${package}.service.dto.${className}Dto;
 import org.mapstruct.Mapper;

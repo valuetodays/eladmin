@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 </#if>
 <#if queryColumns??>
-import me.zhengjie.annotation.Query;
+import me.vt.annotation.Query;
 </#if>
 import io.swagger.annotations.ApiModelProperty;
 

@@ -1,0 +1,31 @@
+package me.vt.modules.maint.service.dto;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.vt.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+/**
+* @author zhanghouying
+ * @since 2019-08-24
+*/
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class DatabaseQueryCriteria extends PageIO {
+
+    @Schema(description = "模糊")
+    @Query(type = Query.Type.INNER_LIKE)
+    private String name;
+
+    @Query
+    @Schema(description = "数据库连接地址")
+    private String jdbcUrl;
+
+    @Schema(description = "创建时间")
+	@Query(type = Query.Type.BETWEEN)
+	private List<Timestamp> createTime;
+}

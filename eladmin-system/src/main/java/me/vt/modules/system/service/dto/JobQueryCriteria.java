@@ -1,0 +1,33 @@
+package me.vt.modules.system.service.dto;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import me.vt.annotation.Query;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+/**
+* @author Zheng Jie
+ * @since 2019-6-4 14:49:34
+*/
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+public class JobQueryCriteria extends PageIO {
+
+    @Schema(description = "岗位名称")
+    @Query(type = Query.Type.INNER_LIKE)
+    private String name;
+
+    @Query
+    @Schema(description = "岗位状态")
+    private Boolean enabled;
+
+    @Schema(description = "创建时间")
+    @Query(type = Query.Type.BETWEEN)
+    private List<Timestamp> createTime;
+}

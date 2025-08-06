@@ -1,0 +1,22 @@
+package me.vt.modules.system.service.dto;
+
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+/**
+* @author Zheng Jie
+ * @since 2019-6-10 16:32:18
+*/
+@Data
+@NoArgsConstructor
+public class JobSmallDto implements Serializable {
+
+    @Schema(description = "ID")
+    private Long id;
+
+    @Schema(description = "名称")
+    private String name;
+}
