@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.system.domain.Dept;
 import me.vt.modules.system.domain.Job;
 import me.vt.modules.system.domain.Menu;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
  * @since 2025-07-19
  */
 @ApplicationScoped
+@Slf4j
 public class UserAuthCompositeService {
     @Inject
     RoleRepository roleRepository;
@@ -84,9 +86,9 @@ public class UserAuthCompositeService {
         if (CollectionUtils.isEmpty(list)) {
             return List.of();
         }
-        return menuRepository.findAllByIds(
-            list.stream().map(RolesMenus::getMenuId).collect(Collectors.toSet())
-        );
+        Set<Long> menuIds = list.stream().map(RolesMenus::getMenuId).collect(Collectors.toSet());
+        log.info("menuIds={}", menuIds);
+        return menuRepository.findAllByIds(menuIds);
     }
 
     public List<Dept> findDeptsByRoleIds(List<Long> roleIds) {
@@ -124,6 +126,7 @@ public class UserAuthCompositeService {
         if (CollectionUtils.isEmpty(menuIds)) {
             return List.of();
         }
+        log.info("#2 menuIds={}", menuIds);
         return menuRepository.findByIdsAndTypeNotAndSortable(menuIds, i);
     }
 

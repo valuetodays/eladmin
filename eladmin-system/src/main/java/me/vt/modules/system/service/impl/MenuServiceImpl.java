@@ -128,14 +128,14 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public List<MenuDto> findByUser(Long currentUserId) {
-        String key = CacheKey.MENU_USER + currentUserId;
+        final String key = CacheKey.MENU_USER + currentUserId;
         List<Menu> menus = redisUtils.getList(key, Menu.class);
         if (CollUtil.isEmpty(menus)) {
             List<RoleSmallDto> roles = roleService.findByUsersId(currentUserId);
             Set<Long> roleIds = roles.stream().map(RoleSmallDto::getId).collect(Collectors.toSet());
             List<Menu> data = userAuthCompositeService.findMenusByRoleIdsAndTypeNot(roleIds, 2);
             menus = new ArrayList<>(data);
-            redisUtils.set(key, menus, 1, TimeUnit.DAYS);
+            redisUtils.set(key, menus, 1, TimeUnit.HOURS);
         }
         return menus.stream().map(menuMapper::toDto).toList();
     }

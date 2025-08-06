@@ -192,7 +192,7 @@ public class RoleServiceImpl implements RoleService {
         if (CollUtil.isEmpty(roles)) {
             List<Role> rolesByUserId = userAuthCompositeService.findRolesByUserId(userId);
             roles = roleSmallMapper.toDto(new ArrayList<>(rolesByUserId));
-            redisUtils.set(key, roles, 1, TimeUnit.DAYS);
+            redisUtils.set(key, roles, 1, TimeUnit.HOURS);
         }
         return roles;
     }
