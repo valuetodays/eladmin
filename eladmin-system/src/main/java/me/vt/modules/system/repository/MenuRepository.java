@@ -8,6 +8,7 @@ import me.vt.MyPanacheRepository;
 import me.vt.modules.system.domain.Menu;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -73,7 +74,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
         update("set subCount=?1 where id=?2", count, menuId);
     }
 
-    public List<Menu> findByIdsAndTypeNotAndSortable(List<Long> menuIds, int type) {
+    public List<Menu> findByIdsAndTypeNotAndSortable(Set<Long> menuIds, int type) {
         log.info("#3 menuIds={}", menuIds);
         return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), menuIds, type).list();
     }

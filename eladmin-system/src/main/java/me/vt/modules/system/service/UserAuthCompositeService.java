@@ -122,7 +122,7 @@ public class UserAuthCompositeService {
         if (CollectionUtils.isEmpty(list)) {
             return List.of();
         }
-        List<Long> menuIds = list.stream().map(RolesMenus::getMenuId).distinct().toList();
+        Set<Long> menuIds = list.stream().map(RolesMenus::getMenuId).distinct().collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(menuIds)) {
             return List.of();
         }
