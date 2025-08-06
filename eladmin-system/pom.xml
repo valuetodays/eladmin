@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <groupId>me.vt</groupId>
         <artifactId>eladmin</artifactId>
-        <groupId>me.zhengjie</groupId>
         <version>3.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
     <dependencies>
         <!-- 代码生成模块 -->
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>me.vt</groupId>
             <artifactId>eladmin-generator</artifactId>
             <version>${project.version}</version>
             <exclusions>
@@ -33,14 +33,9 @@
             </exclusions>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>me.zhengjie</groupId>-->
-        <!--            <artifactId>module-mybiz</artifactId>-->
-        <!--            <version>2.7</version>-->
-        <!--        </dependency>-->
         <!-- tools 模块包含了 common 和 logging 模块 -->
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>me.vt</groupId>
             <artifactId>eladmin-tools</artifactId>
             <version>${project.version}</version>
             <exclusions>
@@ -51,7 +46,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>me.vt</groupId>
             <artifactId>module-mybiz</artifactId>
             <version>${project.version}</version>
         </dependency>
