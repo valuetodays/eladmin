@@ -1,12 +1,12 @@
 package me.vt.modules.system.repository;
 
-import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.MyPanacheRepository;
 import me.vt.modules.system.domain.Menu;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -84,8 +84,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
     public List<Menu> findByIdsAndTypeNotAndSortable(Set<Long> menuIds, int type) {
         log.info("#3 menuIds={}", menuIds);
         List<Long> ids = menuIds.stream().distinct().sorted().toList();
-        return find("id in (:ids) and type != :type",
-            Sort.ascending("menuSort"),
-            Parameters.with("ids", ids).and("type", type)).list();
+        String idsStr = "(" + StringUtils.join(ids, ",") + ")";
+        return find("id in " + idsStr + " and type != ?1", Sort.ascending("menuSort"), type).list();
     }
 }
