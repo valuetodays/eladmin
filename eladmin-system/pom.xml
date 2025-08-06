@@ -23,7 +23,7 @@
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>me.zhengjie</groupId>
+                    <groupId>me.vt</groupId>
                     <artifactId>eladmin-common</artifactId>
                 </exclusion>
                 <exclusion>

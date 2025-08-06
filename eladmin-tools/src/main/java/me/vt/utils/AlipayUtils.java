@@ -7,7 +7,6 @@ import java.util.Date;
 
 /**
  * 支付宝工具类
- * @author zhengjie
  * @since 2018/09/30 14:04:35
  */
 @ApplicationScoped

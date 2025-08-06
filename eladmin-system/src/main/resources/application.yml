@@ -40,7 +40,7 @@ quarkus:
     dialect: org.hibernate.dialect.PostgreSQLDialect
     schema-management:
       strategy: none
-    packages: me.zhengjie
+    packages: me.vt
     database:
       #      generation: none
       version-check:
