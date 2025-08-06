@@ -15,7 +15,7 @@ public class MySingleLineFormat extends SingleLineFormat {
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category, String prepared, String sql, String url) {
         String newUrl = StringUtils.substringBefore(url, "?") + "?...";
-        if (url.contains(",122,122,122,")) {
+        if (sql.contains(",122,122,122,")) {
             throw new CommonException("show error");
         }
         return now + "|" + elapsed + "|" + category + "|connection " + connectionId + "|url " + newUrl + "|" + "" + "|" + P6Util.singleLine(sql);
