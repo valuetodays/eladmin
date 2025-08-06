@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: 'api/${changeClassName}',
+    url: 'api/${changeClassName}/add',
     method: 'post',
     data
   })
@@ -10,16 +10,16 @@ export function add(data) {
 
 export function del(ids) {
   return request({
-    url: 'api/${changeClassName}/',
-    method: 'delete',
+    url: 'api/${changeClassName}/delete',
+    method: 'post',
     data: ids
   })
 }
 
 export function edit(data) {
   return request({
-    url: 'api/${changeClassName}',
-    method: 'put',
+    url: 'api/${changeClassName}/edit',
+    method: 'post',
     data
   })
 }
