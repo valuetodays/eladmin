@@ -47,7 +47,7 @@ public class S3StorageController extends BaseController {
     S3StorageService s3StorageService;
 
     @Operation(summary = "导出数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check('storage:list')")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -56,8 +56,8 @@ public class S3StorageController extends BaseController {
         return super.download(file);
     }
 
-    @GET
-    @Path("")
+    @POST
+    @Path("query")
     @Operation(summary = "查询文件")
     @PreAuthorize("@el.check('storage:list')")
     public PageResult<S3Storage> queryS3Storage(S3StorageQueryCriteria criteria) {

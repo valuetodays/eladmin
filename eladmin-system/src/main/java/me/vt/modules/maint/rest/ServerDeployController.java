@@ -3,7 +3,6 @@ package me.vt.modules.maint.rest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -49,7 +48,7 @@ public class ServerDeployController extends BaseController {
     }
 
     @Operation(summary = "查询服务器")
-    @GET
+    @POST
     @Path("")
     @PreAuthorize("@el.check('serverDeploy:list')")
     public PageResult<ServerDeployDto> queryServerDeploy(ServerDeployQueryCriteria criteria) {

@@ -3,7 +3,6 @@ package me.vt.modules.system.rest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -43,7 +42,7 @@ public class DictController extends BaseController {
     private static final String ENTITY_NAME = "dict";
 
     @Operation(summary = "导出字典数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check('dict:list')")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

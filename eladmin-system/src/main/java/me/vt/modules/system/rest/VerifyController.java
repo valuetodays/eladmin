@@ -1,10 +1,7 @@
 package me.vt.modules.system.rest;
 
-import java.util.Objects;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -18,6 +15,8 @@ import me.vt.utils.enums.CodeBiEnum;
 import me.vt.utils.enums.CodeEnum;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
+import java.util.Objects;
 
 /**
  * @author Zheng Jie
@@ -53,7 +52,7 @@ public class VerifyController {
         return 1;
     }
 
-    @GET
+    @POST
     @Path(value = "/validated")
     @Operation(summary = "验证码验证")
     public Object validated(/*@RequestParam*/ String email /*,@RequestParam String code,  @RequestParamInteger codeBi*/) {

@@ -3,7 +3,6 @@ package me.vt.modules.system.rest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -41,7 +40,7 @@ public class JobController extends BaseController {
 
     @Operation(summary = "导出岗位数据")
     @Path(value = "/download")
-    @GET
+    @POST
     @PreAuthorize("@el.check('job:list')")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response exportJob(JobQueryCriteria criteria) throws IOException {

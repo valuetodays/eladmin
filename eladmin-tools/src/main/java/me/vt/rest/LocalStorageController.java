@@ -3,7 +3,6 @@ package me.vt.rest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -38,8 +37,8 @@ public class LocalStorageController extends BaseController {
     @Inject
     LocalStorageService localStorageService;
 
-    @GET
-    @Path("")
+    @POST
+    @Path("query")
     @Operation(summary = "查询文件")
     @PreAuthorize("@el.check('storage:list')")
     public PageResult<LocalStorageDto> queryFile(LocalStorageQueryCriteria criteria) {
@@ -47,7 +46,7 @@ public class LocalStorageController extends BaseController {
     }
 
     @Operation(summary = "导出数据")
-    @GET
+    @POST
     @Path(value = "/download")
     @PreAuthorize("@el.check('storage:list')")
     public Response exportFile(LocalStorageQueryCriteria criteria) throws IOException {
