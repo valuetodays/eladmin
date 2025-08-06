@@ -76,6 +76,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
 
     public List<Menu> findByIdsAndTypeNotAndSortable(Set<Long> menuIds, int type) {
         log.info("#3 menuIds={}", menuIds);
-        return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), menuIds, type).list();
+        List<Long> ids = menuIds.stream().distinct().sorted().toList();
+        return find("id in ?1 and type != ?2", Sort.ascending("menuSort"), ids, type).list();
     }
 }
