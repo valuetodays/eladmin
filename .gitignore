@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# dot file (Graphviz)
+*.dot
+
 # Log file
 *.log
 *.pdb
