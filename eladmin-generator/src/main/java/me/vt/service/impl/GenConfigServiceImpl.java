@@ -60,6 +60,6 @@ public class GenConfigServiceImpl implements GenConfigService {
         old.setAuthor(genConfig.getAuthor());
         old.setPrefix(genConfig.getPrefix());
         old.setCover(genConfig.getCover());
-        return genConfigRepository.save(genConfig);
+        return genConfigRepository.save(old);
     }
 }
