@@ -67,10 +67,10 @@
               <el-switch
                 active-color="#13ce66"
                 active-text="启用"
-                :active-value="1"
+                :active-value="true"
                 inactive-color="#ff4949"
                 inactive-text="停用"
-                :inactive-value="0"
+                :inactive-value="false"
                 v-model="form.${column.changeColumnName}">
               </el-switch>
             </el-tooltip>
