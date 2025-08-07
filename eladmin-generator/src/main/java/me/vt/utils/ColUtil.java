@@ -1,5 +1,6 @@
 package me.vt.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -12,8 +13,8 @@ import org.slf4j.LoggerFactory;
  * @author Zheng Jie
  * @since 2019-01-03
  */
+@Slf4j
 public class ColUtil {
-    private static final Logger log = LoggerFactory.getLogger(ColUtil.class);
 
     /**
      * 转换mysql数据类型为java数据类型
@@ -23,8 +24,9 @@ public class ColUtil {
      */
     static String cloToJava(String type) {
         Configuration config = getConfig();
-        assert config != null;
-        return config.getString(type, "unknowType");
+        String javaType = config.getString(type, "unknowType");
+        log.info("type={} -> javaType={}", type, javaType);
+        return javaType;
     }
 
     /**
