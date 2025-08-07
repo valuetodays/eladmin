@@ -30,9 +30,9 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
-* @author Zheng Jie
+ * @author Zheng Jie
  * @since 2019-04-10
-*/
+ */
 @ApplicationScoped
 @RequiredArgsConstructor
 public class DictDetailServiceImpl implements DictDetailService {
@@ -79,22 +79,22 @@ public class DictDetailServiceImpl implements DictDetailService {
     @Transactional(rollbackOn = Exception.class)
     public void update(DictDetail resources) {
         DictDetail dictDetail = dictDetailRepository.findById(resources.getId());
-        ValidationUtil.isNull( dictDetail.getId(),"DictDetail","id",resources.getId());
+        ValidationUtil.isNull(dictDetail.getId(), "DictDetail", "id", resources.getId());
         dictDetail.setDictSort(resources.getDictSort());
         dictDetail.setLabel(resources.getLabel());
         dictDetail.setValue(resources.getValue());
         dictDetailRepository.save(dictDetail);
         // 清理缓存
-        delCaches(resources);
+        delCaches(dictDetail);
     }
 
     @Override
     public List<DictDetailDto> getDictByName(String name) {
         String key = CacheKey.DICT_NAME + name;
         List<DictDetail> dictDetails = redisUtils.getList(key, DictDetail.class);
-        if(CollUtil.isEmpty(dictDetails)){
+        if (CollUtil.isEmpty(dictDetails)) {
             dictDetails = dictDetailRepository.findByDictName(name);
-            redisUtils.set(key, dictDetails, 1 , TimeUnit.DAYS);
+            redisUtils.set(key, dictDetails, 1, TimeUnit.DAYS);
         }
         return dictDetailMapper.toDto(dictDetails);
     }
@@ -108,7 +108,7 @@ public class DictDetailServiceImpl implements DictDetailService {
         dictDetailRepository.deleteById(id);
     }
 
-    public void delCaches(DictDetail dictDetail){
+    public void delCaches(DictDetail dictDetail) {
         Dict dict = dictRepository.findById(dictDetail.getDictId());
         redisUtils.del(CacheKey.DICT_NAME + dict.getName());
     }
