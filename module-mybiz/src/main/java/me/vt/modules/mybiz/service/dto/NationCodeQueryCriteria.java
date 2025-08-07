@@ -61,7 +61,7 @@ public class NationCodeQueryCriteria extends PageIO implements QuerySearchable {
     /** 精确 */
     @Query
     @Schema(description = "状态：1启用、0禁用")
-    private Integer enabled;
+    private Boolean enabled;
 
 
     @Override

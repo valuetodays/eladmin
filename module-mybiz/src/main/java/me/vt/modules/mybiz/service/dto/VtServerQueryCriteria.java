@@ -31,7 +31,7 @@ public class VtServerQueryCriteria extends PageIO implements QuerySearchable {
      */
     @Query
     @Schema(description = "timezone状态：1启用、0禁用")
-    private Integer timeZoneEnabled;
+    private Boolean timeZoneEnabled;
 
     /**
      * 模糊
@@ -45,7 +45,7 @@ public class VtServerQueryCriteria extends PageIO implements QuerySearchable {
      */
     @Query
     @Schema(description = "https状态：1启用、0禁用")
-    private Integer httpsEnabled;
+    private Boolean httpsEnabled;
 
     /**
      * 模糊
@@ -59,7 +59,7 @@ public class VtServerQueryCriteria extends PageIO implements QuerySearchable {
      */
     @Query
     @Schema(description = "状态：1启用、0禁用")
-    private Integer enabled;
+    private Boolean enabled;
 
     @Override
     public List<QuerySearch> toQuerySearches() {

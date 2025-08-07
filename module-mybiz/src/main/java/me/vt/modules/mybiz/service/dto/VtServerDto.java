@@ -25,19 +25,19 @@ public class VtServerDto implements Serializable {
     private String portBindings;
 
     @Schema(description = "timezone状态：1启用、0禁用")
-    private Integer timeZoneEnabled;
+    private Boolean timeZoneEnabled;
 
     @Schema(description = "域名")
     private String domain;
 
     @Schema(description = "https状态：1启用、0禁用")
-    private Integer httpsEnabled;
+    private Boolean httpsEnabled;
 
     @Schema(description = "镜像地址")
     private String imageName;
 
     @Schema(description = "状态：1启用、0禁用")
-    private Integer enabled;
+    private Boolean enabled;
 
     @Schema(description = "创建者")
     private String createBy;

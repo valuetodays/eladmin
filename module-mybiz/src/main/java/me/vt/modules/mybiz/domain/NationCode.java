@@ -79,7 +79,7 @@ public class NationCode implements Serializable {
     @Column(name = "enabled", nullable = false)
     @NotNull
     @Schema(description = "状态：1启用、0禁用")
-    private Integer enabled;
+    private Boolean enabled;
 
     @Column(name = "create_by", nullable = false)
     @NotBlank

@@ -45,7 +45,7 @@ public class NationCodeDto implements Serializable {
     private String flag;
 
     @Schema(description = "状态：1启用、0禁用")
-    private Integer enabled;
+    private Boolean enabled;
 
     @Schema(description = "createTime")
     private LocalDateTime createTime;

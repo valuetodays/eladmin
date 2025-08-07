@@ -48,7 +48,7 @@ public class VtServer implements Serializable {
     @Column(name = "time_zone_enabled", nullable = false)
     @NotNull
     @Schema(description = "timezone状态：1启用、0禁用")
-    private Integer timeZoneEnabled;
+    private Boolean timeZoneEnabled;
 
     @Column(name = "domain", nullable = false)
     @NotBlank
@@ -58,7 +58,7 @@ public class VtServer implements Serializable {
     @Column(name = "https_enabled", nullable = false)
     @NotNull
     @Schema(description = "https状态：1启用、0禁用")
-    private Integer httpsEnabled;
+    private Boolean httpsEnabled;
 
     @Column(name = "image_name", nullable = false)
     @NotBlank
@@ -68,7 +68,7 @@ public class VtServer implements Serializable {
     @Column(name = "enabled", nullable = false)
     @NotNull
     @Schema(description = "状态：1启用、0禁用")
-    private Integer enabled;
+    private Boolean enabled;
 
     @Column(name = "create_by", nullable = false)
     @NotBlank
