@@ -8,6 +8,7 @@ import me.vt.QuerySearchable;
 import me.vt.annotation.Query;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,6 +67,7 @@ public class NationCodeQueryCriteria extends PageIO implements QuerySearchable {
 
     @Override
     public List<QuerySearch> toQuerySearches() {
-        return null;
+        List<QuerySearch> querySearches = new ArrayList<>();
+        return querySearches;
     }
 }

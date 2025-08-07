@@ -1,14 +1,18 @@
 package me.vt.modules.mybiz.service.dto;
 
+import cn.valuetodays.quarkus.commons.base.Operator;
 import cn.valuetodays.quarkus.commons.base.PageIO;
 import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.QuerySearchable;
 import me.vt.annotation.Query;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author vt
@@ -24,7 +28,7 @@ public class VtServerQueryCriteria extends PageIO implements QuerySearchable {
      */
     @Query
     @Schema(description = "名称")
-    private Long name;
+    private String name;
 
     /**
      * 精确
@@ -63,6 +67,25 @@ public class VtServerQueryCriteria extends PageIO implements QuerySearchable {
 
     @Override
     public List<QuerySearch> toQuerySearches() {
-        return null;
+        List<QuerySearch> querySearches = new ArrayList<>();
+        if (StringUtils.isNotBlank(name)) {
+            querySearches.add(QuerySearch.of("name", name, Operator.LIKE));
+        }
+        if (Objects.nonNull(timeZoneEnabled)) {
+            querySearches.add(QuerySearch.of("timeZoneEnabled", timeZoneEnabled.toString(), Operator.EQ));
+        }
+        if (StringUtils.isNotBlank(domain)) {
+            querySearches.add(QuerySearch.of("domain", domain, Operator.LIKE));
+        }
+        if (Objects.nonNull(httpsEnabled)) {
+            querySearches.add(QuerySearch.of("httpsEnabled", httpsEnabled.toString(), Operator.EQ));
+        }
+        if (StringUtils.isNotBlank(imageName)) {
+            querySearches.add(QuerySearch.of("imageName", imageName, Operator.LIKE));
+        }
+        if (Objects.nonNull(enabled)) {
+            querySearches.add(QuerySearch.of("enabled", enabled.toString(), Operator.EQ));
+        }
+        return querySearches;
     }
 }
