@@ -39,6 +39,6 @@ public class GenConfigController {
     @Path("/edit")
     @Operation(summary = "修改")
     public Object updateGenConfig(@Valid GenConfig genConfig) {
-        return genConfigService.update(genConfig.getTableName(), genConfig);
+        return genConfigService.update(genConfig);
     }
 }

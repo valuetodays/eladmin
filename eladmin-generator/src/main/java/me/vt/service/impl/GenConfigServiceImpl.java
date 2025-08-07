@@ -31,7 +31,7 @@ public class GenConfigServiceImpl implements GenConfigService {
 
     @Override
     @Transactional
-    public GenConfig update(String tableName, GenConfig genConfig) {
+    public GenConfig update(GenConfig genConfig) {
         String separator = File.separator;
         String[] paths;
         String symbol = "\\";
@@ -50,6 +50,16 @@ public class GenConfigServiceImpl implements GenConfigService {
             }
         }
         genConfig.setApiPath(api.toString());
+        GenConfig old = genConfigRepository.findById(genConfig.getId());
+        old.setTableName(genConfig.getTableName());
+        old.setApiAlias(genConfig.getApiAlias());
+        old.setPack(genConfig.getPack());
+        old.setModuleName(genConfig.getModuleName());
+        old.setPath(genConfig.getPath());
+        old.setApiPath(genConfig.getApiPath());
+        old.setAuthor(genConfig.getAuthor());
+        old.setPrefix(genConfig.getPrefix());
+        old.setCover(genConfig.getCover());
         return genConfigRepository.save(genConfig);
     }
 }
