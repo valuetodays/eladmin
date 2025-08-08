@@ -14,6 +14,9 @@
 - [ ] 修改ftl文件内容
 - [x] me.vt -> me.vt
 - [ ] remove hutool
+## 新功能
+- [ ] 把stock的功能移到eladmin中
+- 
 ## todo
 
 - 查看源码，了解quarkus.hibernate-orm.packages的配置
