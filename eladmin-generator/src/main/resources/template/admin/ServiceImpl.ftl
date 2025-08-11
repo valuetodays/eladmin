@@ -13,7 +13,6 @@ import me.vt.exception.EntityExistException;
 import me.vt.utils.ValidationUtil;
 import me.vt.utils.FileUtil;
 import ${package}.repository.${className}Repository;
-import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}Dto;
 import ${package}.service.dto.${className}QueryCriteria;
 import ${package}.service.mapstruct.${className}Mapper;
@@ -42,7 +41,7 @@ import me.vt.utils.PageResult;
 * @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @ApplicationScoped
-public class ${className}ServiceImpl implements ${className}Service {
+public class ${className}ServiceImpl {
 
     @Inject
     ${className}Repository ${changeClassName}Repository;

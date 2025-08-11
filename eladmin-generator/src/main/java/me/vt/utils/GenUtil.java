@@ -55,7 +55,7 @@ public class GenUtil {
         templateNames.add("Mapper");
         templateNames.add("Controller");
         templateNames.add("QueryCriteria");
-        templateNames.add("Service");
+//        templateNames.add("Service");
         templateNames.add("ServiceImpl");
         templateNames.add("Repository");
         return templateNames;
