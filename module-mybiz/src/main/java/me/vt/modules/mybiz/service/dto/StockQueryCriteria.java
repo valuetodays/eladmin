@@ -1,17 +1,25 @@
 
 package me.vt.modules.mybiz.service.dto;
 
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import lombok.Data;
 
+import lombok.EqualsAndHashCode;
+import me.vt.QuerySearchable;
 import me.vt.annotation.Query;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author vt
  * @since 2025-08-11 19:56
  **/
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class StockQueryCriteria {
+public class StockQueryCriteria extends PageIO implements QuerySearchable {
 
     /**
      * 精确
@@ -40,4 +48,9 @@ public class StockQueryCriteria {
     @Query(type = Query.Type.INNER_LIKE)
     @Schema(description = "备注")
     private String remark;
+
+    @Override
+    public List<QuerySearch> toQuerySearches() {
+        return new ArrayList<>();
+    }
 }
