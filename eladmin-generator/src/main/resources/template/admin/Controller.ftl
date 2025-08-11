@@ -3,7 +3,7 @@ package ${package}.rest;
 import me.vt.annotation.Log;
 import me.vt.BaseController;
 import ${package}.domain.${className};
-import ${package}.service.${className}Service;
+import ${package}.service.${className}ServiceImpl;
 import ${package}.service.dto.${className}QueryCriteria;
 import io.quarkus.panache.common.Page;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 public class ${className}Controller extends BaseController {
 
     @Inject
-    ${className}Service ${changeClassName}Service;
+    ${className}ServiceImpl ${changeClassName}Service;
 
     @Operation(summary = "导出数据")
     @POST
