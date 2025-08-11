@@ -51,9 +51,12 @@ public class GenConfigServiceImpl implements GenConfigService {
             }
         }
         genConfig.setApiPath(api.toString());
-        GenConfig old = genConfigRepository.findById(genConfig.getId());
-        if (Objects.isNull(old)) {
+        Long id = genConfig.getId();
+        GenConfig old;
+        if (Objects.isNull(id)) {
             old = new GenConfig();
+        } else {
+            old = genConfigRepository.findById(id);
         }
         old.setTableName(genConfig.getTableName());
         old.setApiAlias(genConfig.getApiAlias());
