@@ -48,25 +48,21 @@ public class ${className}ServiceImpl {
     @Inject
     ${className}Mapper ${changeClassName}Mapper;
 
-    @Override
     public PageResult<${className}Dto> queryAll(${className}QueryCriteria criteria, Page pageable) {
         Page<${className}> page = ${changeClassName}Repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(${changeClassName}Mapper::toDto));
     }
 
-    @Override
     public List<${className}Dto> queryAll(${className}QueryCriteria criteria){
         return ${changeClassName}Mapper.toDto(${changeClassName}Repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
     }
 
-    @Override
-    public ${className}Dto findById(${pkColumnType} ${pkChangeColName}) {
-        ${className} ${changeClassName} = ${changeClassName}Repository.findById(${pkChangeColName});
+    public ${className}Dto findById(Long id) {
+        ${className} ${changeClassName} = ${changeClassName}Repository.findById(id);
         ValidationUtil.isNull(${changeClassName}.get${pkCapitalColName}(),"${className}","${pkChangeColName}",${pkChangeColName});
         return ${changeClassName}Mapper.toDto(${changeClassName});
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public void create(${className} resources) {
 <#if !auto && pkColumnType = 'Long'>
@@ -88,7 +84,6 @@ resources.set${pkCapitalColName}(IdUtil.simpleUUID());
         ${changeClassName}Repository.save(resources);
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(${className} resources) {
         ${className} ${changeClassName} = ${changeClassName}Repository.findById(resources.get${pkCapitalColName}());
@@ -110,15 +105,13 @@ resources.set${pkCapitalColName}(IdUtil.simpleUUID());
         ${changeClassName}Repository.save(${changeClassName});
     }
 
-    @Override
     @Transactional
     public void delete(Set<Long> ids) {
-        for (${pkColumnType} ${pkChangeColName} : ids) {
-            ${changeClassName}Repository.deleteById(${pkChangeColName});
+        for (Long id : ids) {
+            ${changeClassName}Repository.deleteById(id);
         }
     }
 
-    @Override
     public File download(List<${className}Dto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (${className}Dto ${changeClassName} : all) {
