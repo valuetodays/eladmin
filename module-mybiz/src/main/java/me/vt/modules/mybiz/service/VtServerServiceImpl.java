@@ -1,4 +1,4 @@
-package me.vt.modules.mybiz.service.impl;
+package me.vt.modules.mybiz.service;
 
 import cn.valuetodays.quarkus.commons.QueryPart;
 import cn.valuetodays.quarkus.commons.base.QuerySearch;
@@ -10,7 +10,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import me.vt.modules.mybiz.domain.VtServer;
 import me.vt.modules.mybiz.repository.VtServerRepository;
-import me.vt.modules.mybiz.service.VtServerService;
 import me.vt.modules.mybiz.service.dto.VtServerDto;
 import me.vt.modules.mybiz.service.dto.VtServerQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.VtServerMapper;
@@ -35,14 +34,13 @@ import java.util.Objects;
  * @since 2025-07-11
  **/
 @ApplicationScoped
-public class VtServerServiceImpl implements VtServerService {
+public class VtServerServiceImpl {
 
     @Inject
     VtServerRepository vtServerRepository;
     @Inject
     VtServerMapper vtServerMapper;
 
-    @Override
     public PageResult<VtServerDto> queryAll(VtServerQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
@@ -59,12 +57,10 @@ public class VtServerServiceImpl implements VtServerService {
         return PageUtil.toPage(list, all.count());
     }
 
-    @Override
     public List<VtServerDto> queryAll(VtServerQueryCriteria criteria) {
         return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
-    @Override
     @Transactional
     public VtServerDto findById(Long id) {
         VtServer vtServer = vtServerRepository.findById(id);
@@ -72,13 +68,11 @@ public class VtServerServiceImpl implements VtServerService {
         return vtServerMapper.toDto(vtServer);
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public void create(VtServer resources) {
         vtServerRepository.save(resources);
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(VtServer resources) {
         VtServer vtServer = vtServerRepository.findById(resources.getId());
@@ -87,14 +81,12 @@ public class VtServerServiceImpl implements VtServerService {
         vtServerRepository.save(vtServer);
     }
 
-    @Override
     public void deleteAll(Long[] ids) {
         for (Long id : ids) {
             vtServerRepository.deleteById(id);
         }
     }
 
-    @Override
     public File download(List<VtServerDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (VtServerDto vtServer : all) {

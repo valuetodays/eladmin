@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import me.vt.BaseController;
 import me.vt.annotation.Log;
 import me.vt.modules.mybiz.domain.NationCode;
-import me.vt.modules.mybiz.service.NationCodeService;
+import me.vt.modules.mybiz.service.NationCodeServiceImpl;
 import me.vt.modules.mybiz.service.dto.NationCodeDto;
 import me.vt.modules.mybiz.service.dto.NationCodeQueryCriteria;
 import me.vt.utils.PageResult;
@@ -37,7 +37,7 @@ import java.time.LocalDateTime;
 public class NationCodeController extends BaseController {
 
     @Inject
-    NationCodeService nationCodeService;
+    NationCodeServiceImpl nationCodeService;
 
     @Operation(summary = "导出数据")
     @POST

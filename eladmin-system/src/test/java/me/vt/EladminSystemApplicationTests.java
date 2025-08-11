@@ -3,7 +3,7 @@ package me.vt;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.modules.mybiz.service.VtServerService;
+import me.vt.modules.mybiz.service.VtServerServiceImpl;
 import me.vt.modules.mybiz.service.dto.VtServerDto;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 public class EladminSystemApplicationTests {
 
     @Inject
-    VtServerService vtServerService;
+    VtServerServiceImpl vtServerService;
 
     @Test
     public void contextLoads() {

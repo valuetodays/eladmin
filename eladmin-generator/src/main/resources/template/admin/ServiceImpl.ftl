@@ -1,4 +1,4 @@
-package ${package}.service.impl;
+package ${package}.service;
 
 import ${package}.domain.${className};
 <#if columns??>

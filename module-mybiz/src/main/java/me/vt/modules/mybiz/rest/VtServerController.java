@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import me.vt.BaseController;
 import me.vt.annotation.Log;
 import me.vt.modules.mybiz.domain.VtServer;
-import me.vt.modules.mybiz.service.VtServerService;
+import me.vt.modules.mybiz.service.VtServerServiceImpl;
 import me.vt.modules.mybiz.service.dto.VtServerDto;
 import me.vt.modules.mybiz.service.dto.VtServerQueryCriteria;
 import me.vt.utils.PageResult;
@@ -38,7 +38,7 @@ import java.time.LocalDateTime;
 public class VtServerController extends BaseController {
 
     @Inject
-    VtServerService vtServerService;
+    VtServerServiceImpl vtServerService;
 
     @Operation(summary = "导出数据")
     @POST

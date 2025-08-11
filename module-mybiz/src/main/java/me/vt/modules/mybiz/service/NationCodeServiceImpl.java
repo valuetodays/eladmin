@@ -1,4 +1,4 @@
-package me.vt.modules.mybiz.service.impl;
+package me.vt.modules.mybiz.service;
 
 import cn.valuetodays.quarkus.commons.QueryPart;
 import cn.valuetodays.quarkus.commons.base.QuerySearch;
@@ -10,7 +10,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import me.vt.modules.mybiz.domain.NationCode;
 import me.vt.modules.mybiz.repository.NationCodeRepository;
-import me.vt.modules.mybiz.service.NationCodeService;
 import me.vt.modules.mybiz.service.dto.NationCodeDto;
 import me.vt.modules.mybiz.service.dto.NationCodeQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.NationCodeMapper;
@@ -34,14 +33,13 @@ import java.util.Objects;
 * @since 2025-07-14 22:15
 **/
 @ApplicationScoped
-public class NationCodeServiceImpl implements NationCodeService {
+public class NationCodeServiceImpl  {
 
     @Inject
     NationCodeRepository nationCodeRepository;
     @Inject
     NationCodeMapper nationCodeMapper;
 
-    @Override
     public PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
@@ -57,12 +55,10 @@ public class NationCodeServiceImpl implements NationCodeService {
         return PageUtil.toPage(list, all.count());
     }
 
-    @Override
     public List<NationCodeDto> queryAll(NationCodeQueryCriteria criteria){
         return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
-    @Override
     @Transactional
     public NationCodeDto findById(Long id) {
         NationCode nationCode = nationCodeRepository.findById(id);
@@ -70,13 +66,11 @@ public class NationCodeServiceImpl implements NationCodeService {
         return nationCodeMapper.toDto(nationCode);
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public void create(NationCode resources) {
         nationCodeRepository.save(resources);
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(NationCode resources) {
         NationCode nationCode = nationCodeRepository.findById(resources.getId());
@@ -85,14 +79,12 @@ public class NationCodeServiceImpl implements NationCodeService {
         nationCodeRepository.save(nationCode);
     }
 
-    @Override
     public void deleteAll(Long[] ids) {
         for (Long id : ids) {
             nationCodeRepository.deleteById(id);
         }
     }
 
-    @Override
     public File download(List<NationCodeDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (NationCodeDto nationCode : all) {
