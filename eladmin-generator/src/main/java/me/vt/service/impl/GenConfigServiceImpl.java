@@ -8,6 +8,7 @@ import me.vt.repository.GenConfigRepository;
 import me.vt.service.GenConfigService;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * @author Zheng Jie
@@ -51,6 +52,9 @@ public class GenConfigServiceImpl implements GenConfigService {
         }
         genConfig.setApiPath(api.toString());
         GenConfig old = genConfigRepository.findById(genConfig.getId());
+        if (Objects.isNull(old)) {
+            old = new GenConfig();
+        }
         old.setTableName(genConfig.getTableName());
         old.setApiAlias(genConfig.getApiAlias());
         old.setPack(genConfig.getPack());
@@ -60,6 +64,6 @@ public class GenConfigServiceImpl implements GenConfigService {
         old.setAuthor(genConfig.getAuthor());
         old.setPrefix(genConfig.getPrefix());
         old.setCover(genConfig.getCover());
-        return genConfigRepository.save(old);
+        return genConfigRepository.saveOrUpdate(old);
     }
 }

@@ -79,7 +79,7 @@ CREATE TABLE if not exists "fortune_stock"
     "update_time" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-COMMENT ON TABLE  "fortune_stock" IS '国家列表和区号列表';
+COMMENT ON TABLE  "fortune_stock" IS '股票';
 COMMENT ON COLUMN "fortune_stock"."id" IS '主键';
 COMMENT ON COLUMN "fortune_stock"."code" IS '编号';
 COMMENT ON COLUMN "fortune_stock"."region" IS '区域（上海，深圳）';
