@@ -13,14 +13,16 @@ import java.util.List;
 <#if queryColumns??>
 import me.vt.annotation.Query;
 </#if>
-import io.swagger.annotations.ApiModelProperty;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import cn.valuetodays.quarkus.commons.base.PageIO;
+import cn.valuetodays.quarkus.commons.base.QuerySearch;
 
 /**
 * @author ${author}
 * @since ${.now?string("yyyy-MM-dd HH:mm")}
 **/
 @Data
-public class ${className}QueryCriteria{
+public class ${className}QueryCriteria extends PageIO implements QuerySearchable {
 <#if queryColumns??>
     <#list queryColumns as column>
 
@@ -93,4 +95,12 @@ public class ${className}QueryCriteria{
     private List<${column.columnType}> ${column.changeColumnName};
     </#list>
 </#if>
+
+
+    @Override
+    public List<QuerySearch> toQuerySearches() {
+        List<QuerySearch> querySearches = new ArrayList<>();
+
+        return querySearches;
+    }
 }

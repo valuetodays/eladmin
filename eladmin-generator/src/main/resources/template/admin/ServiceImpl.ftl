@@ -1,5 +1,6 @@
 package ${package}.service;
 
+import jakarta.inject.Inject;
 import ${package}.domain.${className};
 <#if columns??>
     <#list columns as column>
@@ -31,7 +32,8 @@ import me.vt.utils.QueryHelp;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
-
+import java.util.Set;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import me.vt.utils.PageResult;
@@ -53,8 +55,8 @@ public class ${className}ServiceImpl {
         return PageUtil.toPage(page.map(${changeClassName}Mapper::toDto));
     }
 
-    public List<${className}Dto> queryAll(${className}QueryCriteria criteria){
-        return ${changeClassName}Mapper.toDto(${changeClassName}Repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+    public List<${className}Dto> queryAll(${className}QueryCriteria criteria) {
+        return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
     public ${className}Dto findById(Long id) {
@@ -127,6 +129,6 @@ resources.set${pkCapitalColName}(IdUtil.simpleUUID());
         </#list>
             list.add(map);
         }
-        return FileUtil.downloadExcel(list, response);
+        return FileUtil.writeToExcel(list);
     }
 }
