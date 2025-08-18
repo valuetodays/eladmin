@@ -12,6 +12,7 @@ import me.vt.modules.mybiz.service.dto.StockQueryCriteria;
 import io.quarkus.panache.common.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -53,8 +54,8 @@ public class StockController extends BaseController {
     @Path(value = "/query")
     @Operation(summary = "查询股票信息服务")
     @PreAuthorize("@el.check('stock:list')")
-    public PageResult<StockDto> query(StockQueryCriteria criteria, Page pageable) {
-        return stockService.queryAll(criteria,pageable);
+    public PageResult<StockDto> query(StockQueryCriteria criteria) {
+        return stockService.queryAll(criteria, criteria.toPageRequest());
     }
 
     @POST
