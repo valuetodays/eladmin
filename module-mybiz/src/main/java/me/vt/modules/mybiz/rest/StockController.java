@@ -1,5 +1,6 @@
 package me.vt.modules.mybiz.rest;
 
+import cn.vt.auth.AuthUser;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -15,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import jakarta.ws.rs.Produces;
@@ -64,6 +66,12 @@ public class StockController extends BaseController {
     @Operation(summary = "新增股票信息服务")
     @PreAuthorize("@el.check('stock:add')")
     public Object create(Stock resources) {
+        // fill userId and time
+        AuthUser currentUser = getCurrentAccount();
+        resources.setCreateUserId(Long.valueOf(currentUser.getUserId()));
+        resources.setUpdateUserId(resources.getCreateUserId());
+        resources.setCreateTime(LocalDateTime.now());
+        resources.setUpdateTime(LocalDateTime.now());
         stockService.create(resources);
         return 1;
     }
