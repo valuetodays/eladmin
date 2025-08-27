@@ -1,4 +1,4 @@
-package me.vt.annotation.rest;
+package me.vt.annotation.web;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

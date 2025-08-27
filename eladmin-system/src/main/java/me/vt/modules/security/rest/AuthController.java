@@ -13,7 +13,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.BaseController;
 import me.vt.annotation.Log;
@@ -46,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("/auth")
-@RequiredArgsConstructor
 @Tag(name = "系统：系统授权接口")
 public class AuthController extends BaseController {
     @Inject
@@ -98,10 +96,7 @@ public class AuthController extends BaseController {
         authUserToPut.setLoginToken(token);
         putLoginAccount(authUserToPut);
         // 返回 token 与 用户信息
-        Map<String, Object> authInfo = new HashMap<>(2) {{
-            put("token", token);
-            put("user", jwtUser);
-        }};
+        Map<String, Object> authInfo = Map.of("token", token, "user", jwtUser);
         if (loginProperties.singleLogin()) {
             // 踢掉之前已经登录的token
             onlineUserService.kickOutForUsername(authUser.getUsername());
@@ -136,10 +131,7 @@ public class AuthController extends BaseController {
         // 保存
         redisUtils.set(uuid, captchaValue, loginProperties.captcha().expiration(), TimeUnit.MINUTES);
         // 验证码信息
-        return new HashMap<String, Object>(2) {{
-            put("img", captcha.toBase64());
-            put("uuid", uuid);
-        }};
+        return Map.of("img", captcha.toBase64(), "uuid", uuid);
     }
 
     @Operation(summary = "退出登录")

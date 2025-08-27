@@ -5,7 +5,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import me.vt.annotation.Limit;
-import me.vt.annotation.rest.AnonymousGetMapping;
+import me.vt.annotation.web.AnonymousGetMapping;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 

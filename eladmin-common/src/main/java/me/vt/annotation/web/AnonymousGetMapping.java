@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.vt.annotation.rest;
+package me.vt.annotation.web;
 
 import jakarta.validation.Valid;
 import org.springframework.core.annotation.AliasFor;

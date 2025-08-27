@@ -23,10 +23,12 @@ import me.vt.modules.system.repository.RolesMenusRepository;
 import me.vt.modules.system.repository.UserRepository;
 import me.vt.modules.system.repository.UsersJobRepository;
 import me.vt.modules.system.repository.UsersRoleRepository;
+import me.vt.modules.system.service.dto.RoleDto;
 import me.vt.utils.enums.DataScopeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +72,10 @@ public class UserAuthCompositeService {
         }
         List<Long> roleIds = usersRoles.stream().map(UsersRole::getRoleId).distinct().toList();
         return roleRepository.findAllById(roleIds);
+    }
+    public Integer findRolesLevelByUserId(Long userId) {
+        List<Role> roles = this.findRolesByUserId(userId);
+        return Collections.min(roles.stream().map(Role::getLevel).toList());
     }
 
     public List<Job> findJobsByUserId(Long userId) {

@@ -14,7 +14,7 @@ import me.vt.exception.BadRequestException;
 import me.vt.exception.EntityExistException;
 import me.vt.exception.EntityNotFoundException;
 import me.vt.modules.security.service.OnlineUserService;
-import me.vt.modules.security.service.UserCacheManager;
+import me.vt.modules.security.component.UserCacheManager;
 import me.vt.modules.system.domain.Dept;
 import me.vt.modules.system.domain.Job;
 import me.vt.modules.system.domain.Role;

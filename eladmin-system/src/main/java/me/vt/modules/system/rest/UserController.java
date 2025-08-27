@@ -10,17 +10,13 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lombok.RequiredArgsConstructor;
 import me.vt.BaseController;
 import me.vt.annotation.Log;
 import me.vt.config.properties.RsaProperties;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.Dept;
-import me.vt.modules.system.domain.Role;
 import me.vt.modules.system.domain.User;
-import me.vt.modules.system.domain.UsersRole;
 import me.vt.modules.system.domain.vo.UserPassVo;
-import me.vt.modules.system.repository.UsersRoleRepository;
 import me.vt.modules.system.service.DeptService;
 import me.vt.modules.system.service.RoleService;
 import me.vt.modules.system.service.UserAuthCompositeService;
@@ -55,7 +51,6 @@ import java.util.stream.Collectors;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("/api/users")
-@RequiredArgsConstructor
 public class UserController extends BaseController {
 
     @Inject
@@ -70,8 +65,6 @@ public class UserController extends BaseController {
     VerifyService verificationCodeService;
     @Inject
     RsaProperties rsaProperties;
-    @Inject
-    UsersRoleRepository usersRoleRepository;
 
     @Operation(summary = "导出用户数据")
     @POST
@@ -217,17 +210,10 @@ public class UserController extends BaseController {
 
     /**
      * 如果当前用户的角色级别低于创建用户的角色级别，则抛出权限不足的错误
-     * @param resources /
      */
     private void checkLevel(User resources) {
-        Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-        List<UsersRole> usersRoles = usersRoleRepository.findByUserId(resources.getId());
-        Set<Role> roles = usersRoles.stream().map(e -> {
-            Role role = new Role();
-            role.setId(e.getRoleId());
-            return role;
-        }).collect(Collectors.toSet());
-        Integer optLevel = roleService.findByRoles(roles);
+        Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).toList());
+        Integer optLevel = userAuthCompositeService.findRolesLevelByUserId(resources.getId());
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");
         }

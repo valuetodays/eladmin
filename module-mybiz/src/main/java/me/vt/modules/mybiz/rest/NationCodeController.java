@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 **/
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-@RequiredArgsConstructor
 @Tag(name = "国家编码")
 @Path("/api/nationCode")
 public class NationCodeController extends BaseController {

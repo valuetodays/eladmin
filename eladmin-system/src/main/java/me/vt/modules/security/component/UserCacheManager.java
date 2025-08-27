@@ -1,4 +1,4 @@
-package me.vt.modules.security.service;
+package me.vt.modules.security.component;
 
 import cn.hutool.core.util.RandomUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -10,8 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 
 
 /**
+ * 用户缓存管理.
+ *
  * @author Zheng Jie
- * @description 用户缓存管理
  * @since 2022-05-26
  **/
 @ApplicationScoped

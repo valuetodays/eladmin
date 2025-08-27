@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.exception.BadRequestException;
+import me.vt.modules.security.component.UserCacheManager;
 import me.vt.modules.security.service.dto.AuthorityDto;
 import me.vt.modules.security.service.dto.JwtUserDto;
 import me.vt.modules.system.service.DataService;
