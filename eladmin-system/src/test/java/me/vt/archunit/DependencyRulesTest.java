@@ -4,11 +4,16 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import jakarta.ws.rs.Path;
+import lombok.extern.slf4j.Slf4j;
+import me.vt.BaseController;
+import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.junit.jupiter.api.Test;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.DependencyRules.NO_CLASSES_SHOULD_DEPEND_UPPER_PACKAGES;
 
+@Slf4j
 public class DependencyRulesTest {
 
     private final JavaClasses javaClasses = new ClassFileImporter().importPackages("me.vt");
@@ -31,6 +36,28 @@ public class DependencyRulesTest {
             .and().areAnnotatedWith(Path.class)
             .should().dependOnClassesThat()
             .resideInAnyPackage("..repository..", "..dao..", "..rest.."); // 禁止依赖这些包
+        rule.check(javaClasses);
+    }
+
+    @Test
+    void services_should_only_be_accessed_by_service_or_controller() {
+        ArchRule rule1 = classes()
+            .that().resideInAPackage("..service..")
+            .and().haveSimpleNameNotEndingWith("Test")
+            .and().haveSimpleNameNotEndingWith("Tests")
+            .should()
+            .onlyBeAccessed().byAnyPackage("..rest..", "..service..");
+
+
+        ArchRule rule = classes()
+            .should(BaseRules.onlyBeUsedIn(
+                MultipartFormDataInput.class,
+                clazz -> {
+                    log.info("simpleName: {}", clazz.getSimpleName());
+                    log.info("packageName: {}", clazz.getPackageName());
+                    return clazz.getSimpleName().endsWith("Test") || clazz.getSimpleName().endsWith("Tests") || clazz.getName().contains(".test.");
+                }
+            ));
         rule.check(javaClasses);
     }
 }
