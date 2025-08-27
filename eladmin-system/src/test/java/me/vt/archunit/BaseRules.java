@@ -69,4 +69,51 @@ public class BaseRules {
             }
         };
     }
+
+    /**
+     * 自定义 onlyBeAccessed 条件
+     * @param allowed 允许访问的类（包或其他规则）
+     * @return ArchCondition
+     */
+    public static ArchCondition<JavaClass> onlyBeAccessed(Predicate<JavaClass> allowed) {
+        return new ArchCondition<>("only be accessed by allowed classes") {
+            @Override
+            public void check(JavaClass item, ConditionEvents events) {
+                item.getDirectDependenciesFromSelf().forEach(access -> {
+                    JavaClass origin = access.getTargetClass();
+                    if (!allowed.test(origin)) {
+                        String message = String.format(
+                            "Class %s is accessed by %s, which is not allowed",
+                            item.getName(), origin.getName()
+                        );
+                        events.add(SimpleConditionEvent.violated(item, message));
+                    }
+                });
+            }
+        };
+    }
+
+
+    /** ------------------ 通用排除测试类 ------------------ */
+    public static Predicate<JavaClass> excludeTests() {
+        return clazz -> {
+            String name = clazz.getSimpleName();
+            String pkg = clazz.getPackageName();
+            if (name.endsWith("Test") || name.endsWith("Tests")) return false;
+            if (pkg.contains(".test.") || pkg.contains(".tests.")) return false;
+            return true;
+        };
+    }
+
+    public static ArchCondition<JavaClass> exceptTests(ArchCondition<JavaClass> original) {
+        return new ArchCondition<JavaClass>(original.getDescription() + " (except test classes)") {
+            @Override
+            public void check(JavaClass item, ConditionEvents events) {
+                if (excludeTests().test(item)) {
+                    original.check(item, events);
+                }
+            }
+        };
+    }
+
 }
