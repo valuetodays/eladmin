@@ -1,8 +1,8 @@
 package me.vt.modules.mybiz.service.mapstruct;
 
 import me.vt.base.BaseMapper;
+import me.vt.modules.mybiz.api.dto.NationCodeDto;
 import me.vt.modules.mybiz.domain.NationCode;
-import me.vt.modules.mybiz.service.dto.NationCodeDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

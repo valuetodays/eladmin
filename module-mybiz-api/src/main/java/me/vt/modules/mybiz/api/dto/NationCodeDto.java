@@ -1,21 +1,18 @@
-package me.vt.modules.mybiz.service.dto;
+package me.vt.modules.mybiz.api.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.vt.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
 * @description /
 * @author vt
 * @since 2025-07-14 22:15
 **/
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class NationCodeDto implements Serializable {
-
-    @Schema(description = "id")
-    private Long id;
+public class NationCodeDto extends BaseDTO {
 
     @Schema(description = "国家编码2位")
     private String code;
@@ -47,9 +44,4 @@ public class NationCodeDto implements Serializable {
     @Schema(description = "状态：1启用、0禁用")
     private Boolean enabled;
 
-    @Schema(description = "createTime")
-    private LocalDateTime createTime;
-
-    @Schema(description = "updateTime")
-    private LocalDateTime updateTime;
 }

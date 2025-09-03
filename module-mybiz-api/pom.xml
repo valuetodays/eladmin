@@ -9,18 +9,12 @@
         <version>3.0</version>
     </parent>
 
-    <artifactId>module-mybiz</artifactId>
+    <artifactId>module-mybiz-api</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>me.vt</groupId>
-            <artifactId>module-mybiz-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.vt</groupId>
-            <artifactId>eladmin-tools</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
         <dependency>
             <groupId>me.vt</groupId>

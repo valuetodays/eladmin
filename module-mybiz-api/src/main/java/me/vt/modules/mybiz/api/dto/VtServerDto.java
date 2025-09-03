@@ -1,10 +1,9 @@
-package me.vt.modules.mybiz.service.dto;
+package me.vt.modules.mybiz.api.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.vt.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * @author vt
@@ -12,11 +11,9 @@ import java.time.LocalDateTime;
  * @description /
  * @since 2025-07-11
  **/
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class VtServerDto implements Serializable {
-
-    @Schema(description = "ID")
-    private Long id;
+public class VtServerDto extends BaseDTO {
 
     @Schema(description = "名称")
     private String name;
@@ -39,15 +36,4 @@ public class VtServerDto implements Serializable {
     @Schema(description = "状态：1启用、0禁用")
     private Boolean enabled;
 
-    @Schema(description = "创建者")
-    private String createBy;
-
-    @Schema(description = "更新者")
-    private String updateBy;
-
-    @Schema(description = "创建日期")
-    private LocalDateTime createTime;
-
-    @Schema(description = "更新时间")
-    private LocalDateTime updateTime;
 }

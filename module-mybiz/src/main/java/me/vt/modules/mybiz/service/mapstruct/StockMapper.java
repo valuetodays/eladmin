@@ -2,8 +2,8 @@ package me.vt.modules.mybiz.service.mapstruct;
 
 import me.vt.MapStructMapperConfig;
 import me.vt.base.BaseMapper;
+import me.vt.modules.mybiz.api.dto.StockDto;
 import me.vt.modules.mybiz.domain.Stock;
-import me.vt.modules.mybiz.service.dto.StockDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

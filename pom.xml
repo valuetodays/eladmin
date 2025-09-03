@@ -31,6 +31,7 @@
         <module>eladmin-system</module>
         <module>eladmin-tools</module>
         <module>eladmin-generator</module>
+        <module>module-mybiz-api</module>
         <module>module-mybiz</module>
     </modules>
 

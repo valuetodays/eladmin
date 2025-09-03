@@ -3,35 +3,30 @@ package me.vt.modules.mybiz.service;
 import cn.valuetodays.quarkus.commons.QueryPart;
 import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import me.vt.modules.mybiz.api.dto.StockDto;
 import me.vt.modules.mybiz.domain.Stock;
-import me.vt.modules.mybiz.domain.VtServer;
-import me.vt.modules.mybiz.service.dto.VtServerDto;
-import me.vt.utils.ValidationUtil;
-import me.vt.utils.FileUtil;
 import me.vt.modules.mybiz.repository.StockRepository;
-import me.vt.modules.mybiz.service.dto.StockDto;
 import me.vt.modules.mybiz.service.dto.StockQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.StockMapper;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
-import io.quarkus.panache.common.Page;
+import me.vt.utils.FileUtil;
+import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
-import me.vt.utils.QueryHelp;
+import me.vt.utils.ValidationUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import me.vt.utils.PageResult;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
 * @author vt
@@ -99,8 +94,8 @@ public class StockServiceImpl {
             map.put("区域", stock.getRegion());
             map.put("名称", stock.getName());
             map.put("备注", stock.getRemark());
-            map.put("创建者", stock.getCreateUserId());
-            map.put("更新者", stock.getUpdateUserId());
+            map.put("创建者", stock.getCreateBy());
+            map.put("更新者", stock.getUpdateBy());
             map.put("创建日期", stock.getCreateTime());
             map.put("更新时间", stock.getUpdateTime());
             list.add(map);
