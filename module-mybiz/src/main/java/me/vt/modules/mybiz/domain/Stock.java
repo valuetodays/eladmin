@@ -1,7 +1,9 @@
 package me.vt.modules.mybiz.domain;
 
+import cn.valuetodays.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
+import lombok.EqualsAndHashCode;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import cn.hutool.core.bean.copier.CopyOptions;
 import jakarta.persistence.Column;
@@ -20,15 +22,10 @@ import java.time.LocalDateTime;
 * @since 2025-08-11 19:56
 **/
 @Entity
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name="fortune_stock")
-public class Stock implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    @Schema(description = "主键")
-    private Long id;
+public class Stock extends JpaCrudLongIdBasePersist {
 
     @Column(name = "code",nullable = false)
     @NotBlank
@@ -48,26 +45,6 @@ public class Stock implements Serializable {
     @Column(name = "remark")
     @Schema(description = "备注")
     private String remark;
-
-    @Column(name = "create_user_id",nullable = false)
-    @NotNull
-    @Schema(description = "创建者")
-    private Long createUserId;
-
-    @Column(name = "update_user_id",nullable = false)
-    @NotNull
-    @Schema(description = "更新者")
-    private Long updateUserId;
-
-    @Column(name = "create_time",nullable = false)
-    @NotNull
-    @Schema(description = "创建日期")
-    private LocalDateTime createTime;
-
-    @Column(name = "update_time",nullable = false)
-    @NotNull
-    @Schema(description = "更新时间")
-    private LocalDateTime updateTime;
 
     public void copy(Stock source) {
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
