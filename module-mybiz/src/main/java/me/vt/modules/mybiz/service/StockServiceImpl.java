@@ -17,6 +17,8 @@ import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import me.vt.utils.ValidationUtil;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -101,5 +103,19 @@ public class StockServiceImpl {
             list.add(map);
         }
         return FileUtil.writeToExcel(list);
+    }
+
+    public Stock findByCode(String code) {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        return stockRepository.findByCode(code);
+    }
+
+    public List<Stock> findAllByCodes(List<String> codes) {
+        if (CollectionUtils.isEmpty(codes)) {
+            return List.of();
+        }
+        return stockRepository.findAllByCodeIn(codes);
     }
 }
