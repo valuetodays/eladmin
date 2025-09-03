@@ -3,6 +3,7 @@
 - [x] 全部改为POST json请求
 - [x] 使用R而不是直接返回对象给前端
 - [x] 使用quarkus来节省内存
+  - [x] 小内存使用-XX:+UseSerialGC
 - [x] 使用pgsql
 - [ ] 修正所有的fixme
 - 配置跨域 corsFilter()
