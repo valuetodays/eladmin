@@ -108,7 +108,7 @@
 
     <!-- 打包 -->
     <build>
-        <finalName>eladmin-tmp-system</finalName>
+        <finalName>eladmin-system-quarkus</finalName>
         <plugins>
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>
