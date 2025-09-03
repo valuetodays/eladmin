@@ -6,16 +6,21 @@
   - [x] 小内存使用-XX:+UseSerialGC
 - [x] 使用pgsql
 - [ ] 修正所有的fixme
-- 配置跨域 corsFilter()
+- [x] 配置跨域 见 quarkus.http.cors.origins in application.yml
 - [ ] ResponseEntity不应该出现在controller之外
 - [x] 本工程版本升级到3.0
 - 不要使用@Getter/@Setter，直接使用@Data
 - 方法重命名
   + [x] downloadExcel -> writeExcel
+  + [ ] writeExcel -> generateExcelFile
 - [ ] 修改ftl文件内容
 - [x] me.vt -> me.vt
 - [ ] remove hutool
+- [ ] 实现@PreAuthorize
+
+
 ## 新功能
+
 - [ ] 把stock的功能移到eladmin中
 -
 ## todo

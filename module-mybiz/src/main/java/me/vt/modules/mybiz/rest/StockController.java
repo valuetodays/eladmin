@@ -10,7 +10,6 @@ import me.vt.BaseController;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.service.StockServiceImpl;
 import me.vt.modules.mybiz.service.dto.StockQueryCriteria;
-import io.quarkus.panache.common.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -54,7 +53,7 @@ public class StockController extends BaseController {
 
     @POST
     @Path(value = "/query")
-    @Operation(summary = "查询股票信息服务")
+    @Operation(summary = "查询股票信息")
     @PreAuthorize("@el.check('stock:list')")
     public PageResult<StockDto> query(StockQueryCriteria criteria) {
         return stockService.queryAll(criteria, criteria.toPageRequest());
@@ -63,7 +62,7 @@ public class StockController extends BaseController {
     @POST
     @Path("/add")
     @Log("新增股票信息服务")
-    @Operation(summary = "新增股票信息服务")
+    @Operation(summary = "新增股票信息")
     @PreAuthorize("@el.check('stock:add')")
     public Object create(Stock resources) {
         // fill userId and time
@@ -79,7 +78,7 @@ public class StockController extends BaseController {
     @POST
     @Path("/edit")
     @Log("修改股票信息服务")
-    @Operation(summary = "修改股票信息服务")
+    @Operation(summary = "修改股票信息")
     @PreAuthorize("@el.check('stock:edit')")
     public Object update(Stock resources) {
         stockService.update(resources);
@@ -89,7 +88,7 @@ public class StockController extends BaseController {
     @POST
     @Path("delete")
     @Log("删除股票信息服务")
-    @Operation(summary = "删除股票信息服务")
+    @Operation(summary = "删除股票信息")
     @PreAuthorize("@el.check('stock:del')")
     public Object deleteStock(Set<Long> ids) {
         stockService.delete(ids);
