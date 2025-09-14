@@ -1,5 +1,6 @@
 package me.vt.modules.mybiz.repository;
 
+import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import me.vt.MyPanacheRepository;
@@ -14,7 +15,11 @@ import java.util.List;
 @ApplicationScoped
 public class MetricDockerStatsRepository extends MyPanacheRepository<MetricDockerStats> {
 
-    public List<MetricDockerStats> findAllByNameOrderByStatDatetimeAsc(String name) {
-        return find("name = ?1", Sort.ascending("statDatetime"), name).list();
+    public List<MetricDockerStats> findAllByNameOrderByStatDatetimeDesc(String name) {
+        return find(
+            "select m.statDatetime, m.memUsage2 from MetricDockerStats m where m.name = ?1",
+            Sort.descending("statDatetime"),
+            name
+        ).project(MetricDockerStats.class).page(Page.of(0, 1000)).list();
     }
 }
