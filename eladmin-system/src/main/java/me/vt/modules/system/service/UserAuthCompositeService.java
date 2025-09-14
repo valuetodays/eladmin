@@ -23,7 +23,6 @@ import me.vt.modules.system.repository.RolesMenusRepository;
 import me.vt.modules.system.repository.UserRepository;
 import me.vt.modules.system.repository.UsersJobRepository;
 import me.vt.modules.system.repository.UsersRoleRepository;
-import me.vt.modules.system.service.dto.RoleDto;
 import me.vt.utils.enums.DataScopeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -186,7 +185,7 @@ public class UserAuthCompositeService {
 
     public List<User> findUsersByMenuId(Long menuId) {
         //    @Query(value = "SELECT u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE\n" +
-//            "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = ?1 group by u.user_id", nativeQuery = true)
+//            "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.id = ?1 group by u.user_id", nativeQuery = true)
         List<UsersRole> usersRoles = findUsersRolesByMenuIds(List.of(menuId));
         if (CollectionUtils.isEmpty(usersRoles)) {
             return List.of();

@@ -42,7 +42,7 @@ public class Role extends BaseEntity implements Serializable {
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(name = "sys_roles_menus",
 //            joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "role_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "menu_id",referencedColumnName = "menu_id")})
+//            inverseJoinColumns = {@JoinColumn(name = "menu_id",referencedColumnName = "id")})
 //    @Schema(description = "菜单", hidden = true)
 //    private Set<Menu> menus;
 

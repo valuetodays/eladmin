@@ -25,7 +25,7 @@ import java.io.Serializable;
 public class Menu extends BaseEntity implements Serializable {
 
     @Id
-    @Column(name = "menu_id")
+    @Column(name = "id")
     @NotNull(groups = {Update.class})
     @Schema(description = "ID", hidden = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
