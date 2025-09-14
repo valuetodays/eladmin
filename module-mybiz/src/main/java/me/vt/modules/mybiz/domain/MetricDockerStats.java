@@ -74,6 +74,12 @@ public class MetricDockerStats extends JpaCrudLongIdBasePersist {
     @Schema(description = "mem_usage")
     private BigDecimal memUsage2;
 
+    // 新增构造函数，必须与 select 字段顺序一致
+    public MetricDockerStats(LocalDateTime statDatetime, BigDecimal memUsage2) {
+        this.statDatetime = statDatetime;
+        this.memUsage2 = memUsage2;
+    }
+
     public void copy(MetricDockerStats source) {
         BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
