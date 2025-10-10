@@ -14,8 +14,8 @@ import java.util.List;
 import me.vt.annotation.Query;
 </#if>
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import cn.valuetodays.quarkus.commons.base.PageIO;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import ll.vt.quarkus.commons.base.PageIO;
+import ll.vt.quarkus.commons.base.QuerySearch;
 
 /**
 * @author ${author}

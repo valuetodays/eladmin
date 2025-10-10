@@ -1,6 +1,6 @@
 package me.vt.reqresp;
 
-import cn.valuetodays.quarkus.commons.base.PageIO;
+import ll.vt.quarkus.commons.base.PageIO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

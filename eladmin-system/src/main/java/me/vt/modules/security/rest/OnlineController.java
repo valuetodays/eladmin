@@ -1,6 +1,5 @@
 package me.vt.modules.security.rest;
 
-import cn.valuetodays.quarkus.commons.base.PageIO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -8,6 +7,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import ll.vt.quarkus.commons.base.PageIO;
 import lombok.RequiredArgsConstructor;
 import me.vt.BaseController;
 import me.vt.modules.security.req.OnlineUserQueryReq;

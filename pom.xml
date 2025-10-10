@@ -10,12 +10,12 @@
     <parent>
         <groupId>ll.vt.quarkus</groupId>
         <artifactId>valuetodays-quarkus-commons</artifactId>
-        <version>quarkus3.24.2-2025.07.11-SNAPSHOT</version>
+        <version>quarkus3.27.0-2025.10.07</version>
     </parent>
 
     <properties>
-        <valuetodays.quarkus-commons.version>quarkus3.24.2-2025.07.11-SNAPSHOT</valuetodays.quarkus-commons.version>
-        <vt-simple-common-modules.version>boot322-2025.07.10</vt-simple-common-modules.version>
+        <valuetodays.quarkus-commons.version>quarkus3.27.0-2025.10.07</valuetodays.quarkus-commons.version>
+        <vt-simple-common-modules.version>boot322-2025.09.29</vt-simple-common-modules.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>

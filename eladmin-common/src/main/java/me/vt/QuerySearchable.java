@@ -1,6 +1,6 @@
 package me.vt;
 
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import ll.vt.quarkus.commons.base.QuerySearch;
 
 import java.util.List;
 

@@ -1,14 +1,14 @@
 package me.vt.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.valuetodays.quarkus.commons.QueryPart;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import ll.vt.quarkus.commons.QueryPart;
+import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.modules.system.domain.Dict;
 import me.vt.modules.system.repository.DictRepository;
 import me.vt.modules.system.service.DictService;

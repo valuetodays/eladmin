@@ -6,6 +6,10 @@ name: eladmin-system-quarkus-ci/cd
 workspace:
   path: /drone/src
 
+node:
+  provider: volcengine
+  xcxg: 4c8g
+
 clone:
   depth: 1
   disable: false
@@ -80,7 +84,7 @@ volumes:
       path: /opt/maven-m2/repository # path in host machine
   - name: workbench_dir
     host:
-      path: /opt/workbench
+      path: /root/workbench_dir
   - name: dockersock
     host:
       path: /var/run/

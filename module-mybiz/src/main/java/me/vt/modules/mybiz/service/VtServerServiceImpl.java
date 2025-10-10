@@ -1,13 +1,13 @@
 package me.vt.modules.mybiz.service;
 
-import cn.valuetodays.quarkus.commons.QueryPart;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import ll.vt.quarkus.commons.QueryPart;
+import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.modules.mybiz.api.dto.VtServerDto;
 import me.vt.modules.mybiz.domain.VtServer;
 import me.vt.modules.mybiz.repository.VtServerRepository;

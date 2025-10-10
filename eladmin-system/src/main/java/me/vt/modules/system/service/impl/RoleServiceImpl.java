@@ -1,14 +1,14 @@
 package me.vt.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.valuetodays.quarkus.commons.QueryPart;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import ll.vt.quarkus.commons.QueryPart;
+import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.exception.BadRequestException;
 import me.vt.exception.EntityExistException;
 import me.vt.modules.security.component.UserCacheManager;

@@ -1,11 +1,11 @@
 package me.vt;
 
-import cn.valuetodays.quarkus.commons.base.auth.TokenInCacheAuthUserParser;
 import cn.vt.auth.AuthUserParser;
 import io.quarkus.redis.datasource.RedisDataSource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import ll.vt.quarkus.commons.base.auth.TokenInCacheAuthUserParser;
 import me.vt.config.RedissonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;

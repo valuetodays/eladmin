@@ -1,13 +1,13 @@
 package me.vt.service.impl;
 
 import cn.hutool.core.lang.Dict;
-import cn.valuetodays.quarkus.commons.QueryPart;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import ll.vt.quarkus.commons.QueryPart;
+import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.RequiredArgsConstructor;
 import me.vt.domain.SysLog;
 import me.vt.repository.LogRepository;

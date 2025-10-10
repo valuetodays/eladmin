@@ -1,10 +1,9 @@
 
 package me.vt.modules.mybiz.service.dto;
 
-import cn.valuetodays.quarkus.commons.base.PageIO;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import ll.vt.quarkus.commons.base.PageIO;
+import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.Data;
-
 import lombok.EqualsAndHashCode;
 import me.vt.QuerySearchable;
 import me.vt.annotation.Query;

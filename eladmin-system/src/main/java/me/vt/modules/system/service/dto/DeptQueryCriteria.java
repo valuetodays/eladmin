@@ -1,7 +1,7 @@
 package me.vt.modules.system.service.dto;
 
-import cn.valuetodays.quarkus.commons.base.Operator;
-import cn.valuetodays.quarkus.commons.base.QuerySearch;
+import ll.vt.quarkus.commons.base.Operator;
+import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.Data;
 import me.vt.QuerySearchable;
 import me.vt.annotation.DataPermission;
