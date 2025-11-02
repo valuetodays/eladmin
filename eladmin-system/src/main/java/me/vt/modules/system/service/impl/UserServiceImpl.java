@@ -1,5 +1,6 @@
 package me.vt.modules.system.service.impl;
 
+import cn.vt.exception.AssertUtils;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -19,6 +20,7 @@ import me.vt.modules.system.domain.Dept;
 import me.vt.modules.system.domain.Job;
 import me.vt.modules.system.domain.Role;
 import me.vt.modules.system.domain.User;
+import me.vt.modules.system.repository.DeptRepository;
 import me.vt.modules.system.repository.UserRepository;
 import me.vt.modules.system.service.UserAuthCompositeService;
 import me.vt.modules.system.service.UserService;
@@ -64,6 +66,8 @@ public class UserServiceImpl implements UserService {
 
     @Inject
     UserRepository userRepository;
+    @Inject
+    DeptRepository deptRepository;
     @Inject
     UserMapper userMapper;
     @Inject
@@ -255,7 +259,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getLoginData(String userName) {
         User user = userRepository.findByUsername(userName);
-        return userMapper.toDto(user);
+        AssertUtils.assertNotNull(user);
+        Long deptId = user.getDeptId();
+        Dept dept = deptRepository.findById(deptId);
+        AssertUtils.assertNotNull(dept);
+        UserDto userDto = userMapper.toDto(user);
+        userDto.setDept(deptSmallMapper.toDto(dept));
+        return userDto;
     }
 
     @Override
