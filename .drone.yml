@@ -50,7 +50,7 @@ steps:
       - curl --version
       - |
         echo begin to notify
-        curl -X POST "http://go.valuetodays.cn/api/public/notify/anon/cdci.do" -H 'Content-Type: application/json; charset=utf-8' -d '{"content": "eladmin was restarted just now.", "repo": "eladmin"}'
+        curl -X POST "http://go.sisiruyi.fun/api/public/notify/anon/cdci.do" -H 'Content-Type: application/json; charset=utf-8' -d '{"content": "valuetodays-api2-by-quarkus was restarted just now.", "repo": "valuetodays-api2-by-quarkus"}'
       - echo end
   - name: restart application by docker-compose
     image: docker:26.1.4-cli
