@@ -29,12 +29,14 @@ public class UserCacheManager {
      * @return JwtUserDto
      */
     public JwtUserDto getUserCache(String userName) {
-        // 转小写
-        userName = StringUtils.lowerCase(userName);
-        if (StringUtils.isNotEmpty(userName)) {
-            // 获取数据
-            return redisUtils.get(LoginProperties.cacheKey + userName, JwtUserDto.class);
-        }
+//        // 转小写
+//        userName = StringUtils.lowerCase(userName);
+//        if (StringUtils.isNotEmpty(userName)) {
+//            // 获取数据
+//            return redisUtils.get(LoginProperties.cacheKey + userName, JwtUserDto.class);
+//        }
+
+        // return null always
         return null;
     }
 
