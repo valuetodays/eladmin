@@ -12,7 +12,7 @@ import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
 import me.vt.domain.SysLog;
-import me.vt.service.SysLogService;
+import me.vt.service.client.SysLogService;
 import me.vt.utils.SecurityUtils;
 import me.vt.utils.StringExUtils;
 

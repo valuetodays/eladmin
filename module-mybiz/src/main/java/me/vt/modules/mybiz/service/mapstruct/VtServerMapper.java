@@ -1,6 +1,6 @@
 package me.vt.modules.mybiz.service.mapstruct;
 
-import me.vt.base.BaseMapper;
+import me.vt.common.base.BaseMapper;
 import me.vt.modules.mybiz.api.dto.VtServerDto;
 import me.vt.modules.mybiz.domain.VtServer;
 import org.mapstruct.Mapper;

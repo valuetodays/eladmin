@@ -11,7 +11,7 @@ import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.RequiredArgsConstructor;
 import me.vt.domain.SysLog;
 import me.vt.repository.LogRepository;
-import me.vt.service.SysLogService;
+import me.vt.service.client.SysLogService;
 import me.vt.service.dto.SysLogQueryCriteria;
 import me.vt.service.dto.SysLogSmallDto;
 import me.vt.service.mapstruct.LogErrorMapper;

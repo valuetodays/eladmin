@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
 import me.vt.modules.maint.domain.Deploy;
 import me.vt.modules.maint.domain.DeployHistory;
-import me.vt.modules.maint.service.DeployService;
+import me.vt.modules.maint.service.client.DeployService;
 import me.vt.modules.maint.service.dto.DeployDto;
 import me.vt.modules.maint.service.dto.DeployQueryCriteria;
 import me.vt.utils.FileUtil;

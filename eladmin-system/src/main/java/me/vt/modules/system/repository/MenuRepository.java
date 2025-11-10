@@ -4,7 +4,7 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.system.domain.Menu;
 import org.apache.commons.lang3.StringUtils;
 

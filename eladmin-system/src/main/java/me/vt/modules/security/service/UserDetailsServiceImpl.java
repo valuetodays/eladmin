@@ -8,9 +8,9 @@ import me.vt.exception.BadRequestException;
 import me.vt.modules.security.component.UserCacheManager;
 import me.vt.modules.security.service.dto.AuthorityDto;
 import me.vt.modules.security.service.dto.JwtUserDto;
-import me.vt.modules.system.service.DataService;
-import me.vt.modules.system.service.RoleService;
-import me.vt.modules.system.service.UserService;
+import me.vt.modules.system.service.client.DataService;
+import me.vt.modules.system.service.client.RoleService;
+import me.vt.modules.system.service.client.UserService;
 import me.vt.modules.system.service.dto.UserDto;
 import org.apache.commons.lang3.BooleanUtils;
 

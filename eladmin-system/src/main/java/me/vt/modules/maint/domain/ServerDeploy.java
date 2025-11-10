@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import me.vt.base.BaseEntity;
+import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**

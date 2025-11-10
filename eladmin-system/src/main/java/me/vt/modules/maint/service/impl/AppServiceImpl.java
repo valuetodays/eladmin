@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.maint.domain.App;
 import me.vt.modules.maint.repository.AppRepository;
-import me.vt.modules.maint.service.AppService;
+import me.vt.modules.maint.service.client.AppService;
 import me.vt.modules.maint.service.dto.AppDto;
 import me.vt.modules.maint.service.dto.AppQueryCriteria;
 import me.vt.modules.maint.service.mapstruct.AppMapper;

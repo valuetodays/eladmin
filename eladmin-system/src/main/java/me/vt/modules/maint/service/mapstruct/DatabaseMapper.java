@@ -1,6 +1,6 @@
 package me.vt.modules.maint.service.mapstruct;
 
-import me.vt.base.BaseMapper;
+import me.vt.common.base.BaseMapper;
 import me.vt.modules.maint.domain.Database;
 import me.vt.modules.maint.service.dto.DatabaseDto;
 import org.mapstruct.Mapper;

@@ -4,7 +4,7 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.BaseController;
+import me.vt.common.base.BaseController;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.junit.jupiter.api.Test;
 

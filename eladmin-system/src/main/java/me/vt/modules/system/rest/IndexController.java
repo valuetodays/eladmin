@@ -2,7 +2,7 @@ package me.vt.modules.system.rest;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import me.vt.BaseController;
+import me.vt.common.base.BaseController;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 /**

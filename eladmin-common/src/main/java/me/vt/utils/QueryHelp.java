@@ -11,8 +11,8 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.annotation.DataPermission;
-import me.vt.annotation.Query;
+import me.vt.common.annotation.DataPermission;
+import me.vt.common.annotation.Query;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;

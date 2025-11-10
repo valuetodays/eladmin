@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.maint.domain.Database;
 import me.vt.modules.maint.repository.DatabaseRepository;
-import me.vt.modules.maint.service.DatabaseService;
+import me.vt.modules.maint.service.client.DatabaseService;
 import me.vt.modules.maint.service.dto.DatabaseDto;
 import me.vt.modules.maint.service.dto.DatabaseQueryCriteria;
 import me.vt.modules.maint.service.mapstruct.DatabaseMapper;

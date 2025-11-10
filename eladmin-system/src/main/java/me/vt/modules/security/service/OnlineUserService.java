@@ -9,7 +9,7 @@ import me.vt.modules.security.security.TokenProvider;
 import me.vt.modules.security.service.dto.JwtUserDto;
 import me.vt.modules.security.service.dto.OnlineUserDto;
 import me.vt.modules.system.domain.Dept;
-import me.vt.modules.system.service.UserAuthCompositeService;
+import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.utils.EncryptUtils;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;

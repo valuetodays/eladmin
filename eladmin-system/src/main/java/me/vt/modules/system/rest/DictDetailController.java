@@ -12,7 +12,7 @@ import jakarta.ws.rs.core.MediaType;
 import me.vt.annotation.Log;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.DictDetail;
-import me.vt.modules.system.service.DictDetailService;
+import me.vt.modules.system.service.client.DictDetailService;
 import me.vt.modules.system.service.dto.DictDetailDto;
 import me.vt.modules.system.service.dto.DictDetailQueryCriteria;
 import me.vt.utils.PageResult;

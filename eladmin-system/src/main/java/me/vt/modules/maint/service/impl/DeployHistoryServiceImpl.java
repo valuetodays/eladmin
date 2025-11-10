@@ -8,7 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.vt.modules.maint.domain.DeployHistory;
 import me.vt.modules.maint.repository.DeployHistoryRepository;
-import me.vt.modules.maint.service.DeployHistoryService;
+import me.vt.modules.maint.service.client.DeployHistoryService;
 import me.vt.modules.maint.service.dto.DeployHistoryDto;
 import me.vt.modules.maint.service.dto.DeployHistoryQueryCriteria;
 import me.vt.modules.maint.service.mapstruct.DeployHistoryMapper;

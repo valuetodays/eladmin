@@ -1,6 +1,6 @@
 package me.vt.service.mapstruct;
 
-import me.vt.base.BaseMapper;
+import me.vt.common.base.BaseMapper;
 import me.vt.domain.LocalStorage;
 import me.vt.service.dto.LocalStorageDto;
 import org.mapstruct.Mapper;

@@ -27,7 +27,7 @@ import me.vt.config.AmzS3ConfigProperty;
 import me.vt.domain.S3Storage;
 import me.vt.exception.BadRequestException;
 import me.vt.repository.S3StorageRepository;
-import me.vt.service.S3StorageService;
+import me.vt.service.client.S3StorageService;
 import me.vt.service.dto.S3StorageQueryCriteria;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;

@@ -4,7 +4,7 @@ import ll.vt.quarkus.commons.base.PageIO;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.vt.QuerySearchable;
+import me.vt.common.QuerySearchable;
 
 import java.util.ArrayList;
 import java.util.List;

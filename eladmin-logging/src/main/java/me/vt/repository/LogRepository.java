@@ -2,7 +2,7 @@ package me.vt.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import me.vt.domain.SysLog;
 
 /**

@@ -4,7 +4,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.domain.vo.TableInfo;
-import me.vt.service.GeneratorService;
+import me.vt.service.client.GeneratorService;
 import me.vt.utils.PageResult;
 import org.junit.jupiter.api.Test;
 

@@ -6,10 +6,10 @@ import jakarta.inject.Inject;
 import me.vt.modules.system.domain.Dept;
 import me.vt.modules.system.domain.User;
 import me.vt.modules.system.repository.UserRepository;
-import me.vt.modules.system.service.DataService;
-import me.vt.modules.system.service.DeptService;
-import me.vt.modules.system.service.RoleService;
-import me.vt.modules.system.service.UserAuthCompositeService;
+import me.vt.modules.system.service.client.DataService;
+import me.vt.modules.system.service.client.DeptService;
+import me.vt.modules.system.service.client.RoleService;
+import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.modules.system.service.dto.RoleSmallDto;
 import me.vt.utils.enums.DataScopeEnum;
 

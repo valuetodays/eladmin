@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.vt.base.BaseEntity;
+import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.io.Serializable;

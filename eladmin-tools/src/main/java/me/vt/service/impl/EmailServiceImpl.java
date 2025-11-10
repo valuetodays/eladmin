@@ -10,7 +10,7 @@ import me.vt.domain.EmailConfig;
 import me.vt.domain.vo.EmailVo;
 import me.vt.exception.BadRequestException;
 import me.vt.repository.EmailRepository;
-import me.vt.service.EmailService;
+import me.vt.service.client.EmailService;
 import me.vt.utils.EncryptUtils;
 
 /**

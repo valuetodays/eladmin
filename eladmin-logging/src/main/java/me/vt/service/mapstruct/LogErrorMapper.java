@@ -1,6 +1,6 @@
 package me.vt.service.mapstruct;
 
-import me.vt.base.BaseMapper;
+import me.vt.common.base.BaseMapper;
 import me.vt.domain.SysLog;
 import me.vt.service.dto.SysLogErrorDto;
 import org.mapstruct.Mapper;

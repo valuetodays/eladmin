@@ -1,7 +1,7 @@
 package me.vt.modules.system.service.mapstruct;
 
-import me.vt.MapStructMapperConfig;
-import me.vt.base.BaseMapper;
+import me.vt.common.MapStructMapperConfig;
+import me.vt.common.base.BaseMapper;
 import me.vt.modules.system.domain.Menu;
 import me.vt.modules.system.service.dto.MenuDto;
 import org.mapstruct.Mapper;

@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.BaseController;
+import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
 import me.vt.config.properties.RsaProperties;
 import me.vt.exception.BadRequestException;

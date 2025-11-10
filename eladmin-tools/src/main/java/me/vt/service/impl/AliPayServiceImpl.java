@@ -11,7 +11,7 @@ import me.vt.domain.AlipayConfig;
 import me.vt.domain.vo.TradeVo;
 import me.vt.exception.BadRequestException;
 import me.vt.repository.AliPayRepository;
-import me.vt.service.AliPayService;
+import me.vt.service.client.AliPayService;
 
 /**
  * @author Zheng Jie

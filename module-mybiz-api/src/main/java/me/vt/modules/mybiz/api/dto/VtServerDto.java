@@ -2,7 +2,7 @@ package me.vt.modules.mybiz.api.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.vt.base.BaseDTO;
+import me.vt.common.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**

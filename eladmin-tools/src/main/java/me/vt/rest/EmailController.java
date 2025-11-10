@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import me.vt.annotation.Log;
 import me.vt.domain.EmailConfig;
 import me.vt.domain.vo.EmailVo;
-import me.vt.service.EmailService;
+import me.vt.service.client.EmailService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 

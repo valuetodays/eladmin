@@ -2,16 +2,15 @@ package me.vt.modules.maint.rest;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import me.vt.BaseController;
+import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
-import me.vt.modules.maint.service.DeployHistoryService;
+import me.vt.modules.maint.service.client.DeployHistoryService;
 import me.vt.modules.maint.service.dto.DeployHistoryDto;
 import me.vt.modules.maint.service.dto.DeployHistoryQueryCriteria;
 import me.vt.utils.PageResult;

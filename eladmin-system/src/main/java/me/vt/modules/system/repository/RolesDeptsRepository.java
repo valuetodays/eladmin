@@ -1,7 +1,7 @@
 package me.vt.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.system.domain.RolesDepts;
 
 import java.util.Collection;

@@ -1,6 +1,6 @@
 package me.vt.modules.system.service.mapstruct;
 
-import me.vt.base.BaseMapper;
+import me.vt.common.base.BaseMapper;
 import me.vt.modules.system.domain.DictDetail;
 import me.vt.modules.system.service.dto.DictDetailDto;
 import org.mapstruct.Mapper;

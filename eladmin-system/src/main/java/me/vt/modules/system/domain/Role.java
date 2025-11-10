@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.vt.base.BaseEntity;
+import me.vt.common.base.BaseEntity;
 import me.vt.utils.enums.DataScopeEnum;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 

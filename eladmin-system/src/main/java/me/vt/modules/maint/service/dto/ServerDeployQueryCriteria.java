@@ -3,7 +3,7 @@ package me.vt.modules.maint.service.dto;
 import ll.vt.quarkus.commons.base.PageIO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.vt.annotation.Query;
+import me.vt.common.annotation.Query;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.sql.Timestamp;

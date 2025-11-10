@@ -1,7 +1,7 @@
 package ${package}.repository;
 
 import ${package}.domain.${className};
-import me.vt.MyPanacheRepository;
+import me.vt.repository.MyPanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**

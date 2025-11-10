@@ -12,7 +12,7 @@ import me.vt.modules.quartz.domain.QuartzJob;
 import me.vt.modules.quartz.domain.QuartzLog;
 import me.vt.modules.quartz.repository.QuartzJobRepository;
 import me.vt.modules.quartz.repository.QuartzLogRepository;
-import me.vt.modules.quartz.service.QuartzJobService;
+import me.vt.modules.quartz.service.client.QuartzJobService;
 import me.vt.modules.quartz.service.dto.JobQueryCriteria;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;

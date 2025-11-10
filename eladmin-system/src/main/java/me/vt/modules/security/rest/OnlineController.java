@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import ll.vt.quarkus.commons.base.PageIO;
 import lombok.RequiredArgsConstructor;
-import me.vt.BaseController;
+import me.vt.common.base.BaseController;
 import me.vt.modules.security.req.OnlineUserQueryReq;
 import me.vt.modules.security.service.OnlineUserService;
 import me.vt.modules.security.service.dto.OnlineUserDto;

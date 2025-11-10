@@ -2,7 +2,7 @@ package me.vt.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.system.domain.User;
 
 import java.util.Date;

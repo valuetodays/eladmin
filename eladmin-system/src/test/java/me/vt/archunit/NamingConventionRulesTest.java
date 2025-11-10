@@ -4,7 +4,7 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.Path;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;

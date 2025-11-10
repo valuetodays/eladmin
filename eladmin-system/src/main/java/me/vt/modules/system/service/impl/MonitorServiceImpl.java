@@ -4,7 +4,7 @@ import cn.hutool.core.date.BetweenFormatter.Level;
 import cn.hutool.core.date.DateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.modules.system.service.MonitorService;
+import me.vt.modules.system.service.client.MonitorService;
 import me.vt.utils.ElConstant;
 import me.vt.utils.FileUtil;
 import me.vt.utils.StringExUtils;

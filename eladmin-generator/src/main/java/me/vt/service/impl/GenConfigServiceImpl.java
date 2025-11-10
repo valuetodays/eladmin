@@ -5,7 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import me.vt.domain.GenConfig;
 import me.vt.repository.GenConfigRepository;
-import me.vt.service.GenConfigService;
+import me.vt.service.client.GenConfigService;
 
 import java.io.File;
 import java.util.Objects;

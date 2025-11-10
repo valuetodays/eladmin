@@ -1,7 +1,7 @@
 package ${package}.rest;
 
 import me.vt.annotation.Log;
-import me.vt.BaseController;
+import me.vt.base.BaseController;
 import ${package}.domain.${className};
 import ${package}.service.${className}ServiceImpl;
 import ${package}.service.dto.${className}QueryCriteria;

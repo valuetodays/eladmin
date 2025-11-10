@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.vt.domain.vo.EmailVo;
 import me.vt.exception.BadRequestException;
-import me.vt.modules.system.service.VerifyService;
+import me.vt.modules.system.service.client.VerifyService;
 import me.vt.utils.RedisUtils;
 
 import java.util.Collections;

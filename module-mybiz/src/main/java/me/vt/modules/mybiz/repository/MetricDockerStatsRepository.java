@@ -3,7 +3,7 @@ package me.vt.modules.mybiz.repository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.mybiz.domain.MetricDockerStats;
 
 import java.util.List;

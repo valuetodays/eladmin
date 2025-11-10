@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional;
 import me.vt.config.properties.FileProperties;
 import me.vt.domain.LocalStorage;
 import me.vt.repository.LocalStorageRepository;
-import me.vt.service.LocalStorageService;
+import me.vt.service.client.LocalStorageService;
 import me.vt.service.dto.LocalStorageDto;
 import me.vt.service.dto.LocalStorageQueryCriteria;
 import me.vt.service.mapstruct.LocalStorageMapper;

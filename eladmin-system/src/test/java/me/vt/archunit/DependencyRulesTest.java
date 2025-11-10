@@ -3,11 +3,8 @@ package me.vt.archunit;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import jakarta.ws.rs.Path;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.BaseController;
-import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;

@@ -11,7 +11,7 @@ import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.modules.system.domain.Dict;
 import me.vt.modules.system.repository.DictRepository;
-import me.vt.modules.system.service.DictService;
+import me.vt.modules.system.service.client.DictService;
 import me.vt.modules.system.service.dto.DictDetailDto;
 import me.vt.modules.system.service.dto.DictDto;
 import me.vt.modules.system.service.dto.DictQueryCriteria;

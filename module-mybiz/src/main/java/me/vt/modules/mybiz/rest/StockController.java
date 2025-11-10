@@ -9,7 +9,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import me.vt.BaseController;
+import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
 import me.vt.modules.mybiz.api.dto.StockDto;
 import me.vt.modules.mybiz.domain.Stock;

@@ -1,7 +1,7 @@
 package me.vt.modules.quartz.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import me.vt.MyPanacheRepository;
+import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.quartz.domain.QuartzLog;
 
 /**

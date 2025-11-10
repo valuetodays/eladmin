@@ -7,7 +7,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.vt.modules.maint.domain.ServerDeploy;
 import me.vt.modules.maint.repository.ServerDeployRepository;
-import me.vt.modules.maint.service.ServerDeployService;
+import me.vt.modules.maint.service.client.ServerDeployService;
 import me.vt.modules.maint.service.dto.ServerDeployDto;
 import me.vt.modules.maint.service.dto.ServerDeployQueryCriteria;
 import me.vt.modules.maint.service.mapstruct.ServerDeployMapper;

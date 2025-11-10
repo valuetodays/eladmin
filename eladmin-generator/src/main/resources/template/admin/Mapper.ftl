@@ -1,6 +1,6 @@
 package ${package}.service.mapstruct;
 
-import me.vt.MapStructMapperConfig;
+import me.vt.common.MapStructMapperConfig;
 import me.vt.base.BaseMapper;
 import ${package}.domain.${className};
 import ${package}.service.dto.${className}Dto;
