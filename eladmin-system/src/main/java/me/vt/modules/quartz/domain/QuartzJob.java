@@ -9,12 +9,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
  * @author Zheng Jie

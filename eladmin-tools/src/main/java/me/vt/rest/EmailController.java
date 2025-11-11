@@ -42,7 +42,7 @@ public class EmailController {
     @Path("updateEmailConfig")
     @Operation(summary = "配置邮件")
     public Object updateEmailConfig(@Valid EmailConfig emailConfig) throws Exception {
-        emailService.config(emailConfig,emailService.find());
+        emailService.config(emailConfig, emailService.find());
         return 1;
     }
 
@@ -51,7 +51,7 @@ public class EmailController {
     @Path("sendEmail")
     @Operation(summary = "发送邮件")
     public Object sendEmail(@Valid EmailVo emailVo) {
-        emailService.send(emailVo,emailService.find());
+        emailService.send(emailVo, emailService.find());
         return 1;
     }
 }

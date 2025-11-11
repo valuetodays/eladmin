@@ -1,11 +1,10 @@
 package me.vt.service.dto;
 
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
 * @author Zheng Jie

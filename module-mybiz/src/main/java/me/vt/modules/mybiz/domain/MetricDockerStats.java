@@ -7,13 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import ll.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * @author vt
@@ -74,8 +73,7 @@ public class MetricDockerStats extends JpaCrudLongIdBasePersist {
     @Schema(description = "mem_usage")
     private BigDecimal memUsage2;
 
-    public MetricDockerStats() {
-    }
+    public MetricDockerStats() {}
 
     // 新增构造函数，必须与 select 字段顺序一致
     public MetricDockerStats(LocalDateTime statDatetime, BigDecimal memUsage2) {

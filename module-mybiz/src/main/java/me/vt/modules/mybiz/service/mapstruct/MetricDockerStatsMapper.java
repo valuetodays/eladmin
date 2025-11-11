@@ -12,8 +12,8 @@ import org.mapstruct.ReportingPolicy;
  * @since 2025-09-14 20:30
  **/
 @Mapper(componentModel = "jakarta",
-    config = MapStructMapperConfig.class,
-    unmappedTargetPolicy = ReportingPolicy.IGNORE)
+        config = MapStructMapperConfig.class,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MetricDockerStatsMapper extends BaseMapper<MetricDockerStatsDto, MetricDockerStats> {
 
 }

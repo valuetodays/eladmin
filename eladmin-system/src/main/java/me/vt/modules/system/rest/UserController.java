@@ -10,8 +10,15 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import me.vt.common.base.BaseController;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.config.properties.RsaProperties;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.Dept;
@@ -19,9 +26,9 @@ import me.vt.modules.system.domain.User;
 import me.vt.modules.system.domain.vo.UserPassVo;
 import me.vt.modules.system.service.client.DeptService;
 import me.vt.modules.system.service.client.RoleService;
-import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.modules.system.service.client.UserService;
 import me.vt.modules.system.service.client.VerifyService;
+import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.modules.system.service.dto.RoleSmallDto;
 import me.vt.modules.system.service.dto.UserDto;
 import me.vt.modules.system.service.dto.UserQueryCriteria;
@@ -34,14 +41,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -148,8 +147,10 @@ public class UserController extends BaseController {
     @PreAuthorize("@el.check('user:del')")
     public Object deleteUser(Set<Long> ids) {
         for (Long id : ids) {
-            Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-            Integer optLevel =  Collections.min(roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+            Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream()
+                    .map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+            Integer optLevel = Collections.min(
+                    roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
             if (currentLevel > optLevel) {
                 throw new BadRequestException("角色权限不足，不能删除：" + userService.findById(id).getUsername());
             }
@@ -204,7 +205,7 @@ public class UserController extends BaseController {
             throw new BadRequestException("密码错误");
         }
         verificationCodeService.validated(CodeEnum.EMAIL_RESET_EMAIL_CODE.getKey() + user.getEmail(), code);
-        userService.updateEmail(userDto.getUsername(),user.getEmail());
+        userService.updateEmail(userDto.getUsername(), user.getEmail());
         return 1;
     }
 
@@ -212,7 +213,8 @@ public class UserController extends BaseController {
      * 如果当前用户的角色级别低于创建用户的角色级别，则抛出权限不足的错误
      */
     private void checkLevel(User resources) {
-        Integer currentLevel = Collections.min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).toList());
+        Integer currentLevel = Collections
+                .min(roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).toList());
         Integer optLevel = userAuthCompositeService.findRolesLevelByUserId(resources.getId());
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");

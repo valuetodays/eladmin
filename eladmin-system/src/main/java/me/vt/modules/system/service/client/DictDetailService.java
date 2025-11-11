@@ -1,12 +1,11 @@
 package me.vt.modules.system.service.client;
 
 import io.quarkus.panache.common.Page;
+import java.util.List;
 import me.vt.modules.system.domain.DictDetail;
 import me.vt.modules.system.service.dto.DictDetailDto;
 import me.vt.modules.system.service.dto.DictDetailQueryCriteria;
 import me.vt.utils.PageResult;
-
-import java.util.List;
 
 /**
 * @author Zheng Jie

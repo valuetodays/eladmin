@@ -9,10 +9,13 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.quartz.domain.QuartzJob;
 import me.vt.modules.quartz.domain.QuartzLog;
@@ -22,10 +25,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -86,7 +85,7 @@ public class QuartzJobController extends BaseController {
     @PreAuthorize("@el.check('timing:add')")
     public Object createQuartzJob(@Valid QuartzJob resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @ApplicationScoped 定义
         checkBean(resources.getBeanName());
@@ -136,11 +135,11 @@ public class QuartzJobController extends BaseController {
         return 1;
     }
 
-    private void checkBean(String beanName){
+    private void checkBean(String beanName) {
         // 避免调用攻击者可以从SpringContextHolder获得控制jdbcTemplate类
         // 并使用getDeclaredMethod调用jdbcTemplate的queryForMap函数，执行任意sql命令。
-//  fixme:      if(!SpringBeanHolder.getAllServiceBeanName().contains(beanName)){
-//            throw new BadRequestException("非法的 Bean，请重新输入！");
-//        }
+        //  fixme:      if(!SpringBeanHolder.getAllServiceBeanName().contains(beanName)){
+        //            throw new BadRequestException("非法的 Bean，请重新输入！");
+        //        }
     }
 }

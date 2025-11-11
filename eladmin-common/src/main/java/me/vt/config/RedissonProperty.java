@@ -1,11 +1,10 @@
 package me.vt.config;
 
-import java.time.Duration;
-
 import io.quarkus.runtime.annotations.StaticInitSafe;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.time.Duration;
 
 @ConfigMapping(prefix = "quarkus.redis")
 @StaticInitSafe
@@ -27,5 +26,3 @@ public interface RedissonProperty {
 
 
 }
-
-

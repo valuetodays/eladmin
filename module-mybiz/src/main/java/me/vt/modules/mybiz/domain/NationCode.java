@@ -10,11 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @description /
@@ -23,7 +22,7 @@ import java.time.LocalDateTime;
 **/
 @Entity
 @Data
-@Table(name="nation_code")
+@Table(name = "nation_code")
 public class NationCode implements Serializable {
 
     @Id
@@ -99,7 +98,7 @@ public class NationCode implements Serializable {
     @Schema(description = "updateTime")
     private LocalDateTime updateTime;
 
-    public void copy(NationCode source){
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    public void copy(NationCode source) {
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

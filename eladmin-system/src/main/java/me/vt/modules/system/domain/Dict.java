@@ -8,12 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
 * @author Zheng Jie
@@ -22,7 +21,7 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
-@Table(name="sys_dict")
+@Table(name = "sys_dict")
 public class Dict extends BaseEntity implements Serializable {
 
     @Id
@@ -32,8 +31,8 @@ public class Dict extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToMany(mappedBy = "dict",cascade={CascadeType.PERSIST,CascadeType.REMOVE})
-//    private List<DictDetail> dictDetails;
+    //    @OneToMany(mappedBy = "dict",cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    //    private List<DictDetail> dictDetails;
 
     @NotBlank
     @Schema(description = "名称")

@@ -5,6 +5,13 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import me.vt.modules.maint.domain.DeployHistory;
 import me.vt.modules.maint.repository.DeployHistoryRepository;
@@ -15,14 +22,6 @@ import me.vt.modules.maint.service.mapstruct.DeployHistoryMapper;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -39,13 +38,13 @@ public class DeployHistoryServiceImpl implements DeployHistoryService {
 
     @Override
     public PageResult<DeployHistoryDto> queryAll(DeployHistoryQueryCriteria criteria, Page pageable) {
-// fixme        Page<DeployHistory> page = deployhistoryRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-//        return PageUtil.toPage(page.map(deployhistoryMapper::toDto));
+        // fixme        Page<DeployHistory> page = deployhistoryRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        //        return PageUtil.toPage(page.map(deployhistoryMapper::toDto));
         return null;
     }
 
     @Override
-    public List<DeployHistoryDto> queryAll(DeployHistoryQueryCriteria criteria){
+    public List<DeployHistoryDto> queryAll(DeployHistoryQueryCriteria criteria) {
         // fixme       return deployhistoryMapper.toDto(deployhistoryRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
         return null;
     }
@@ -53,7 +52,7 @@ public class DeployHistoryServiceImpl implements DeployHistoryService {
     @Override
     public DeployHistoryDto findById(Long id) {
         DeployHistory deployhistory = deployhistoryRepository.findById(id);
-        ValidationUtil.isNull(deployhistory.getId(),"DeployHistory","id",id);
+        ValidationUtil.isNull(deployhistory.getId(), "DeployHistory", "id", id);
         return deployhistoryMapper.toDto(deployhistory);
     }
 
@@ -76,7 +75,7 @@ public class DeployHistoryServiceImpl implements DeployHistoryService {
     public File download(List<DeployHistoryDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (DeployHistoryDto deployHistoryDto : queryAll) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("部署编号", deployHistoryDto.getDeployId());
             map.put("应用名称", deployHistoryDto.getAppName());
             map.put("部署IP", deployHistoryDto.getIp());

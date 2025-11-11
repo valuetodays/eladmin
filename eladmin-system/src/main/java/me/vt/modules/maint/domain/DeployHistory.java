@@ -6,13 +6,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.sql.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
 * @author zhanghouying
@@ -21,7 +20,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
-@Table(name="mnt_deploy_history")
+@Table(name = "mnt_deploy_history")
 public class DeployHistory implements Serializable {
 
     @Id
@@ -45,7 +44,7 @@ public class DeployHistory implements Serializable {
     @Schema(description = "部署ID")
     private Long deployId;
 
-    public void copy(DeployHistory source){
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    public void copy(DeployHistory source) {
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

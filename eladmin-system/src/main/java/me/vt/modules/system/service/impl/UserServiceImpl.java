@@ -7,6 +7,18 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +34,8 @@ import me.vt.modules.system.domain.Role;
 import me.vt.modules.system.domain.User;
 import me.vt.modules.system.repository.DeptRepository;
 import me.vt.modules.system.repository.UserRepository;
-import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.modules.system.service.client.UserService;
+import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.modules.system.service.dto.JobSmallDto;
 import me.vt.modules.system.service.dto.RoleSmallDto;
 import me.vt.modules.system.service.dto.UserDto;
@@ -42,19 +54,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Zheng Jie
@@ -191,12 +190,12 @@ public class UserServiceImpl implements UserService {
         }
         // 如果用户的角色改变
         // fixme
-//        if (!resources.getRoles().equals(user.getRoles())) {
-//            redisUtils.del(CacheKey.DATA_USER + resources.getId());
-//            redisUtils.del(CacheKey.MENU_USER + resources.getId());
-//            redisUtils.del(CacheKey.ROLE_AUTH + resources.getId());
-//            redisUtils.del(CacheKey.ROLE_USER + resources.getId());
-//        }
+        //        if (!resources.getRoles().equals(user.getRoles())) {
+        //            redisUtils.del(CacheKey.DATA_USER + resources.getId());
+        //            redisUtils.del(CacheKey.MENU_USER + resources.getId());
+        //            redisUtils.del(CacheKey.ROLE_AUTH + resources.getId());
+        //            redisUtils.del(CacheKey.ROLE_USER + resources.getId());
+        //        }
         // 修改部门会影响 数据权限
         if (!Objects.equals(resources.getDeptId(), user.getDeptId())) {
             redisUtils.del(CacheKey.DATA_USER + resources.getId());
@@ -312,9 +311,11 @@ public class UserServiceImpl implements UserService {
         }
         String username = user.getUsername();
         flushCache(username);
-        return new HashMap<String, String>(1) {{
-            put("avatar", file.getName());
-        }};
+        return new HashMap<String, String>(1) {
+            {
+                put("avatar", file.getName());
+            }
+        };
     }
 
     @Override

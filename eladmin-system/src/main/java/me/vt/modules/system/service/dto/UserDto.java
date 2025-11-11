@@ -1,14 +1,13 @@
 package me.vt.modules.system.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 /**
  * @author Zheng Jie

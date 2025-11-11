@@ -1,13 +1,13 @@
 package me.vt.archunit;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.Path;
 import me.vt.common.repository.MyPanacheRepository;
 import org.junit.jupiter.api.Test;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
  * .
@@ -22,47 +22,47 @@ public class NamingConventionRulesTest {
     @Test
     public void components_should_be_suffixed() {
         classes()
-            .that().resideInAPackage("..component..")
-            .and().areAnnotatedWith(ApplicationScoped.class)
-            .should(BaseRules.haveSimpleNameEndingWithAny("Manager", "Component"))
-            .check(javaClasses);
+                .that().resideInAPackage("..component..")
+                .and().areAnnotatedWith(ApplicationScoped.class)
+                .should(BaseRules.haveSimpleNameEndingWithAny("Manager", "Component"))
+                .check(javaClasses);
     }
 
     @Test
     public void services_should_be_suffixed() {
         classes()
-            .that().resideInAPackage("..service..")
-            .and().areAnnotatedWith(ApplicationScoped.class)
-            .should(BaseRules.haveSimpleNameEndingWithAny("Service", "ServiceImpl"))
-            .check(javaClasses);
+                .that().resideInAPackage("..service..")
+                .and().areAnnotatedWith(ApplicationScoped.class)
+                .should(BaseRules.haveSimpleNameEndingWithAny("Service", "ServiceImpl"))
+                .check(javaClasses);
     }
 
     @Test
     public void controllers_should_not_have_Gui_in_name() {
         classes()
-            .that().resideInAPackage("..rest..")
-            .should().haveSimpleNameNotContaining("Gui")
-            .check(javaClasses);
+                .that().resideInAPackage("..rest..")
+                .should().haveSimpleNameNotContaining("Gui")
+                .check(javaClasses);
     }
 
     @Test
     public void controllers_should_be_suffixed() {
         classes()
-            .that().resideInAPackage("..rest..")
-            .and().areAnnotatedWith(Path.class)
-//            .and().areAssignableTo(AbstractController.class)
-            .should().haveSimpleNameEndingWith("Controller")
-            .check(javaClasses);
+                .that().resideInAPackage("..rest..")
+                .and().areAnnotatedWith(Path.class)
+                //            .and().areAssignableTo(AbstractController.class)
+                .should().haveSimpleNameEndingWith("Controller")
+                .check(javaClasses);
     }
 
     @Test
     public void dao_should_be_suffixed() {
         classes()
-            .that().resideInAPackage("..repository..")
-            .and().areAnnotatedWith(ApplicationScoped.class)
-            .and().areAssignableTo(MyPanacheRepository.class)
-            .should(BaseRules.haveSimpleNameEndingWithAny("Repository"))
-            .check(javaClasses);
+                .that().resideInAPackage("..repository..")
+                .and().areAnnotatedWith(ApplicationScoped.class)
+                .and().areAssignableTo(MyPanacheRepository.class)
+                .should(BaseRules.haveSimpleNameEndingWithAny("Repository"))
+                .check(javaClasses);
     }
 
 }

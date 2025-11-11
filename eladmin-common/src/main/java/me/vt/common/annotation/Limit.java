@@ -1,11 +1,10 @@
 package me.vt.common.annotation;
 
-import me.vt.common.aspect.LimitType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import me.vt.common.aspect.LimitType;
 
 /**
  * @author jacky

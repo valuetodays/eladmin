@@ -12,8 +12,8 @@ import org.mapstruct.ReportingPolicy;
  * @since 2025-08-11 19:56
  **/
 @Mapper(componentModel = "jakarta",
-    config = MapStructMapperConfig.class,
-    unmappedTargetPolicy = ReportingPolicy.IGNORE)
+        config = MapStructMapperConfig.class,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StockMapper extends BaseMapper<StockDto, Stock> {
 
 }

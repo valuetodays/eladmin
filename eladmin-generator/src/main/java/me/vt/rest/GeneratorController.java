@@ -8,6 +8,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.vt.common.base.BaseController;
 import me.vt.domain.ColumnInfo;
@@ -22,9 +24,6 @@ import me.vt.utils.PageUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -56,7 +55,7 @@ public class GeneratorController extends BaseController {
     @POST
     @Path(value = "/tables")
     public PageResult<TableInfo> queryTables(GenQueryTablesReq req) {
-        int[] startEnd = new int[]{(req.getPageNum() - 1) * req.getPageSize(), (req.getPageNum()) * req.getPageSize()};
+        int[] startEnd = new int[] {(req.getPageNum() - 1) * req.getPageSize(), (req.getPageNum()) * req.getPageSize()};
         return generatorService.getTables(req.getName(), startEnd);
     }
 
@@ -100,7 +99,8 @@ public class GeneratorController extends BaseController {
                 break;
             // 预览
             case 1:
-                return generatorService.preview(genConfigService.find(tableName), generatorService.getColumns(tableName));
+                return generatorService.preview(genConfigService.find(tableName),
+                        generatorService.getColumns(tableName));
             default:
                 throw new BadRequestException("没有这个选项");
         }

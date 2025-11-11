@@ -6,13 +6,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
-import lombok.extern.slf4j.Slf4j;
-import me.vt.utils.RedisUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import me.vt.utils.RedisUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * @author /
@@ -32,11 +31,11 @@ public class TokenProvider {
      * @param token /
      * @return /
      */
-// fixme    Authentication getAuthentication(String token) {
-//        Claims claims = getClaims(token);
-//        User principal = new User(claims.getSubject(), "******", new ArrayList<>());
-//        return new UsernamePasswordAuthenticationToken(principal, token, new ArrayList<>());
-//    }
+    // fixme    Authentication getAuthentication(String token) {
+    //        Claims claims = getClaims(token);
+    //        User principal = new User(claims.getSubject(), "******", new ArrayList<>());
+    //        return new UsernamePasswordAuthenticationToken(principal, token, new ArrayList<>());
+    //    }
     //# token 续期检查时间范围（默认30分钟，单位毫秒），在token即将过期的一段时间内用户操作了，则给用户的token续期
     long detect = 1800000L;
     //  # 续期时间范围，默认1小时，单位毫秒

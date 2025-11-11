@@ -1,10 +1,9 @@
 package me.vt.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.system.domain.DictDetail;
-
-import java.util.List;
 
 /**
 * @author Zheng Jie

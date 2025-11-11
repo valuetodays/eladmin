@@ -1,9 +1,8 @@
 package me.vt.modules.security.config;
 
 import io.smallrye.config.WithDefault;
-import me.vt.modules.security.config.enums.LoginCodeEnum;
-
 import java.util.Optional;
+import me.vt.modules.security.config.enums.LoginCodeEnum;
 
 /**
  * 验证码配置映射

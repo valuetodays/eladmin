@@ -6,6 +6,13 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.modules.mybiz.api.dto.NationCodeDto;
@@ -19,21 +26,13 @@ import me.vt.utils.PageUtil;
 import me.vt.utils.ValidationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 /**
 * @description 服务实现
 * @author vt
 * @since 2025-07-14 22:15
 **/
 @ApplicationScoped
-public class NationCodeServiceImpl  {
+public class NationCodeServiceImpl {
 
     @Inject
     NationCodeRepository nationCodeRepository;
@@ -55,14 +54,14 @@ public class NationCodeServiceImpl  {
         return PageUtil.toPage(list, all.count());
     }
 
-    public List<NationCodeDto> queryAll(NationCodeQueryCriteria criteria){
+    public List<NationCodeDto> queryAll(NationCodeQueryCriteria criteria) {
         return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
     @Transactional
     public NationCodeDto findById(Long id) {
         NationCode nationCode = nationCodeRepository.findById(id);
-        ValidationUtil.isNull(nationCode.getId(),"NationCode","id",id);
+        ValidationUtil.isNull(nationCode.getId(), "NationCode", "id", id);
         return nationCodeMapper.toDto(nationCode);
     }
 
@@ -74,7 +73,7 @@ public class NationCodeServiceImpl  {
     @Transactional(rollbackOn = Exception.class)
     public void update(NationCode resources) {
         NationCode nationCode = nationCodeRepository.findById(resources.getId());
-        ValidationUtil.isNull( nationCode.getId(),"NationCode","id",resources.getId());
+        ValidationUtil.isNull(nationCode.getId(), "NationCode", "id", resources.getId());
         nationCode.copy(resources);
         nationCodeRepository.save(nationCode);
     }
@@ -88,7 +87,7 @@ public class NationCodeServiceImpl  {
     public File download(List<NationCodeDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (NationCodeDto nationCode : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("国家编码2位", nationCode.getCode());
             map.put("国家编码3位", nationCode.getAlpha3Code());
             map.put("国家数字编码", nationCode.getNumeric());
@@ -99,8 +98,8 @@ public class NationCodeServiceImpl  {
             map.put("手机区号", nationCode.getPhoneAreaCode());
             map.put("国旗", nationCode.getFlag());
             map.put("状态：1启用、0禁用", nationCode.getEnabled());
-            map.put(" createTime",  nationCode.getCreateTime());
-            map.put(" updateTime",  nationCode.getUpdateTime());
+            map.put(" createTime", nationCode.getCreateTime());
+            map.put(" updateTime", nationCode.getUpdateTime());
             list.add(map);
         }
         return FileUtil.writeToExcel(list);

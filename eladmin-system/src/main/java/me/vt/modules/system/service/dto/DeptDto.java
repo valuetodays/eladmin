@@ -3,7 +3,6 @@ package me.vt.modules.system.service.dto;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseDTO;

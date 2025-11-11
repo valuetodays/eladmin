@@ -13,9 +13,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.config.properties.RsaProperties;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.security.config.CaptchaFactory;
@@ -31,10 +34,6 @@ import me.vt.utils.RsaUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Zheng Jie

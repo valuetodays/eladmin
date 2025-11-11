@@ -3,6 +3,13 @@ package me.vt.modules.system.service.impl;
 import cn.hutool.core.date.BetweenFormatter.Level;
 import cn.hutool.core.date.DateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.lang.management.ManagementFactory;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.system.service.client.MonitorService;
 import me.vt.utils.ElConstant;
@@ -19,14 +26,6 @@ import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 import oshi.util.Util;
 
-import java.lang.management.ManagementFactory;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
 * @author Zheng Jie
  * @since 2020-05-02
@@ -38,7 +37,7 @@ public class MonitorServiceImpl implements MonitorService {
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
-    public Map<String,Object> getServers(){
+    public Map<String, Object> getServers() {
         Map<String, Object> resultMap = new LinkedHashMap<>(8);
         try {
             SystemInfo si = new SystemInfo();
@@ -65,15 +64,15 @@ public class MonitorServiceImpl implements MonitorService {
      * 获取磁盘信息
      * @return /
      */
-    private Map<String,Object> getDiskInfo(OperatingSystem os) {
-        Map<String,Object> diskInfo = new LinkedHashMap<>();
+    private Map<String, Object> getDiskInfo(OperatingSystem os) {
+        Map<String, Object> diskInfo = new LinkedHashMap<>();
         FileSystem fileSystem = os.getFileSystem();
         List<OSFileStore> fsArray = fileSystem.getFileStores();
         String osName = System.getProperty("os.name");
         long available = 0, total = 0;
-        for (OSFileStore fs : fsArray){
+        for (OSFileStore fs : fsArray) {
             // windows 需要将所有磁盘分区累加，linux 和 mac 直接累加会出现磁盘重复的问题，待修复
-            if(osName.toLowerCase().startsWith(ElConstant.WIN)) {
+            if (osName.toLowerCase().startsWith(ElConstant.WIN)) {
                 available += fs.getUsableSpace();
                 total += fs.getTotalSpace();
             } else {
@@ -86,8 +85,8 @@ public class MonitorServiceImpl implements MonitorService {
         diskInfo.put("total", total > 0 ? FileUtil.getSize(total) : "?");
         diskInfo.put("available", FileUtil.getSize(available));
         diskInfo.put("used", FileUtil.getSize(used));
-        if(total != 0){
-            diskInfo.put("usageRate", df.format(used/(double)total * 100));
+        if (total != 0) {
+            diskInfo.put("usageRate", df.format(used / (double) total * 100));
         } else {
             diskInfo.put("usageRate", 0);
         }
@@ -99,18 +98,18 @@ public class MonitorServiceImpl implements MonitorService {
      * @param memory /
      * @return /
      */
-    private Map<String,Object> getSwapInfo(GlobalMemory memory) {
-        Map<String,Object> swapInfo = new LinkedHashMap<>();
+    private Map<String, Object> getSwapInfo(GlobalMemory memory) {
+        Map<String, Object> swapInfo = new LinkedHashMap<>();
         VirtualMemory virtualMemory = memory.getVirtualMemory();
         long total = virtualMemory.getSwapTotal();
         long used = virtualMemory.getSwapUsed();
         swapInfo.put("total", FormatUtil.formatBytes(total));
         swapInfo.put("used", FormatUtil.formatBytes(used));
         swapInfo.put("available", FormatUtil.formatBytes(total - used));
-        if(used == 0){
+        if (used == 0) {
             swapInfo.put("usageRate", 0);
         } else {
-            swapInfo.put("usageRate", df.format(used/(double)total * 100));
+            swapInfo.put("usageRate", df.format(used / (double) total * 100));
         }
         return swapInfo;
     }
@@ -120,12 +119,13 @@ public class MonitorServiceImpl implements MonitorService {
      * @param memory /
      * @return /
      */
-    private Map<String,Object> getMemoryInfo(GlobalMemory memory) {
-        Map<String,Object> memoryInfo = new LinkedHashMap<>();
+    private Map<String, Object> getMemoryInfo(GlobalMemory memory) {
+        Map<String, Object> memoryInfo = new LinkedHashMap<>();
         memoryInfo.put("total", FormatUtil.formatBytes(memory.getTotal()));
         memoryInfo.put("available", FormatUtil.formatBytes(memory.getAvailable()));
         memoryInfo.put("used", FormatUtil.formatBytes(memory.getTotal() - memory.getAvailable()));
-        memoryInfo.put("usageRate", df.format((memory.getTotal() - memory.getAvailable())/(double)memory.getTotal() * 100));
+        memoryInfo.put("usageRate",
+                df.format((memory.getTotal() - memory.getAvailable()) / (double) memory.getTotal() * 100));
         return memoryInfo;
     }
 
@@ -134,8 +134,8 @@ public class MonitorServiceImpl implements MonitorService {
      * @param processor /
      * @return /
      */
-    private Map<String,Object> getCpuInfo(CentralProcessor processor) {
-        Map<String,Object> cpuInfo = new LinkedHashMap<>();
+    private Map<String, Object> getCpuInfo(CentralProcessor processor) {
+        Map<String, Object> cpuInfo = new LinkedHashMap<>();
         cpuInfo.put("name", processor.getProcessorIdentifier().getName());
         cpuInfo.put("package", processor.getPhysicalPackageCount() + "个物理CPU");
         cpuInfo.put("core", processor.getPhysicalProcessorCount() + "个物理核心");
@@ -147,19 +147,27 @@ public class MonitorServiceImpl implements MonitorService {
         long time = 300;
         Util.sleep(time);
         long[] ticks = processor.getSystemCpuLoadTicks();
-        while (Arrays.toString(prevTicks).equals(Arrays.toString(ticks)) && time < 1000){
+        while (Arrays.toString(prevTicks).equals(Arrays.toString(ticks)) && time < 1000) {
             time += 25;
             Util.sleep(25);
             ticks = processor.getSystemCpuLoadTicks();
         }
-        long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
-        long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
-        long sys = ticks[CentralProcessor.TickType.SYSTEM.getIndex()] - prevTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
-        long idle = ticks[CentralProcessor.TickType.IDLE.getIndex()] - prevTicks[CentralProcessor.TickType.IDLE.getIndex()];
-        long iowait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()] - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
-        long irq = ticks[CentralProcessor.TickType.IRQ.getIndex()] - prevTicks[CentralProcessor.TickType.IRQ.getIndex()];
-        long softirq = ticks[CentralProcessor.TickType.SOFTIRQ.getIndex()] - prevTicks[CentralProcessor.TickType.SOFTIRQ.getIndex()];
-        long steal = ticks[CentralProcessor.TickType.STEAL.getIndex()] - prevTicks[CentralProcessor.TickType.STEAL.getIndex()];
+        long user =
+                ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
+        long nice =
+                ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
+        long sys = ticks[CentralProcessor.TickType.SYSTEM.getIndex()]
+                - prevTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
+        long idle =
+                ticks[CentralProcessor.TickType.IDLE.getIndex()] - prevTicks[CentralProcessor.TickType.IDLE.getIndex()];
+        long iowait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()]
+                - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
+        long irq =
+                ticks[CentralProcessor.TickType.IRQ.getIndex()] - prevTicks[CentralProcessor.TickType.IRQ.getIndex()];
+        long softirq = ticks[CentralProcessor.TickType.SOFTIRQ.getIndex()]
+                - prevTicks[CentralProcessor.TickType.SOFTIRQ.getIndex()];
+        long steal = ticks[CentralProcessor.TickType.STEAL.getIndex()]
+                - prevTicks[CentralProcessor.TickType.STEAL.getIndex()];
         long totalCpu = user + nice + sys + idle + iowait + irq + softirq + steal;
         cpuInfo.put("used", df.format(100d * user / totalCpu + 100d * sys / totalCpu));
         cpuInfo.put("idle", df.format(100d * idle / totalCpu));
@@ -171,8 +179,8 @@ public class MonitorServiceImpl implements MonitorService {
      * @param os /
      * @return /
      */
-    private Map<String,Object> getSystemInfo(OperatingSystem os){
-        Map<String,Object> systemInfo = new LinkedHashMap<>();
+    private Map<String, Object> getSystemInfo(OperatingSystem os) {
+        Map<String, Object> systemInfo = new LinkedHashMap<>();
         // jvm 运行时间
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
         Date date = new Date(time);

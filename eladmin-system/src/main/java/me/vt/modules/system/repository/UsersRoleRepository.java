@@ -1,11 +1,10 @@
 package me.vt.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import me.vt.common.repository.MyPanacheRepository;
-import me.vt.modules.system.domain.UsersRole;
-
 import java.util.Collection;
 import java.util.List;
+import me.vt.common.repository.MyPanacheRepository;
+import me.vt.modules.system.domain.UsersRole;
 
 /**
  * .

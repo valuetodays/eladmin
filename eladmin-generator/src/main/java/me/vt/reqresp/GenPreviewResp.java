@@ -1,7 +1,6 @@
 package me.vt.reqresp;
 
 import java.io.Serializable;
-
 import lombok.Data;
 
 /**

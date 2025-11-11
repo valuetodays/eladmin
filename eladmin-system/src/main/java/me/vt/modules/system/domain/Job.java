@@ -8,13 +8,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
 * @author Zheng Jie
@@ -23,7 +22,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@Table(name="sys_job")
+@Table(name = "sys_job")
 public class Job extends BaseEntity implements Serializable {
 
     @Id

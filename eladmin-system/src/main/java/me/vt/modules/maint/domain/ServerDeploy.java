@@ -1,8 +1,5 @@
 package me.vt.modules.maint.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import jakarta.persistence.Column;
@@ -11,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseEntity;
@@ -23,7 +22,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Entity
 @Getter
 @Setter
-@Table(name="mnt_server")
+@Table(name = "mnt_server")
 public class ServerDeploy extends BaseEntity implements Serializable {
 
     @Id
@@ -47,8 +46,8 @@ public class ServerDeploy extends BaseEntity implements Serializable {
     @Schema(description = "密码")
     private String password;
 
-    public void copy(ServerDeploy source){
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    public void copy(ServerDeploy source) {
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 
     @Override

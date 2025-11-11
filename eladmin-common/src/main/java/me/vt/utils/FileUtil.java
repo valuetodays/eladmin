@@ -3,11 +3,6 @@ package me.vt.utils;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.vt.exception.BadRequestException;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +16,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import me.vt.exception.BadRequestException;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 /**
  * File工具类，扩展 hutool 工具包
@@ -43,7 +42,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
      *       linux: /temp
      * </pre>
      */
-//    public static final String SYS_TEM_DIR = System.getProperty("java.io.tmpdir") + File.separator;
+    //    public static final String SYS_TEM_DIR = System.getProperty("java.io.tmpdir") + File.separator;
     public static final String SYS_TEM_DIR = "/tmp" + File.separator;
     /**
      * 定义GB的计算常量
@@ -119,7 +118,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     /**
      * inputStream 转 File
      */
-    static File inputStreamToFile(InputStream ins, String name){
+    static File inputStreamToFile(InputStream ins, String name) {
         File file = new File(SYS_TEM_DIR + name);
         if (file.exists()) {
             return file;
@@ -184,7 +183,8 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             map.forEach((key, value) -> {
                 if (value instanceof String strValue) {
                     // 检查并处理以特殊字符开头的值
-                    if (strValue.startsWith("=") || strValue.startsWith("+") || strValue.startsWith("-") || strValue.startsWith("@")) {
+                    if (strValue.startsWith("=") || strValue.startsWith("+") || strValue.startsWith("-")
+                            || strValue.startsWith("@")) {
                         strValue = "'" + strValue; // 添加单引号前缀
                     }
                     sanitizedMap.put(key, strValue);
@@ -196,7 +196,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         }).collect(Collectors.toList());
         // 一次性写出内容，使用默认样式，强制输出标题
         writer.write(sanitizedList, true);
-        SXSSFSheet sheet = (SXSSFSheet)writer.getSheet();
+        SXSSFSheet sheet = (SXSSFSheet) writer.getSheet();
         //上面需要强转SXSSFSheet  不然没有trackAllColumnsForAutoSizing方法
         sheet.trackAllColumnsForAutoSizing();
         //列宽自适应
@@ -239,7 +239,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     public static boolean check(File file1, File file2) {
         String img1Md5 = getMd5(file1);
         String img2Md5 = getMd5(file2);
-        if(img1Md5 != null){
+        if (img1Md5 != null) {
             return img1Md5.equals(img2Md5);
         }
         return false;

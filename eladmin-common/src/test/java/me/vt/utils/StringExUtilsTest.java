@@ -1,16 +1,15 @@
 package me.vt.utils;
 
-import org.junit.jupiter.api.Test;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import static me.vt.utils.StringExUtils.getWeekDay;
 import static me.vt.utils.StringExUtils.toCamelCase;
 import static me.vt.utils.StringExUtils.toCapitalizeCamelCase;
 import static me.vt.utils.StringExUtils.toUnderScoreCase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.junit.jupiter.api.Test;
 
 public class StringExUtilsTest {
 

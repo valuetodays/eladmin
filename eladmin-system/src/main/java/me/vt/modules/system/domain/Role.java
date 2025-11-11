@@ -8,13 +8,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.base.BaseEntity;
 import me.vt.utils.enums.DataScopeEnum;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
  * 角色
@@ -34,24 +33,24 @@ public class Role extends BaseEntity implements Serializable {
     @Schema(description = "ID", hidden = true)
     private Long id;
 
-//    @JSONField(serialize = false)
-//    @ManyToMany(mappedBy = "roles")
-//    @Schema(description = "用户", hidden = true)
-//    private Set<User> users;
+    //    @JSONField(serialize = false)
+    //    @ManyToMany(mappedBy = "roles")
+    //    @Schema(description = "用户", hidden = true)
+    //    private Set<User> users;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(name = "sys_roles_menus",
-//            joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "role_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "menu_id",referencedColumnName = "id")})
-//    @Schema(description = "菜单", hidden = true)
-//    private Set<Menu> menus;
+    //    @ManyToMany(fetch = FetchType.EAGER)
+    //    @JoinTable(name = "sys_roles_menus",
+    //            joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "role_id")},
+    //            inverseJoinColumns = {@JoinColumn(name = "menu_id",referencedColumnName = "id")})
+    //    @Schema(description = "菜单", hidden = true)
+    //    private Set<Menu> menus;
 
-//    @ManyToMany
-//    @JoinTable(name = "sys_roles_depts",
-//            joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "role_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "dept_id",referencedColumnName = "dept_id")})
-//    @Schema(description = "部门", hidden = true)
-//    private Set<Dept> depts;
+    //    @ManyToMany
+    //    @JoinTable(name = "sys_roles_depts",
+    //            joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "role_id")},
+    //            inverseJoinColumns = {@JoinColumn(name = "dept_id",referencedColumnName = "dept_id")})
+    //    @Schema(description = "部门", hidden = true)
+    //    private Set<Dept> depts;
 
     @NotBlank
     @Schema(description = "名称", hidden = true)

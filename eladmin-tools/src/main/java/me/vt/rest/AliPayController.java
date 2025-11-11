@@ -76,19 +76,19 @@ public class AliPayController {
     @Operation(summary = "支付之后跳转的链接")
     public String returnPage(/*HttpServletRequest request*/) {
         AlipayConfig alipay = alipayService.find();
-//        response.setContentType("text/html;charset=" + alipay.getCharset());
+        //        response.setContentType("text/html;charset=" + alipay.getCharset());
         //内容验签，防止黑客篡改参数
         //    if (alipayUtils.rsaCheck(request, alipay)) {
-            //商户订单号
-//            String outTradeNo = new String(request.getParameter("out_trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-//            支付宝交易号
-//            String tradeNo = new String(request.getParameter("trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-//            System.out.println("商户订单号" + outTradeNo + "  " + "第三方交易号" + tradeNo);
+        //商户订单号
+        //            String outTradeNo = new String(request.getParameter("out_trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        //            支付宝交易号
+        //            String tradeNo = new String(request.getParameter("trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        //            System.out.println("商户订单号" + outTradeNo + "  " + "第三方交易号" + tradeNo);
 
-            // 根据业务需要返回数据，这里统一返回OK
+        // 根据业务需要返回数据，这里统一返回OK
         return "payment successful";
         //    } else {
-            // 根据业务需要返回数据
+        // 根据业务需要返回数据
         //        return "fail";
         //    }
     }
@@ -98,7 +98,7 @@ public class AliPayController {
     @Operation(summary = "支付异步通知(要公网访问)，接收异步通知，检查通知内容app_id、out_trade_no、total_amount是否与请求中的一致，根据trade_status进行后续业务处理")
     public Object notifyA(/*HttpServletRequest request*/) {
         AlipayConfig alipay = alipayService.find();
-       /* Map<String, String[]> parameterMap = request.getParameterMap();
+        /* Map<String, String[]> parameterMap = request.getParameterMap();
         //内容验签，防止黑客篡改参数
         if (alipayUtils.rsaCheck(request, alipay)) {
             //交易状态

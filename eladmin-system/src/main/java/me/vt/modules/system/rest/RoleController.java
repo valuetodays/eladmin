@@ -10,9 +10,15 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.Role;
 import me.vt.modules.system.req.LongIdBase;
@@ -25,13 +31,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -96,7 +95,7 @@ public class RoleController extends BaseController {
     @PreAuthorize("@el.check('roles:add')")
     public Object createRole(@Valid Role resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         getLevels(resources.getLevel());
         roleService.create(resources);
@@ -146,11 +145,12 @@ public class RoleController extends BaseController {
      * 获取用户的角色级别
      * @return /
      */
-    private int getLevels(Integer level){
-        List<Integer> levels = roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList());
+    private int getLevels(Integer level) {
+        List<Integer> levels = roleService.findByUsersId(getCurrentAccountId()).stream().map(RoleSmallDto::getLevel)
+                .collect(Collectors.toList());
         int min = Collections.min(levels);
-        if(level != null){
-            if(level < min){
+        if (level != null) {
+            if (level < min) {
                 throw new BadRequestException("权限不足，你的角色级别：" + min + "，低于操作的角色级别：" + level);
             }
         }

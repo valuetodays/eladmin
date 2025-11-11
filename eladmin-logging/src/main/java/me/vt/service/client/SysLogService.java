@@ -2,14 +2,13 @@ package me.vt.service.client;
 
 import cn.hutool.core.lang.Dict;
 import io.quarkus.panache.common.Page;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import me.vt.domain.SysLog;
 import me.vt.service.dto.SysLogQueryCriteria;
 import me.vt.service.dto.SysLogSmallDto;
 import me.vt.utils.PageResult;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -47,7 +46,7 @@ public interface SysLogService {
      * @param ip 请求IP
      * @param sysLog 日志实体
      */
-//fixme    @Async
+    //fixme    @Async
     void save(String username, String browser, String ip, SysLog sysLog);
 
     /**

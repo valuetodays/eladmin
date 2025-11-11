@@ -2,7 +2,6 @@ package me.vt.modules.maint.service.dto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -23,11 +22,11 @@ public class DeployHistoryDto implements Serializable {
     private String ip;
 
     @Schema(description = "部署时间")
-	private Timestamp deployDate;
+    private Timestamp deployDate;
 
     @Schema(description = "部署人员")
-	private String deployUser;
+    private String deployUser;
 
     @Schema(description = "部署编号")
-	private Long deployId;
+    private Long deployId;
 }

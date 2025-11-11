@@ -1,7 +1,6 @@
 package me.vt.modules.maint.service.dto;
 
 import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseDTO;

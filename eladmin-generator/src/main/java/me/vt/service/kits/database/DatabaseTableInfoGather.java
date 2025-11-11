@@ -8,6 +8,8 @@ package me.vt.service.kits.database;
  */
 public interface DatabaseTableInfoGather {
     String getSqlForTables();
+
     String getSqlForTablesForQuery();
+
     String getSqlForColumns(String name);
 }

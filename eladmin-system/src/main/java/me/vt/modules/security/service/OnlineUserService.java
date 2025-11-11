@@ -3,6 +3,15 @@ package me.vt.modules.security.service;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.security.security.TokenProvider;
@@ -18,16 +27,6 @@ import me.vt.utils.RedisUtils;
 import me.vt.utils.StringExUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author Zheng Jie
  * @since 2019年10月26日21:56:27
@@ -38,13 +37,14 @@ import java.util.concurrent.TimeUnit;
 public class OnlineUserService {
 
     //    @Inject
-//    SecurityProperties properties;
+    //    SecurityProperties properties;
     @Inject
     TokenProvider tokenProvider;
     @Inject
     RedisUtils redisUtils;
     @Inject
     UserAuthCompositeService userAuthCompositeService;
+
     /**
      * 保存在线用户信息
      * @param jwtUserDto /
@@ -60,13 +60,13 @@ public class OnlineUserService {
         OnlineUserDto onlineUserDto = null;
         try {
             onlineUserDto = new OnlineUserDto(id,
-                jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(),
-                dept,
-                browser, ip, address,
-                EncryptUtils.desEncrypt(token),
-                new Date());
+                    jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(),
+                    dept,
+                    browser, ip, address,
+                    EncryptUtils.desEncrypt(token),
+                    new Date());
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
         String loginKey = tokenProvider.loginKey(token);
         redisUtils.set(loginKey, onlineUserDto, 4, TimeUnit.HOURS);
@@ -82,8 +82,7 @@ public class OnlineUserService {
         List<OnlineUserDto> onlineUserDtos = getAll(username);
         return PageUtil.toPage(
                 PageUtil.paging(pageable.index, pageable.size, onlineUserDtos),
-                onlineUserDtos.size()
-        );
+                onlineUserDtos.size());
     }
 
     /**
@@ -91,9 +90,9 @@ public class OnlineUserService {
      * @param username /
      * @return /
      */
-    public List<OnlineUserDto> getAll(String username){
+    public List<OnlineUserDto> getAll(String username) {
         String loginKey = "online_token:" +
-            (StringUtils.isBlank(username) ? "" : "*" + username);
+                (StringUtils.isBlank(username) ? "" : "*" + username);
         List<String> keys = redisUtils.scan(loginKey + "*");
         Collections.reverse(keys);
         List<OnlineUserDto> onlineUserDtos = new ArrayList<>();
@@ -121,7 +120,7 @@ public class OnlineUserService {
     public File download(List<OnlineUserDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (OnlineUserDto user : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("用户名", user.getUserName());
             map.put("部门", user.getDept());
             map.put("登录IP", user.getIp());

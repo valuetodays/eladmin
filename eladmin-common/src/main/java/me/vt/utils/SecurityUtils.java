@@ -4,10 +4,9 @@ import cn.vt.auth.AuthUser;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
+import java.util.List;
 import ll.vt.quarkus.commons.base.BaseAuthorizationController;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 /**
  * 获取当前登录的用户
@@ -50,9 +49,9 @@ public class SecurityUtils extends BaseAuthorizationController {
     public List<Long> getCurrentUserDataScope() {
         AuthUser userDetails = getCurrentUser();
         // 将 Java 对象转换为 JSONObject 对象
-//        JSONObject jsonObject = (JSONObject) JSON.toJSON(userDetails);
-//        JSONArray jsonArray = jsonObject.getJSONArray("dataScopes");
-//        return JSON.parseArray(jsonArray.toJSONString(), Long.class);
+        //        JSONObject jsonObject = (JSONObject) JSON.toJSON(userDetails);
+        //        JSONArray jsonArray = jsonObject.getJSONArray("dataScopes");
+        //        return JSON.parseArray(jsonArray.toJSONString(), Long.class);
         return List.of(); // fixme
     }
 
@@ -70,8 +69,8 @@ public class SecurityUtils extends BaseAuthorizationController {
      * @return 系统用户名称
      */
     public static String getCurrentUsername(String token) {
-//        JWT jwt = JWTUtil.parseToken(token);
-//        return jwt.getPayload("sub").toString();
+        //        JWT jwt = JWTUtil.parseToken(token);
+        //        return jwt.getPayload("sub").toString();
         return null;
     }
 
@@ -89,8 +88,8 @@ public class SecurityUtils extends BaseAuthorizationController {
      * @return 系统用户ID
      */
     public Long getCurrentUserId(String token) {
-//        JWT jwt = JWTUtil.parseToken(token);
-//        return Long.valueOf(jwt.getPayload("userId").toString());
+        //        JWT jwt = JWTUtil.parseToken(token);
+        //        return Long.valueOf(jwt.getPayload("userId").toString());
         return null;
     }
 

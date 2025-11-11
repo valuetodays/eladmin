@@ -9,12 +9,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.util.Date;
 
 /**
  * @author Zheng Jie
@@ -23,7 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Table(name="sys_user")
+@Table(name = "sys_user")
 public class User extends BaseEntity {
 
     @Id

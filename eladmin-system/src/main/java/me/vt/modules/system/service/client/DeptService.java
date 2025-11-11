@@ -1,13 +1,12 @@
 package me.vt.modules.system.service.client;
 
-import me.vt.modules.system.domain.Dept;
-import me.vt.modules.system.service.dto.DeptDto;
-import me.vt.modules.system.service.dto.DeptQueryCriteria;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import me.vt.modules.system.domain.Dept;
+import me.vt.modules.system.service.dto.DeptDto;
+import me.vt.modules.system.service.dto.DeptQueryCriteria;
 
 /**
 * @author Zheng Jie

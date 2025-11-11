@@ -2,10 +2,9 @@ package me.vt.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.system.domain.Dept;
-
-import java.util.List;
 
 /**
 * @author Zheng Jie
@@ -46,7 +45,7 @@ public class DeptRepository extends MyPanacheRepository<Dept> {
      * @param id /
      */
     @Transactional
-//    @Query(value = " update sys_dept set sub_count = ?1 where dept_id = ?2 ",nativeQuery = true)
+    //    @Query(value = " update sys_dept set sub_count = ?1 where dept_id = ?2 ",nativeQuery = true)
     public void updateSubCntById(Integer count, Long id) {
         update("set subCount=?1 where id=?1", count, id);
     }

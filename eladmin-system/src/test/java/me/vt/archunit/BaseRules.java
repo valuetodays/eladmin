@@ -4,7 +4,6 @@ import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
-
 import java.util.Arrays;
 import java.util.function.Predicate;
 
@@ -32,9 +31,8 @@ public class BaseRules {
      * @param allowed      谓词，定义允许出现的类（如包规则、类名规则）
      */
     public static ArchCondition<JavaClass> onlyBeUsedIn(
-        Class<?> targetClass,
-        Predicate<JavaClass> allowed
-    ) {
+            Class<?> targetClass,
+            Predicate<JavaClass> allowed) {
         return onlyBeUsedIn(targetClass, allowed, javaClass -> false);
     }
 
@@ -45,10 +43,9 @@ public class BaseRules {
      * @param allowed      谓词，定义允许出现的类（如包规则、类名规则）
      */
     public static ArchCondition<JavaClass> onlyBeUsedIn(
-        Class<?> targetClass,
-        Predicate<JavaClass> allowed,
-        Predicate<JavaClass> excludes
-    ) {
+            Class<?> targetClass,
+            Predicate<JavaClass> allowed,
+            Predicate<JavaClass> excludes) {
         return new ArchCondition<>("only use " + targetClass.getSimpleName() + " in allowed classes") {
             @Override
             public void check(JavaClass item, ConditionEvents events) {
@@ -56,14 +53,13 @@ public class BaseRules {
                     return; // 跳过
                 }
                 boolean dependsOn = item.getDirectDependenciesFromSelf()
-                    .stream()
-                    .anyMatch(dep -> dep.getTargetClass().isEquivalentTo(targetClass));
+                        .stream()
+                        .anyMatch(dep -> dep.getTargetClass().isEquivalentTo(targetClass));
 
                 if (dependsOn && !allowed.test(item)) {
                     String message = String.format(
-                        "Class %s uses %s but is not in an allowed location",
-                        item.getName(), targetClass.getSimpleName()
-                    );
+                            "Class %s uses %s but is not in an allowed location",
+                            item.getName(), targetClass.getSimpleName());
                     events.add(SimpleConditionEvent.violated(item, message));
                 }
             }
@@ -83,9 +79,8 @@ public class BaseRules {
                     JavaClass origin = access.getTargetClass();
                     if (!allowed.test(origin)) {
                         String message = String.format(
-                            "Class %s is accessed by %s, which is not allowed",
-                            item.getName(), origin.getName()
-                        );
+                                "Class %s is accessed by %s, which is not allowed",
+                                item.getName(), origin.getName());
                         events.add(SimpleConditionEvent.violated(item, message));
                     }
                 });
@@ -99,8 +94,10 @@ public class BaseRules {
         return clazz -> {
             String name = clazz.getSimpleName();
             String pkg = clazz.getPackageName();
-            if (name.endsWith("Test") || name.endsWith("Tests")) return false;
-            if (pkg.contains(".test.") || pkg.contains(".tests.")) return false;
+            if (name.endsWith("Test") || name.endsWith("Tests"))
+                return false;
+            if (pkg.contains(".test.") || pkg.contains(".tests."))
+                return false;
             return true;
         };
     }

@@ -9,7 +9,6 @@ import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import java.awt.Font;
 
 @ApplicationScoped
@@ -68,7 +67,7 @@ public class CaptchaFactory {
             int n1 = Math.max(n1Temp, n2Temp);
             int n2 = Math.min(n1Temp, n2Temp);
             int opt = num(3);
-            int res = new int[]{n1 + n2, n1 - n2, n1 * n2}[opt];
+            int res = new int[] {n1 + n2, n1 - n2, n1 * n2}[opt];
             char optChar = "+-x".charAt(opt);
             this.setArithmeticString(String.format("%s%c%s=?", n1, optChar, n2));
             this.chars = String.valueOf(res);

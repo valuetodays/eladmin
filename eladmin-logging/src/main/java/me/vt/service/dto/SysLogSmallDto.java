@@ -1,10 +1,9 @@
 package me.vt.service.dto;
 
-import lombok.Data;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie

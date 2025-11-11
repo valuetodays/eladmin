@@ -2,6 +2,7 @@ package me.vt.modules.security.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.exception.BadRequestException;
@@ -13,8 +14,6 @@ import me.vt.modules.system.service.client.RoleService;
 import me.vt.modules.system.service.client.UserService;
 import me.vt.modules.system.service.dto.UserDto;
 import org.apache.commons.lang3.BooleanUtils;
-
-import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -35,7 +34,7 @@ public class UserDetailsServiceImpl {
 
     public JwtUserDto loadUserByUsername(String username) {
         JwtUserDto jwtUserDto = userCacheManager.getUserCache(username);
-        if(jwtUserDto == null){
+        if (jwtUserDto == null) {
             UserDto user = userService.getLoginData(username);
             if (user == null) {
                 throw new BadRequestException("用户不存在");

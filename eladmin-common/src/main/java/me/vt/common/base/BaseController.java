@@ -8,15 +8,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.resteasy.reactive.server.multipart.FileItem;
-import org.jboss.resteasy.reactive.server.multipart.FormValue;
-import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
-import org.redisson.api.RedissonClient;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,6 +17,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.resteasy.reactive.server.multipart.FileItem;
+import org.jboss.resteasy.reactive.server.multipart.FormValue;
+import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
+import org.redisson.api.RedissonClient;
 
 /**
  * .
@@ -43,7 +42,7 @@ public abstract class BaseController /*extends BaseCrudController */ {
         //response为HttpServletResponse对象
         String contentType = ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
-//        response.setHeader("Content-Disposition", "attachment;filename=file.xlsx");
+        //        response.setHeader("Content-Disposition", "attachment;filename=file.xlsx");
 
         return Response.ok(file, MediaType.valueOf(contentType))
                 .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
@@ -74,6 +73,7 @@ public abstract class BaseController /*extends BaseCrudController */ {
         java.nio.file.Path file = fileItem.getFile();
         return file.toFile();
     }
+
     @Inject
     RedissonClient redissonClient;
 
@@ -94,7 +94,8 @@ public abstract class BaseController /*extends BaseCrudController */ {
     }
 
     protected void putLoginAccount(AuthUser authUser) {
-        redissonClient.getBucket("login:users:" + authUser.getLoginToken()).set(JsonUtils.toJson(authUser), 1, TimeUnit.HOURS);
+        redissonClient.getBucket("login:users:" + authUser.getLoginToken()).set(JsonUtils.toJson(authUser), 1,
+                TimeUnit.HOURS);
     }
 
     /**
@@ -109,7 +110,7 @@ public abstract class BaseController /*extends BaseCrudController */ {
             ip = headers.getHeaderString("WL-Proxy-Client-IP");
         }
         if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-// fixme:            ip = headers.getRemoteAddr();
+            // fixme:            ip = headers.getRemoteAddr();
         }
         String comma = ",";
         String localhost = "127.0.0.1";

@@ -3,19 +3,18 @@ package me.vt.service.impl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.util.Objects;
 import me.vt.domain.GenConfig;
 import me.vt.repository.GenConfigRepository;
 import me.vt.service.client.GenConfigService;
-
-import java.io.File;
-import java.util.Objects;
 
 /**
  * @author Zheng Jie
  * @since 2019-01-14
  */
 @ApplicationScoped
-@SuppressWarnings({"unchecked","all"})
+@SuppressWarnings({"unchecked", "all"})
 public class GenConfigServiceImpl implements GenConfigService {
 
     @Inject
@@ -24,7 +23,7 @@ public class GenConfigServiceImpl implements GenConfigService {
     @Override
     public GenConfig find(String tableName) {
         GenConfig genConfig = genConfigRepository.findByTableName(tableName);
-        if(genConfig == null){
+        if (genConfig == null) {
             return new GenConfig(tableName);
         }
         return genConfig;

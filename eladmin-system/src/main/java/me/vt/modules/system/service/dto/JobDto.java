@@ -1,7 +1,6 @@
 package me.vt.modules.system.service.dto;
 
 import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

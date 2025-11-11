@@ -1,13 +1,12 @@
 package me.vt.modules.security.service.dto;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.vt.modules.system.service.dto.UserDto;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie

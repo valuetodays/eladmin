@@ -8,13 +8,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
 * @author Zheng Jie
@@ -23,7 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name="tool_local_storage")
+@Table(name = "tool_local_storage")
 @NoArgsConstructor
 public class LocalStorage extends BaseEntity implements Serializable {
 
@@ -51,7 +50,7 @@ public class LocalStorage extends BaseEntity implements Serializable {
     @Schema(description = "大小")
     private String size;
 
-    public LocalStorage(String realName,String name, String suffix, String path, String type, String size) {
+    public LocalStorage(String realName, String name, String suffix, String path, String type, String size) {
         this.realName = realName;
         this.name = name;
         this.suffix = suffix;
@@ -60,7 +59,7 @@ public class LocalStorage extends BaseEntity implements Serializable {
         this.size = size;
     }
 
-    public void copy(LocalStorage source){
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    public void copy(LocalStorage source) {
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

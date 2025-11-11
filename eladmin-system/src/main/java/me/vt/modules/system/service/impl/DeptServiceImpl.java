@@ -8,6 +8,19 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.RequiredArgsConstructor;
@@ -33,20 +46,6 @@ import me.vt.utils.enums.DataScopeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
 * @author Zheng Jie
@@ -76,19 +75,21 @@ public class DeptServiceImpl implements DeptService {
     public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery, Long userId) {
         String dataScopeType = userAuthCompositeService.findDataScopesTypeByUserId(userId);
         if (isQuery) {
-            if(dataScopeType.equals(DataScopeEnum.ALL.getValue())){
+            if (dataScopeType.equals(DataScopeEnum.ALL.getValue())) {
                 criteria.setPidIsNull(true);
             }
             List<Field> fields = QueryHelp.getAllFields(criteria.getClass(), new ArrayList<>());
-            List<String> fieldNames = new ArrayList<>() {{
-                add("pidIsNull");
-                add("enabled");
-            }};
+            List<String> fieldNames = new ArrayList<>() {
+                {
+                    add("pidIsNull");
+                    add("enabled");
+                }
+            };
             for (Field field : fields) {
                 //设置对象的访问权限，保证对private的属性的访问
                 field.setAccessible(true);
                 Object val = field.get(criteria);
-                if(fieldNames.contains(field.getName())){
+                if (fieldNames.contains(field.getName())) {
                     continue;
                 }
                 if (ObjectUtil.isNotNull(val)) {
@@ -109,7 +110,7 @@ public class DeptServiceImpl implements DeptService {
         List<Dept> deptList = panacheQuery.list();
         List<DeptDto> list = deptMapper.toDto(deptList);
         // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
-        if(StringUtils.isBlank(dataScopeType)){
+        if (StringUtils.isBlank(dataScopeType)) {
             return deduplication(list);
         }
         return list;
@@ -119,9 +120,9 @@ public class DeptServiceImpl implements DeptService {
     public DeptDto findById(Long id) {
         String key = CacheKey.DEPT_ID + id;
         Dept dept = redisUtils.get(key, Dept.class);
-        if(dept == null){
+        if (dept == null) {
             dept = deptRepository.findById(id);
-            ValidationUtil.isNull(dept.getId(),"Dept","id",id);
+            ValidationUtil.isNull(dept.getId(), "Dept", "id", id);
             redisUtils.set(key, dept, 1, TimeUnit.DAYS);
         }
         return deptMapper.toDto(dept);
@@ -151,11 +152,11 @@ public class DeptServiceImpl implements DeptService {
         // 旧的部门
         Long oldPid = findById(resources.getId()).getPid();
         Long newPid = resources.getPid();
-        if(resources.getPid() != null && resources.getId().equals(resources.getPid())) {
+        if (resources.getPid() != null && resources.getId().equals(resources.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
         Dept dept = deptRepository.findById(resources.getId());
-        ValidationUtil.isNull( dept.getId(),"Dept","id",resources.getId());
+        ValidationUtil.isNull(dept.getId(), "Dept", "id", resources.getId());
         dept.setDeptSort(resources.getDeptSort());
         dept.setName(resources.getName());
         dept.setEnabled(resources.getEnabled());
@@ -183,7 +184,7 @@ public class DeptServiceImpl implements DeptService {
     public File download(List<DeptDto> deptDtos) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (DeptDto deptDTO : deptDtos) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("部门名称", deptDTO.getName());
             map.put("部门状态", Boolean.TRUE.equals(deptDTO.getEnabled()) ? "启用" : "停用");
             map.put("创建日期", deptDTO.getCreateTime());
@@ -198,7 +199,7 @@ public class DeptServiceImpl implements DeptService {
         for (Dept dept : menuList) {
             deptDtos.add(deptMapper.toDto(dept));
             List<Dept> depts = deptRepository.findByPid(dept.getId());
-            if(CollUtil.isNotEmpty(depts)){
+            if (CollUtil.isNotEmpty(depts)) {
                 getDeleteDepts(depts, deptDtos);
             }
         }
@@ -209,21 +210,20 @@ public class DeptServiceImpl implements DeptService {
     public List<Long> getDeptChildren(List<Dept> deptList) {
         List<Long> list = new ArrayList<>();
         deptList.forEach(dept -> {
-                    if (dept!=null && dept.getEnabled()) {
-                        List<Dept> depts = deptRepository.findByPid(dept.getId());
-                        if (CollUtil.isNotEmpty(depts)) {
-                            list.addAll(getDeptChildren(depts));
-                        }
-                        list.add(dept.getId());
-                    }
+            if (dept != null && dept.getEnabled()) {
+                List<Dept> depts = deptRepository.findByPid(dept.getId());
+                if (CollUtil.isNotEmpty(depts)) {
+                    list.addAll(getDeptChildren(depts));
                 }
-        );
+                list.add(dept.getId());
+            }
+        });
         return list;
     }
 
     @Override
     public List<DeptDto> getSuperior(DeptDto deptDto, List<Dept> depts) {
-        if(deptDto.getPid() == null){
+        if (deptDto.getPid() == null) {
             depts.addAll(deptRepository.findByPidIsNull());
             return deptMapper.toDto(depts);
         }
@@ -234,7 +234,7 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public Object buildTree(List<DeptDto> deptDtos) {
         Set<DeptDto> trees = new LinkedHashSet<>();
-        Set<DeptDto> depts= new LinkedHashSet<>();
+        Set<DeptDto> depts = new LinkedHashSet<>();
         List<String> deptNames = deptDtos.stream().map(DeptDto::getName).collect(Collectors.toList());
         boolean isChild;
         for (DeptDto deptDTO : deptDtos) {
@@ -251,9 +251,9 @@ public class DeptServiceImpl implements DeptService {
                     deptDTO.getChildren().add(it);
                 }
             }
-            if(isChild) {
+            if (isChild) {
                 depts.add(deptDTO);
-            } else if(deptDTO.getPid() != null &&  !deptNames.contains(findById(deptDTO.getPid()).getName())) {
+            } else if (deptDTO.getPid() != null && !deptNames.contains(findById(deptDTO.getPid()).getName())) {
                 depts.add(deptDTO);
             }
         }
@@ -261,16 +261,16 @@ public class DeptServiceImpl implements DeptService {
         if (CollectionUtil.isEmpty(trees)) {
             trees = depts;
         }
-        Map<String,Object> map = new HashMap<>(2);
-        map.put("totalElements",deptDtos.size());
-        map.put("content",CollectionUtil.isEmpty(trees)? deptDtos :trees);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("totalElements", deptDtos.size());
+        map.put("content", CollectionUtil.isEmpty(trees) ? deptDtos : trees);
         return map;
     }
 
     @Override
     public void verification(Set<DeptDto> deptDtos) {
         Set<Long> deptIds = deptDtos.stream().map(DeptDto::getId).collect(Collectors.toSet());
-        if(userRepository.countByDepts(deptIds) > 0){
+        if (userRepository.countByDepts(deptIds) > 0) {
             throw new BadRequestException("所选部门存在用户关联，请解除后再试！");
         }
         int n = userAuthCompositeService.countRolesByDeptIds(deptIds);
@@ -279,7 +279,7 @@ public class DeptServiceImpl implements DeptService {
         }
     }
 
-    private void updateSubCnt(Long deptId){
+    private void updateSubCnt(Long deptId) {
         if (deptId != null) {
             long count = deptRepository.countByPid(deptId);
             deptRepository.updateSubCntById((int) count, deptId);
@@ -296,7 +296,7 @@ public class DeptServiceImpl implements DeptService {
                     break;
                 }
             }
-            if (flag){
+            if (flag) {
                 deptDtos.add(deptDto);
             }
         }
@@ -307,7 +307,7 @@ public class DeptServiceImpl implements DeptService {
      * 清理缓存
      * @param id /
      */
-    public void delCaches(Long id){
+    public void delCaches(Long id) {
         if (Objects.isNull(id)) {
             return;
         }

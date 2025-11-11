@@ -8,9 +8,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.domain.LocalStorage;
 import me.vt.service.client.LocalStorageService;
 import me.vt.service.dto.LocalStorageDto;
@@ -19,9 +21,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
 * @author Zheng Jie
@@ -68,10 +67,10 @@ public class LocalStorageController extends BaseController {
     @Path("/pictures")
     public LocalStorage uploadPicture(/*@RequestParam*/ File file) {
         // 判断文件是否为图片
-// fixme:       String suffix = FileUtil.getExtensionName(file.getOriginalFilename());
-//        if(!FileUtil.IMAGE.equals(FileUtil.getFileType(suffix))){
-//            throw new BadRequestException("只能上传图片");
-//        }
+        // fixme:       String suffix = FileUtil.getExtensionName(file.getOriginalFilename());
+        //        if(!FileUtil.IMAGE.equals(FileUtil.getFileType(suffix))){
+        //            throw new BadRequestException("只能上传图片");
+        //        }
         LocalStorage localStorage = localStorageService.create(null, file);
         return localStorage;
     }

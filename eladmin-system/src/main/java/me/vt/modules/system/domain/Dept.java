@@ -8,12 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
 * @author Zheng Jie
@@ -22,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Table(name="sys_dept")
+@Table(name = "sys_dept")
 public class Dept extends BaseEntity implements Serializable {
 
     @Id
@@ -32,10 +31,10 @@ public class Dept extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @JSONField(serialize = false)
-//    @ManyToMany(mappedBy = "depts")
-//    @Schema(description = "角色")
-//    private Set<Role> roles;
+    //    @JSONField(serialize = false)
+    //    @ManyToMany(mappedBy = "depts")
+    //    @Schema(description = "角色")
+    //    private Set<Role> roles;
 
     @Schema(description = "排序")
     private Integer deptSort;

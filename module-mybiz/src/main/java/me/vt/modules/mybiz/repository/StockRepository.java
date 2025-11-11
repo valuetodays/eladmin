@@ -1,10 +1,9 @@
 package me.vt.modules.mybiz.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.mybiz.domain.Stock;
-
-import java.util.List;
 
 /**
 * @author vt

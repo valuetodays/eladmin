@@ -6,6 +6,12 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import me.vt.config.properties.FileProperties;
 import me.vt.domain.LocalStorage;
 import me.vt.repository.LocalStorageRepository;
@@ -17,13 +23,6 @@ import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import me.vt.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -49,7 +48,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     }
 
     @Override
-    public List<LocalStorageDto> queryAll(LocalStorageQueryCriteria criteria){
+    public List<LocalStorageDto> queryAll(LocalStorageQueryCriteria criteria) {
         // fixme:        return localStorageMapper.toDto(localStorageRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
         List<LocalStorage> pagedRaw = localStorageRepository.findAll().list();
         List<LocalStorageDto> list = localStorageMapper.toDto(pagedRaw);
@@ -57,9 +56,9 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     }
 
     @Override
-    public LocalStorageDto findById(Long id){
+    public LocalStorageDto findById(Long id) {
         LocalStorage localStorage = localStorageRepository.findById(id);
-        ValidationUtil.isNull(localStorage.getId(),"LocalStorage","id",id);
+        ValidationUtil.isNull(localStorage.getId(), "LocalStorage", "id", id);
         return localStorageMapper.toDto(localStorage);
     }
 
@@ -96,7 +95,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     @Transactional(rollbackOn = Exception.class)
     public void update(LocalStorage resources) {
         LocalStorage localStorage = localStorageRepository.findById(resources.getId());
-        ValidationUtil.isNull( localStorage.getId(),"LocalStorage","id",resources.getId());
+        ValidationUtil.isNull(localStorage.getId(), "LocalStorage", "id", resources.getId());
         localStorage.copy(resources);
         localStorageRepository.save(localStorage);
     }
@@ -115,7 +114,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     public File download(List<LocalStorageDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (LocalStorageDto localStorageDTO : queryAll) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("文件名", localStorageDTO.getRealName());
             map.put("备注名", localStorageDTO.getName());
             map.put("文件类型", localStorageDTO.getType());

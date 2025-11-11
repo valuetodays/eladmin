@@ -5,6 +5,13 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.maint.domain.Database;
@@ -17,14 +24,6 @@ import me.vt.modules.maint.util.SqlUtils;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -48,7 +47,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public List<DatabaseDto> queryAll(DatabaseQueryCriteria criteria){
+    public List<DatabaseDto> queryAll(DatabaseQueryCriteria criteria) {
         // fixme      return databaseMapper.toDto(databaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
         return null;
     }
@@ -56,7 +55,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public DatabaseDto findById(String id) {
         Database database = databaseRepository.findById(id);
-        ValidationUtil.isNull(database.getId(),"Database","id",id);
+        ValidationUtil.isNull(database.getId(), "Database", "id", id);
         return databaseMapper.toDto(database);
     }
 
@@ -71,7 +70,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Transactional(rollbackOn = Exception.class)
     public void update(Database resources) {
         Database database = databaseRepository.findById(resources.getId());
-        ValidationUtil.isNull(database.getId(),"Database","id",resources.getId());
+        ValidationUtil.isNull(database.getId(), "Database", "id", resources.getId());
         database.copy(resources);
         databaseRepository.persist(database);
     }
@@ -98,7 +97,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     public File download(List<DatabaseDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (DatabaseDto databaseDto : queryAll) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("数据库名称", databaseDto.getName());
             map.put("数据库连接地址", databaseDto.getJdbcUrl());
             map.put("用户名", databaseDto.getUserName());

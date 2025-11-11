@@ -1,11 +1,10 @@
 package me.vt.annotation;
 
+import jakarta.interceptor.InterceptorBinding;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import jakarta.interceptor.InterceptorBinding;
 
 /**
  * @author Zheng Jie

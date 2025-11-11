@@ -29,12 +29,12 @@ public class UserCacheManager {
      * @return JwtUserDto
      */
     public JwtUserDto getUserCache(String userName) {
-//        // 转小写
-//        userName = StringUtils.lowerCase(userName);
-//        if (StringUtils.isNotEmpty(userName)) {
-//            // 获取数据
-//            return redisUtils.get(LoginProperties.cacheKey + userName, JwtUserDto.class);
-//        }
+        //        // 转小写
+        //        userName = StringUtils.lowerCase(userName);
+        //        if (StringUtils.isNotEmpty(userName)) {
+        //            // 获取数据
+        //            return redisUtils.get(LoginProperties.cacheKey + userName, JwtUserDto.class);
+        //        }
 
         // return null always
         return null;
@@ -44,7 +44,7 @@ public class UserCacheManager {
      *  添加缓存到Redis
      * @param userName 用户名
      */
-//    @Async
+    //    @Async
     public void addUserCache(String userName, JwtUserDto user) {
         // 转小写
         userName = StringUtils.lowerCase(userName);
@@ -60,7 +60,7 @@ public class UserCacheManager {
      * 用户信息变更时
      * @param userName 用户名
      */
-//    @Async
+    //    @Async
     public void cleanUserCache(String userName) {
         // 转小写
         userName = StringUtils.lowerCase(userName);

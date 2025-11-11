@@ -18,20 +18,20 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Table(name="fortune_stock")
+@Table(name = "fortune_stock")
 public class Stock extends JpaCrudLongIdBasePersist {
 
-    @Column(name = "code",nullable = false)
+    @Column(name = "code", nullable = false)
     @NotBlank
     @Schema(description = "编号")
     private String code;
 
-    @Column(name = "region",nullable = false)
+    @Column(name = "region", nullable = false)
     @NotBlank
     @Schema(description = "区域")
     private String region;
 
-    @Column(name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     @NotBlank
     @Schema(description = "名称")
     private String name;
@@ -41,6 +41,6 @@ public class Stock extends JpaCrudLongIdBasePersist {
     private String remark;
 
     public void copy(Stock source) {
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

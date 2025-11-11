@@ -7,6 +7,9 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +27,6 @@ import me.vt.utils.PageUtil;
 import me.vt.utils.RedisUtils;
 import me.vt.utils.ValidationUtil;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Zheng Jie
@@ -60,8 +59,8 @@ public class DictDetailServiceImpl implements DictDetailService {
 
         PanacheQuery<DictDetail> page = panacheQuery.page(pageable);
 
-//        PanacheQuery<DictDetail> paged = dictDetailRepository.findAll().page(pageable);
-//        Page<DictDetail> page = dictDetailRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        //        PanacheQuery<DictDetail> paged = dictDetailRepository.findAll().page(pageable);
+        //        Page<DictDetail> page = dictDetailRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         List<DictDetail> list = page.list();
         List<DictDetailDto> dto = dictDetailMapper.toDto(list);
         return PageUtil.toPage(dto, page.count());

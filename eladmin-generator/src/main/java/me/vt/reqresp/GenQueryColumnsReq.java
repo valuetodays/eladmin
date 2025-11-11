@@ -1,10 +1,9 @@
 package me.vt.reqresp;
 
+import java.io.Serializable;
 import ll.vt.quarkus.commons.base.PageIO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
 
 /**
  * .

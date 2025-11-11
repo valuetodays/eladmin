@@ -2,11 +2,10 @@ package me.vt.modules.system.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import me.vt.common.repository.MyPanacheRepository;
-import me.vt.modules.system.domain.User;
-
 import java.util.Date;
 import java.util.Set;
+import me.vt.common.repository.MyPanacheRepository;
+import me.vt.modules.system.domain.User;
 
 /**
  * @author Zheng Jie
@@ -49,7 +48,7 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param lastPasswordResetTime /
      */
     @Transactional
-//    @Query(value = "update sys_user set password = ?2 , pwd_reset_time = ?3 where username = ?1",nativeQuery = true)
+    //    @Query(value = "update sys_user set password = ?2 , pwd_reset_time = ?3 where username = ?1",nativeQuery = true)
     public void updatePass(String username, String pass, Date lastPasswordResetTime) {
         update("set password = ?2 , pwdResetTime = ?3  where username = ?1", username, pass, lastPasswordResetTime);
     }
@@ -60,7 +59,7 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param email 邮箱
      */
     @Transactional
-//    @Query(value = "update sys_user set email = ?2 where username = ?1",nativeQuery = true)
+    //    @Query(value = "update sys_user set email = ?2 where username = ?1",nativeQuery = true)
     public void updateEmail(String username, String email) {
         update("set email = ?2 where username = ?1", username, email);
     }
@@ -70,7 +69,7 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param deptIds /
      * @return /
      */
-//    @Query(value = "SELECT count(1) FROM sys_user u WHERE u.dept_id IN ?1", nativeQuery = true)
+    //    @Query(value = "SELECT count(1) FROM sys_user u WHERE u.dept_id IN ?1", nativeQuery = true)
     public int countByDepts(Set<Long> deptIds) {
         return (int) find("deptId in ?1", deptIds).count();
     }
@@ -81,7 +80,7 @@ public class UserRepository extends MyPanacheRepository<User> {
      * @param pwd 、
      */
     @Transactional
-//    @Query(value = "update sys_user set password = ?2 where user_id in ?1",nativeQuery = true)
+    //    @Query(value = "update sys_user set password = ?2 where user_id in ?1",nativeQuery = true)
     public void resetPwd(Set<Long> ids, String pwd) {
         update("set password = ?2 where id in ?1", pwd, ids);
     }

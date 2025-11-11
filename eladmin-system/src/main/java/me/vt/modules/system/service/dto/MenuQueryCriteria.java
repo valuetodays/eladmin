@@ -1,5 +1,9 @@
 package me.vt.modules.system.service.dto;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import ll.vt.quarkus.commons.base.Operator;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.Data;
@@ -7,11 +11,6 @@ import me.vt.common.QuerySearchable;
 import me.vt.common.annotation.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Zheng Jie
@@ -44,9 +43,9 @@ public class MenuQueryCriteria implements QuerySearchable {
             querySearches.add(QuerySearch.of("pid", String.valueOf(pid), Operator.EQ));
         }
         // fixme createTime between
-//        if (StringExUtils.isNotBlank(dictName)) {
-//            querySearches.add(QuerySearch.of("dictId#id#Dict#name", dictName, Operator.JOIN));
-//        }
+        //        if (StringExUtils.isNotBlank(dictName)) {
+        //            querySearches.add(QuerySearch.of("dictId#id#Dict#name", dictName, Operator.JOIN));
+        //        }
         return querySearches;
     }
 }

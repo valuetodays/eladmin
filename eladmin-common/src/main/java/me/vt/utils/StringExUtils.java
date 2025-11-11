@@ -2,15 +2,14 @@ package me.vt.utils;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
-import lombok.extern.slf4j.Slf4j;
-import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
-import net.dreamlu.mica.ip2region.core.IpInfo;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import lombok.extern.slf4j.Slf4j;
+import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
+import net.dreamlu.mica.ip2region.core.IpInfo;
 
 /**
  * @author Zheng Jie
@@ -118,7 +117,7 @@ public class StringExUtils {
      */
     public static String getCityInfo(String ip) {
         IpInfo ipInfo = IP_SEARCHER.memorySearch(ip);
-        if(ipInfo != null){
+        if (ipInfo != null) {
             return ipInfo.getAddress();
         }
         return null;
@@ -130,7 +129,7 @@ public class StringExUtils {
     public static String getBrowser(String uaStr) {
         UserAgent ua = UserAgentUtil.parse(uaStr);
         String browser = ua.getBrowser().toString() + " " + ua.getVersion();
-        return browser.replace(".0.0.0","");
+        return browser.replace(".0.0.0", "");
     }
 
     /**
@@ -157,10 +156,12 @@ public class StringExUtils {
         try {
             InetAddress candidateAddress = null;
             // 遍历所有的网络接口
-            for (Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements();) {
+            for (Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); interfaces
+                    .hasMoreElements();) {
                 NetworkInterface anInterface = interfaces.nextElement();
                 // 在所有的接口下再遍历IP
-                for (Enumeration<InetAddress> inetAddresses = anInterface.getInetAddresses(); inetAddresses.hasMoreElements();) {
+                for (Enumeration<InetAddress> inetAddresses = anInterface.getInetAddresses(); inetAddresses
+                        .hasMoreElements();) {
                     InetAddress inetAddr = inetAddresses.nextElement();
                     // 排除loopback类型地址
                     if (!inetAddr.isLoopbackAddress()) {

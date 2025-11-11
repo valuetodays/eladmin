@@ -9,16 +9,15 @@ import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.ext.Provider;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
 import me.vt.domain.SysLog;
 import me.vt.service.client.SysLogService;
 import me.vt.utils.SecurityUtils;
 import me.vt.utils.StringExUtils;
-
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * @author Zheng Jie
@@ -47,7 +46,7 @@ public class LogAspect {
         log.info("调用方法: {}", method.getName());
         currentTime.set(System.currentTimeMillis());
         Object result = ctx.proceed();
-        SysLog sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get());
+        SysLog sysLog = new SysLog("INFO", System.currentTimeMillis() - currentTime.get());
         currentTime.remove();
         Object[] parameters = ctx.getParameters();
         sysLog.setParams(JsonUtils.toJsonString(parameters));
@@ -55,7 +54,8 @@ public class LogAspect {
         sysLog.setMethod(methodName);
         me.vt.annotation.Log aopLog = method.getAnnotation(me.vt.annotation.Log.class);
         sysLog.setDescription(aopLog.value());
-        sysLogService.save(getUsername(), StringExUtils.getBrowser(headers.getHeaderString("User-Agent")), getIp(), sysLog);
+        sysLogService.save(getUsername(), StringExUtils.getBrowser(headers.getHeaderString("User-Agent")), getIp(),
+                sysLog);
         log.info("方法执行完毕: {}", method.getName());
         return result;
     }
@@ -72,7 +72,7 @@ public class LogAspect {
             ip = headers.getHeaderString("WL-Proxy-Client-IP");
         }
         if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-// fixme:            ip = headers.getRemoteAddr();
+            // fixme:            ip = headers.getRemoteAddr();
         }
         String comma = ",";
         String localhost = "127.0.0.1";
@@ -97,7 +97,7 @@ public class LogAspect {
     public String getUsername() {
         try {
             return securityUtils.getCurrentUsername();
-        }catch (Exception e){
+        } catch (Exception e) {
             return "";
         }
     }

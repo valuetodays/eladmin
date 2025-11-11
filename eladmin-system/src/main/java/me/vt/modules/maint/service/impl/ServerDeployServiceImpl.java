@@ -4,6 +4,13 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import me.vt.modules.maint.domain.ServerDeploy;
 import me.vt.modules.maint.repository.ServerDeployRepository;
@@ -15,14 +22,6 @@ import me.vt.modules.maint.util.ExecuteShellUtil;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author zhanghouying
@@ -39,8 +38,8 @@ public class ServerDeployServiceImpl implements ServerDeployService {
 
     @Override
     public PageResult<ServerDeployDto> queryAll(ServerDeployQueryCriteria criteria, Page pageable) {
-// fixme        Page<ServerDeploy> page = serverDeployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-//        return PageUtil.toPage(page.map(serverDeployMapper::toDto));
+        // fixme        Page<ServerDeploy> page = serverDeployRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        //        return PageUtil.toPage(page.map(serverDeployMapper::toDto));
         return null;
     }
 
@@ -67,7 +66,8 @@ public class ServerDeployServiceImpl implements ServerDeployService {
     public Boolean testConnect(ServerDeploy resources) {
         ExecuteShellUtil executeShellUtil = null;
         try {
-            executeShellUtil = new ExecuteShellUtil(resources.getIp(), resources.getAccount(), resources.getPassword(), resources.getPort());
+            executeShellUtil = new ExecuteShellUtil(resources.getIp(), resources.getAccount(), resources.getPassword(),
+                    resources.getPort());
             return executeShellUtil.execute("ls") == 0;
         } catch (Exception e) {
             return false;

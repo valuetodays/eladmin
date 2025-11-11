@@ -5,6 +5,14 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import me.vt.exception.BadRequestException;
 import me.vt.exception.EntityExistException;
@@ -22,15 +30,6 @@ import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import me.vt.utils.RedisUtils;
 import me.vt.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
 * @author Zheng Jie
@@ -53,7 +52,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public PageResult<JobDto> queryAll(JobQueryCriteria criteria, Page pageable) {
-//   fixme: 条件查询         Page<Job> page = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        //   fixme: 条件查询         Page<Job> page = jobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         PanacheQuery<Job> paged = jobRepository.findAll().page(pageable);
         List<Job> list = paged.list();
         long count = paged.count();
@@ -72,9 +71,9 @@ public class JobServiceImpl implements JobService {
     public JobDto findById(Long id) {
         String key = CacheKey.JOB_ID + id;
         Job job = redisUtils.get(key, Job.class);
-        if(job == null){
+        if (job == null) {
             job = jobRepository.findById(id);
-            ValidationUtil.isNull(job.getId(),"Job","id",id);
+            ValidationUtil.isNull(job.getId(), "Job", "id", id);
             redisUtils.set(key, job, 1, TimeUnit.DAYS);
         }
         return jobMapper.toDto(job);
@@ -84,8 +83,8 @@ public class JobServiceImpl implements JobService {
     @Transactional(rollbackOn = Exception.class)
     public void create(Job resources) {
         Job job = jobRepository.findByName(resources.getName());
-        if(job != null){
-            throw new EntityExistException(Job.class,"name",resources.getName());
+        if (job != null) {
+            throw new EntityExistException(Job.class, "name", resources.getName());
         }
         jobRepository.save(resources);
     }
@@ -95,10 +94,10 @@ public class JobServiceImpl implements JobService {
     public void update(Job resources) {
         Job job = jobRepository.findById(resources.getId());
         Job old = jobRepository.findByName(resources.getName());
-        if(old != null && !old.getId().equals(resources.getId())){
-            throw new EntityExistException(Job.class,"name",resources.getName());
+        if (old != null && !old.getId().equals(resources.getId())) {
+            throw new EntityExistException(Job.class, "name", resources.getName());
         }
-        ValidationUtil.isNull( job.getId(),"Job","id",resources.getId());
+        ValidationUtil.isNull(job.getId(), "Job", "id", resources.getId());
         resources.setId(job.getId());
         jobRepository.update(resources);
         // 删除缓存
@@ -117,7 +116,7 @@ public class JobServiceImpl implements JobService {
     public File download(List<JobDto> jobDtos) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (JobDto jobDTO : jobDtos) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("岗位名称", jobDTO.getName());
             map.put("岗位状态", jobDTO.getEnabled() ? "启用" : "停用");
             map.put("创建日期", jobDTO.getCreateTime());
@@ -138,7 +137,7 @@ public class JobServiceImpl implements JobService {
      * 删除缓存
      * @param id /
      */
-    public void delCaches(Long id){
+    public void delCaches(Long id) {
         redisUtils.del(CacheKey.JOB_ID + id);
     }
 }

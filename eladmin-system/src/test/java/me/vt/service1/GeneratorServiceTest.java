@@ -23,7 +23,7 @@ public class GeneratorServiceTest {
 
     @Test
     public void getTables() {
-        PageResult<TableInfo> ba = generatorService.getTables("ba", new int[]{0, 10});
+        PageResult<TableInfo> ba = generatorService.getTables("ba", new int[] {0, 10});
         log.info("ba={}", ba);
     }
 }

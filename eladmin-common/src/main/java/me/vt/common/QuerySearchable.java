@@ -1,8 +1,7 @@
 package me.vt.common;
 
-import ll.vt.quarkus.commons.base.QuerySearch;
-
 import java.util.List;
+import ll.vt.quarkus.commons.base.QuerySearch;
 
 /**
  * .

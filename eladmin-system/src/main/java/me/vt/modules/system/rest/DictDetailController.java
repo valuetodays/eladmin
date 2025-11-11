@@ -9,6 +9,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import me.vt.annotation.Log;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.DictDetail;
@@ -19,10 +22,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
 * @author Zheng Jie
@@ -64,7 +63,7 @@ public class DictDetailController {
     @PreAuthorize("@el.check('dict:add')")
     public Object createDictDetail(@Valid DictDetail resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         dictDetailService.create(resources);
         return 1;

@@ -6,12 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.vt.utils.GenUtil;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
  * 列的数据信息
@@ -69,14 +68,15 @@ public class ColumnInfo implements Serializable {
     @Schema(description = "日期注解")
     private String dateAnnotation;
 
-    public ColumnInfo(String tableName, String columnName, Boolean notNull, String columnType, String remark, String keyType, String extra) {
+    public ColumnInfo(String tableName, String columnName, Boolean notNull, String columnType, String remark,
+            String keyType, String extra) {
         this.tableName = tableName;
         this.columnName = columnName;
         this.columnType = columnType;
         this.keyType = keyType;
         this.extra = extra;
         this.notNull = notNull;
-        if(GenUtil.PK.equalsIgnoreCase(keyType) && GenUtil.EXTRA.equalsIgnoreCase(extra)){
+        if (GenUtil.PK.equalsIgnoreCase(keyType) && GenUtil.EXTRA.equalsIgnoreCase(extra)) {
             this.notNull = false;
         }
         this.remark = remark;

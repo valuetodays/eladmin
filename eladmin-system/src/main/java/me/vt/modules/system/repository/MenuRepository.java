@@ -3,13 +3,12 @@ package me.vt.modules.system.repository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.system.domain.Menu;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -76,7 +75,7 @@ public class MenuRepository extends MyPanacheRepository<Menu> {
      * @param menuId /
      */
     @Transactional
-//    @Query(value = " update sys_menu set sub_count = ?1 where id = ?2 ",nativeQuery = true)
+    //    @Query(value = " update sys_menu set sub_count = ?1 where id = ?2 ",nativeQuery = true)
     public void updateSubCntById(int count, Long menuId) {
         update("set subCount=?1 where id=?2", count, menuId);
     }

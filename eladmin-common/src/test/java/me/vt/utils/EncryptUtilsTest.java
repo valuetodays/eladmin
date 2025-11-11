@@ -1,11 +1,11 @@
 package me.vt.utils;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-
 import static me.vt.utils.EncryptUtils.desDecrypt;
 import static me.vt.utils.EncryptUtils.desEncrypt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class EncryptUtilsTest {

@@ -7,12 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.base.BaseEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
 
 /**
  * @author Zheng Jie
@@ -31,10 +30,10 @@ public class Menu extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @JSONField(serialize = false)
-//    @ManyToMany(mappedBy = "menus")
-//    @Schema(description = "菜单角色")
-//    private Set<Role> roles;
+    //    @JSONField(serialize = false)
+    //    @ManyToMany(mappedBy = "menus")
+    //    @Schema(description = "菜单角色")
+    //    private Set<Role> roles;
 
     @Schema(description = "菜单标题")
     private String title;

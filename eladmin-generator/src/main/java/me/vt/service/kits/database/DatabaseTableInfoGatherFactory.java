@@ -3,7 +3,6 @@ package me.vt.service.kits.database;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import org.springframework.util.Assert;
 
 /**
@@ -14,9 +13,9 @@ import org.springframework.util.Assert;
  */
 public class DatabaseTableInfoGatherFactory {
     public enum DbType {
-        MYSQL,
-        PGSQL,
+        MYSQL, PGSQL,
     }
+
     public static DatabaseTableInfoGather choose(DbType dbType) {
         Map<DbType, DatabaseTableInfoGather> map = new HashMap<>();
         map.put(DbType.MYSQL, new MySqlTableInfoGather());

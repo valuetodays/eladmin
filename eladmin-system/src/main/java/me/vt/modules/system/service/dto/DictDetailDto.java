@@ -1,7 +1,6 @@
 package me.vt.modules.system.service.dto;
 
 import java.io.Serializable;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.base.BaseDTO;

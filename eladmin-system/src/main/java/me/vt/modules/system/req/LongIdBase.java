@@ -1,8 +1,7 @@
 package me.vt.modules.system.req;
 
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * .

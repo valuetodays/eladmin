@@ -9,9 +9,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.modules.maint.domain.Database;
 import me.vt.modules.maint.service.client.DatabaseService;
 import me.vt.modules.maint.service.dto.DatabaseDto;
@@ -21,10 +24,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * @author zhanghouying
@@ -103,19 +102,19 @@ public class DatabaseController extends BaseController {
     @Path(value = "/upload")
     @PreAuthorize("@el.check('database:add')")
     public Object uploadDatabase(/*MultipartFile file, HttpServletRequest request*/) throws Exception {
-		/*String id = request.getParameter("id");
-		DatabaseDto database = databaseService.findById(id);
-		String fileName;
-		if(database != null){
-			fileName = FileUtil.verifyFilename(file.getOriginalFilename());
-			File executeFile = new File(fileSavePath + fileName);
-			FileUtil.del(executeFile);
-			file.transferTo(executeFile);
-			String result = SqlUtils.executeFile(database.getJdbcUrl(), database.getUserName(), database.getPwd(), executeFile);
-			return new ResponseEntity<>(result,HttpStatus.OK);
-		}else{
-			throw new BadRequestException("Database not exist");
-		}*/
+        /*String id = request.getParameter("id");
+        DatabaseDto database = databaseService.findById(id);
+        String fileName;
+        if(database != null){
+        	fileName = FileUtil.verifyFilename(file.getOriginalFilename());
+        	File executeFile = new File(fileSavePath + fileName);
+        	FileUtil.del(executeFile);
+        	file.transferTo(executeFile);
+        	String result = SqlUtils.executeFile(database.getJdbcUrl(), database.getUserName(), database.getPwd(), executeFile);
+        	return new ResponseEntity<>(result,HttpStatus.OK);
+        }else{
+        	throw new BadRequestException("Database not exist");
+        }*/
         throw AssertUtils.create("temply comment");
     }
 }

@@ -3,6 +3,11 @@ package me.vt.modules.system.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import me.vt.modules.system.domain.Dept;
 import me.vt.modules.system.domain.User;
 import me.vt.modules.system.repository.UserRepository;
@@ -12,12 +17,6 @@ import me.vt.modules.system.service.client.RoleService;
 import me.vt.modules.system.service.composited.UserAuthCompositeService;
 import me.vt.modules.system.service.dto.RoleSmallDto;
 import me.vt.utils.enums.DataScopeEnum;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Zheng Jie
@@ -71,7 +70,7 @@ public class DataServiceImpl implements DataService {
      * @param role 角色
      * @return 数据权限ID
      */
-    public Set<Long> getCustomize(Set<Long> deptIds, RoleSmallDto role){
+    public Set<Long> getCustomize(Set<Long> deptIds, RoleSmallDto role) {
         List<Dept> depts = userAuthCompositeService.findDeptsByRoleIds(List.of(role.getId()));
         for (Dept dept : depts) {
             deptIds.add(dept.getId());

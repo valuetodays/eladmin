@@ -11,9 +11,16 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.Dept;
 import me.vt.modules.system.service.client.DeptService;
@@ -24,14 +31,6 @@ import me.vt.utils.PageUtil;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
 * @author Zheng Jie
@@ -76,14 +75,14 @@ public class DeptController extends BaseController {
     @Path("/superior")
     @PreAuthorize("@el.check('user:list','dept:list')")
     public Object getDeptSuperior(List<Long> ids,
-                                  @QueryParam("exclude") @DefaultValue("false") Boolean exclude) {
-        Set<DeptDto> deptSet  = new LinkedHashSet<>();
+            @QueryParam("exclude") @DefaultValue("false") Boolean exclude) {
+        Set<DeptDto> deptSet = new LinkedHashSet<>();
         for (Long id : ids) {
             DeptDto deptDto = deptService.findById(id);
             List<DeptDto> depts = deptService.getSuperior(deptDto, new ArrayList<>());
-            if(exclude){
+            if (exclude) {
                 for (DeptDto dept : depts) {
-                    if(dept.getId().equals(deptDto.getPid())) {
+                    if (dept.getId().equals(deptDto.getPid())) {
                         dept.setSubCount(dept.getSubCount() - 1);
                     }
                 }
@@ -102,7 +101,7 @@ public class DeptController extends BaseController {
     @PreAuthorize("@el.check('dept:add')")
     public Object createDept(@Valid Dept resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         deptService.create(resources);
         return "1";
@@ -128,7 +127,7 @@ public class DeptController extends BaseController {
         for (Long id : ids) {
             List<Dept> deptList = deptService.findByPid(id);
             deptDtos.add(deptService.findById(id));
-            if(CollectionUtil.isNotEmpty(deptList)){
+            if (CollectionUtil.isNotEmpty(deptList)) {
                 deptDtos = deptService.getDeleteDepts(deptList, deptDtos);
             }
         }

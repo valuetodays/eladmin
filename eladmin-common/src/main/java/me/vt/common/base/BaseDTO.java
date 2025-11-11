@@ -1,18 +1,17 @@
 package me.vt.common.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @author Zheng Jie
  * @since 2019年10月24日20:48:53
  */
 @Data
-public class BaseDTO  implements Serializable {
+public class BaseDTO implements Serializable {
 
     @Schema(description = "创建人")
     private String createBy;

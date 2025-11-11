@@ -7,12 +7,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.sql.Timestamp;
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * @author Zheng Jie
@@ -65,8 +64,8 @@ public class SysLog implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
-    public SysLog() {
-    }
+    public SysLog() {}
+
     public SysLog(String logType, Long time) {
         this.logType = logType;
         this.time = time;

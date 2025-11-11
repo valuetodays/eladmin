@@ -6,6 +6,14 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.modules.mybiz.api.dto.StockDto;
@@ -20,15 +28,6 @@ import me.vt.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
 * @author vt
@@ -58,13 +57,13 @@ public class StockServiceImpl {
         return PageUtil.toPage(list, all.count());
     }
 
-    public List<StockDto> queryAll(StockQueryCriteria criteria){
+    public List<StockDto> queryAll(StockQueryCriteria criteria) {
         return this.queryAll(criteria, Page.ofSize(10000)).getContent();
     }
 
     public StockDto findById(Long id) {
         Stock stock = stockRepository.findById(id);
-        ValidationUtil.isNull(stock.getId(),"Stock","id",id);
+        ValidationUtil.isNull(stock.getId(), "Stock", "id", id);
         return stockMapper.toDto(stock);
     }
 
@@ -76,7 +75,7 @@ public class StockServiceImpl {
     @Transactional(rollbackOn = Exception.class)
     public void update(Stock resources) {
         Stock stock = stockRepository.findById(resources.getId());
-        ValidationUtil.isNull( stock.getId(),"Stock","id",resources.getId());
+        ValidationUtil.isNull(stock.getId(), "Stock", "id", resources.getId());
         stock.copy(resources);
         stockRepository.save(stock);
     }
@@ -91,7 +90,7 @@ public class StockServiceImpl {
     public File download(List<StockDto> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (StockDto stock : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("编号", stock.getCode());
             map.put("区域", stock.getRegion());
             map.put("名称", stock.getName());

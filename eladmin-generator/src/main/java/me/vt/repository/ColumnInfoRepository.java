@@ -2,10 +2,9 @@ package me.vt.repository;
 
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import me.vt.common.repository.MyPanacheRepository;
 import me.vt.domain.ColumnInfo;
-
-import java.util.List;
 
 /**
  * @author Zheng Jie

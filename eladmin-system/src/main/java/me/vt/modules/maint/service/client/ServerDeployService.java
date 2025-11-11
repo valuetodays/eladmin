@@ -1,11 +1,10 @@
 package me.vt.modules.maint.service.client;
 
+import io.quarkus.panache.common.Page;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import io.quarkus.panache.common.Page;
 import me.vt.modules.maint.domain.ServerDeploy;
 import me.vt.modules.maint.service.dto.ServerDeployDto;
 import me.vt.modules.maint.service.dto.ServerDeployQueryCriteria;
@@ -64,12 +63,12 @@ public interface ServerDeployService {
      */
     ServerDeployDto findByIp(String ip);
 
-	/**
-	 * 测试登录服务器
-	 * @param resources /
-	 * @return /
-	 */
-	Boolean testConnect(ServerDeploy resources);
+    /**
+     * 测试登录服务器
+     * @param resources /
+     * @return /
+     */
+    Boolean testConnect(ServerDeploy resources);
 
     /**
      * 导出数据

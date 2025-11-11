@@ -1,11 +1,10 @@
 package me.vt.domain.vo;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.sql.Date;
 import java.sql.Timestamp;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * 交易详情，按需应该存入数据库，这里存入数据库，仅供临时测试

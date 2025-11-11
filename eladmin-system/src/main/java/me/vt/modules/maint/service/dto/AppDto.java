@@ -1,7 +1,6 @@
 package me.vt.modules.maint.service.dto;
 
 import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseDTO;
@@ -19,23 +18,23 @@ public class AppDto extends BaseDTO implements Serializable {
     private Long id;
 
     @Schema(description = "应用名称")
-	private String name;
+    private String name;
 
     @Schema(description = "端口")
-	private Integer port;
+    private Integer port;
 
     @Schema(description = "上传目录")
-	private String uploadPath;
+    private String uploadPath;
 
     @Schema(description = "部署目录")
-	private String deployPath;
+    private String deployPath;
 
     @Schema(description = "备份目录")
-	private String backupPath;
+    private String backupPath;
 
     @Schema(description = "启动脚本")
-	private String startScript;
+    private String startScript;
 
     @Schema(description = "部署脚本")
-	private String deployScript;
+    private String deployScript;
 }

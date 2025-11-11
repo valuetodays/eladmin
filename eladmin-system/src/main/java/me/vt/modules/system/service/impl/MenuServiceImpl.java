@@ -8,6 +8,18 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.exception.BadRequestException;
@@ -33,19 +45,6 @@ import me.vt.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -155,7 +154,8 @@ public class MenuServiceImpl implements MenuService {
             resources.setPid(null);
         }
         if (resources.getIframe()) {
-            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE) || resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
+            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE)
+                    || resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
                 throw new BadRequestException(BAD_REQUEST);
             }
         }
@@ -176,7 +176,8 @@ public class MenuServiceImpl implements MenuService {
         ValidationUtil.isNull(menu.getId(), "Permission", "id", resources.getId());
 
         if (resources.getIframe()) {
-            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE) || resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
+            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE)
+                    || resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
                 throw new BadRequestException(BAD_REQUEST);
             }
         }
@@ -293,43 +294,45 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuVo> buildMenus(List<MenuDto> menuDtos) {
         List<MenuVo> list = new LinkedList<>();
         menuDtos.forEach(menuDTO -> {
-                if (menuDTO != null) {
-                    List<MenuDto> menuDtoList = menuDTO.getChildren();
-                    MenuVo menuVo = new MenuVo();
-                    menuVo.setName(ObjectUtil.isNotEmpty(menuDTO.getComponentName()) ? menuDTO.getComponentName() : menuDTO.getTitle());
-                    // 一级目录需要加斜杠，不然会报警告
-                    menuVo.setPath(menuDTO.getPid() == null ? "/" + menuDTO.getPath() : menuDTO.getPath());
-                    menuVo.setHidden(menuDTO.getHidden());
-                    // 如果不是外链
-                    if (!menuDTO.getIframe()) {
-                        if (menuDTO.getPid() == null) {
-                            menuVo.setComponent(StringUtils.isEmpty(menuDTO.getComponent()) ? "Layout" : menuDTO.getComponent());
-                            // 如果不是一级菜单，并且菜单类型为目录，则代表是多级菜单
-                        } else if (menuDTO.getType() == 0) {
-                            menuVo.setComponent(StringUtils.isEmpty(menuDTO.getComponent()) ? "ParentView" : menuDTO.getComponent());
-                        } else if (StringUtils.isNoneBlank(menuDTO.getComponent())) {
-                            menuVo.setComponent(menuDTO.getComponent());
-                        }
+            if (menuDTO != null) {
+                List<MenuDto> menuDtoList = menuDTO.getChildren();
+                MenuVo menuVo = new MenuVo();
+                menuVo.setName(ObjectUtil.isNotEmpty(menuDTO.getComponentName()) ? menuDTO.getComponentName()
+                        : menuDTO.getTitle());
+                // 一级目录需要加斜杠，不然会报警告
+                menuVo.setPath(menuDTO.getPid() == null ? "/" + menuDTO.getPath() : menuDTO.getPath());
+                menuVo.setHidden(menuDTO.getHidden());
+                // 如果不是外链
+                if (!menuDTO.getIframe()) {
+                    if (menuDTO.getPid() == null) {
+                        menuVo.setComponent(
+                                StringUtils.isEmpty(menuDTO.getComponent()) ? "Layout" : menuDTO.getComponent());
+                        // 如果不是一级菜单，并且菜单类型为目录，则代表是多级菜单
+                    } else if (menuDTO.getType() == 0) {
+                        menuVo.setComponent(
+                                StringUtils.isEmpty(menuDTO.getComponent()) ? "ParentView" : menuDTO.getComponent());
+                    } else if (StringUtils.isNoneBlank(menuDTO.getComponent())) {
+                        menuVo.setComponent(menuDTO.getComponent());
                     }
-                    menuVo.setMeta(new MenuMetaVo(menuDTO.getTitle(), menuDTO.getIcon(), !menuDTO.getCache()));
-                    if (CollectionUtil.isNotEmpty(menuDtoList)) {
-                        menuVo.setAlwaysShow(true);
-                        menuVo.setRedirect("noredirect");
-                        menuVo.setChildren(buildMenus(menuDtoList));
-                        // 处理是一级菜单并且没有子菜单的情况
-                    } else if (menuDTO.getPid() == null) {
-                        MenuVo menuVo1 = getMenuVo(menuDTO, menuVo);
-                        menuVo.setName(null);
-                        menuVo.setMeta(null);
-                        menuVo.setComponent("Layout");
-                        List<MenuVo> list1 = new ArrayList<>();
-                        list1.add(menuVo1);
-                        menuVo.setChildren(list1);
-                    }
-                    list.add(menuVo);
                 }
+                menuVo.setMeta(new MenuMetaVo(menuDTO.getTitle(), menuDTO.getIcon(), !menuDTO.getCache()));
+                if (CollectionUtil.isNotEmpty(menuDtoList)) {
+                    menuVo.setAlwaysShow(true);
+                    menuVo.setRedirect("noredirect");
+                    menuVo.setChildren(buildMenus(menuDtoList));
+                    // 处理是一级菜单并且没有子菜单的情况
+                } else if (menuDTO.getPid() == null) {
+                    MenuVo menuVo1 = getMenuVo(menuDTO, menuVo);
+                    menuVo.setName(null);
+                    menuVo.setMeta(null);
+                    menuVo.setComponent("Layout");
+                    List<MenuVo> list1 = new ArrayList<>();
+                    list1.add(menuVo1);
+                    menuVo.setChildren(list1);
+                }
+                list.add(menuVo);
             }
-        );
+        });
         return list;
     }
 

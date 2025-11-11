@@ -8,11 +8,11 @@ import lombok.Getter;
  * 统一异常处理
  */
 @Getter
-public class BadRequestException extends RuntimeException{
+public class BadRequestException extends RuntimeException {
 
     private Integer status = 400;
 
-    public BadRequestException(String msg){
+    public BadRequestException(String msg) {
         super(msg);
     }
 

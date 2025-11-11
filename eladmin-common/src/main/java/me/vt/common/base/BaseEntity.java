@@ -2,13 +2,12 @@ package me.vt.common.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 通用字段， is_del 根据需求自行添加
@@ -43,9 +42,11 @@ public class BaseEntity implements Serializable {
     private LocalDateTime updateTime;
 
     /* 分组校验 */
-    public @interface Create {}
+    public @interface Create {
+    }
 
     /* 分组校验 */
-    public @interface Update {}
+    public @interface Update {
+    }
 
 }

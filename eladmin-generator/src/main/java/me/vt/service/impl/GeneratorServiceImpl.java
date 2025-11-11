@@ -7,24 +7,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import me.vt.domain.ColumnInfo;
-import me.vt.domain.GenConfig;
-import me.vt.domain.vo.TableInfo;
-import me.vt.exception.BadRequestException;
-import me.vt.repository.ColumnInfoRepository;
-import me.vt.reqresp.GenPreviewResp;
-import me.vt.service.kits.database.DatabaseTableInfoGather;
-import me.vt.service.kits.database.DatabaseTableInfoGatherFactory;
-import me.vt.service.client.GeneratorService;
-import me.vt.utils.GenUtil;
-import me.vt.utils.PageResult;
-import me.vt.utils.PageUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -32,6 +14,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import me.vt.domain.ColumnInfo;
+import me.vt.domain.GenConfig;
+import me.vt.domain.vo.TableInfo;
+import me.vt.exception.BadRequestException;
+import me.vt.repository.ColumnInfoRepository;
+import me.vt.reqresp.GenPreviewResp;
+import me.vt.service.client.GeneratorService;
+import me.vt.service.kits.database.DatabaseTableInfoGather;
+import me.vt.service.kits.database.DatabaseTableInfoGatherFactory;
+import me.vt.utils.GenUtil;
+import me.vt.utils.PageResult;
+import me.vt.utils.PageUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Zheng Jie
@@ -74,12 +73,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         for (Object obj : result) {
             Object[] arr = (Object[]) obj;
             TableInfo ti = new TableInfo(
-                Objects.toString(arr[0], null),
-                Objects.toString(arr[1], null),
-                Objects.toString(arr[2], null),
-                Objects.toString(arr[3], null),
-                Objects.toString(arr[4], "-")
-            );
+                    Objects.toString(arr[0], null),
+                    Objects.toString(arr[1], null),
+                    Objects.toString(arr[2], null),
+                    Objects.toString(arr[3], null),
+                    Objects.toString(arr[4], "-"));
             tableInfos.add(ti);
         }
         String countSql = "select count(1) from (" + sqlForTablesForQuery + ") tmp";
@@ -121,15 +119,14 @@ public class GeneratorServiceImpl implements GeneratorService {
         for (Object obj : result) {
             Object[] arr = (Object[]) obj;
             columnInfos.add(
-                new ColumnInfo(
-                    tableName,
-                    arr[0].toString(),
-                    "NO".equals(arr[1]),
-                    arr[2].toString(),
-                    Objects.toString(arr[3], null),
-                    Objects.toString(arr[4], null),
-                    Objects.toString(arr[5], null))
-            );
+                    new ColumnInfo(
+                            tableName,
+                            arr[0].toString(),
+                            "NO".equals(arr[1]),
+                            arr[2].toString(),
+                            Objects.toString(arr[3], null),
+                            Objects.toString(arr[4], null),
+                            Objects.toString(arr[5], null)));
         }
         return columnInfos;
     }
@@ -140,7 +137,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         // 第一种情况，数据库类字段改变或者新增字段
         for (ColumnInfo columnInfo : columnInfoList) {
             // 根据字段名称查找
-            List<ColumnInfo> columns = columnInfos.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+            List<ColumnInfo> columns = columnInfos.stream()
+                    .filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
             // 如果能找到，就修改部分可能被字段
             if (CollectionUtil.isNotEmpty(columns)) {
                 ColumnInfo column = columns.get(0);
@@ -159,7 +157,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         // 第二种情况，数据库字段删除了
         for (ColumnInfo columnInfo : columnInfos) {
             // 根据字段名称查找
-            List<ColumnInfo> columns = columnInfoList.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+            List<ColumnInfo> columns = columnInfoList.stream()
+                    .filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
             // 如果找不到，就代表字段被删除了，则需要删除该字段
             if (CollectionUtil.isEmpty(columns)) {
                 columnInfoRepository.delete(columnInfo);

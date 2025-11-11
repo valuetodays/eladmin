@@ -1,18 +1,13 @@
 package me.vt.utils;
 
+import static me.vt.utils.FileUtil.SYS_TEM_DIR;
+
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.template.Template;
 import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateException;
 import cn.hutool.extra.template.TemplateUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.vt.domain.ColumnInfo;
-import me.vt.domain.GenConfig;
-import me.vt.reqresp.GenPreviewResp;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.ObjectUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,8 +17,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static me.vt.utils.FileUtil.SYS_TEM_DIR;
+import lombok.extern.slf4j.Slf4j;
+import me.vt.domain.ColumnInfo;
+import me.vt.domain.GenConfig;
+import me.vt.reqresp.GenPreviewResp;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 代码生成
@@ -55,7 +54,7 @@ public class GenUtil {
         templateNames.add("Mapper");
         templateNames.add("Controller");
         templateNames.add("QueryCriteria");
-//        templateNames.add("Service");
+        //        templateNames.add("Service");
         templateNames.add("ServiceImpl");
         templateNames.add("Repository");
         return templateNames;
@@ -76,7 +75,8 @@ public class GenUtil {
     public static List<GenPreviewResp> preview(List<ColumnInfo> columns, GenConfig genConfig) {
         Map<String, Object> genMap = getGenMap(columns, genConfig);
         List<GenPreviewResp> genList = new ArrayList<>();
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine =
+                TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 获取后端模版
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
@@ -97,12 +97,14 @@ public class GenUtil {
         // String tempPath =SYS_TEM_DIR + "eladmin-gen-temp" + File.separator + genConfig.getTableName() + File.separator;
         String tempPath = SYS_TEM_DIR + "eladmin-gen-temp" + File.separator + genConfig.getTableName() + File.separator;
         Map<String, Object> genMap = getGenMap(columns, genConfig);
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine =
+                TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("admin/" + templateName + ".ftl");
-            String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(), tempPath + "eladmin" + File.separator);
+            String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(),
+                    tempPath + "eladmin" + File.separator);
             assert filePath != null;
             File file = new File(filePath);
             // 如果非覆盖生成
@@ -119,8 +121,10 @@ public class GenUtil {
             Template template = engine.getTemplate("front/" + templateName + ".ftl");
             String path = tempPath + "eladmin-web" + File.separator;
             String apiPath = path + "src" + File.separator + "api" + File.separator;
-            String srcPath = path + "src" + File.separator + "views" + File.separator + genMap.get("changeClassName").toString() + File.separator;
-            String filePath = getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString());
+            String srcPath = path + "src" + File.separator + "views" + File.separator
+                    + genMap.get("changeClassName").toString() + File.separator;
+            String filePath =
+                    getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString());
             assert filePath != null;
             File file = new File(filePath);
             // 如果非覆盖生成
@@ -134,9 +138,11 @@ public class GenUtil {
         return tempPath;
     }
 
-    public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig, final String rootPath) throws IOException {
+    public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig, final String rootPath)
+            throws IOException {
         Map<String, Object> genMap = getGenMap(columnInfos, genConfig);
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine =
+                TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
@@ -157,7 +163,8 @@ public class GenUtil {
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("front/" + templateName + ".ftl");
-            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(), genMap.get("changeClassName").toString());
+            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(),
+                    genMap.get("changeClassName").toString());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -193,8 +200,10 @@ public class GenUtil {
         String changeClassName = StringExUtils.toCamelCase(genConfig.getTableName());
         // 判断是否去除表前缀
         if (StringUtils.isNotEmpty(genConfig.getPrefix())) {
-            className = StringExUtils.toCapitalizeCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
-            changeClassName = StringExUtils.toCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
+            className = StringExUtils
+                    .toCapitalizeCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
+            changeClassName =
+                    StringExUtils.toCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
             changeClassName = StringUtils.uncapitalize(changeClassName);
         }
         // 保存类名
@@ -263,7 +272,7 @@ public class GenUtil {
             // 主键存在字典
             if (StringUtils.isNotBlank(column.getDictName())) {
                 genMap.put("hasDict", true);
-                if(!dicts.contains(column.getDictName()))
+                if (!dicts.contains(column.getDictName()))
                     dicts.add(column.getDictName());
             }
 
@@ -334,9 +343,11 @@ public class GenUtil {
     /**
      * 定义后端文件路径以及名称
      */
-    private static String getAdminFilePath(String templateName, GenConfig genConfig, String className, String rootPath) {
+    private static String getAdminFilePath(String templateName, GenConfig genConfig, String className,
+            String rootPath) {
         String projectPath = rootPath + File.separator + genConfig.getModuleName();
-        String packagePath = projectPath + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator;
+        String packagePath = projectPath + File.separator + "src" + File.separator + "main" + File.separator + "java"
+                + File.separator;
         if (!ObjectUtils.isEmpty(genConfig.getPack())) {
             packagePath += genConfig.getPack().replace(".", File.separator) + File.separator;
         }

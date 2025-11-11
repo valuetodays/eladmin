@@ -1,11 +1,10 @@
 package me.vt.modules.maint.service.client;
 
+import io.quarkus.panache.common.Page;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import io.quarkus.panache.common.Page;
 import me.vt.modules.maint.domain.Database;
 import me.vt.modules.maint.service.dto.DatabaseDto;
 import me.vt.modules.maint.service.dto.DatabaseQueryCriteria;
@@ -57,12 +56,12 @@ public interface DatabaseService {
      */
     void delete(Set<String> ids);
 
-	/**
-	 * 测试连接数据库
-	 * @param resources /
-	 * @return /
-	 */
-	boolean testConnection(Database resources);
+    /**
+     * 测试连接数据库
+     * @param resources /
+     * @return /
+     */
+    boolean testConnection(Database resources);
 
     /**
      * 导出数据

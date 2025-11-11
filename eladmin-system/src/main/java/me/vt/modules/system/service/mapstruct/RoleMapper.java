@@ -12,9 +12,9 @@ import org.mapstruct.ReportingPolicy;
  * @since 2018-11-23
  */
 @Mapper(componentModel = "jakarta",
-    config = MapStructMapperConfig.class,
-    uses = {MenuMapper.class, DeptMapper.class},
-    unmappedTargetPolicy = ReportingPolicy.IGNORE)
+        config = MapStructMapperConfig.class,
+        uses = {MenuMapper.class, DeptMapper.class},
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RoleMapper extends BaseMapper<RoleDto, Role> {
 
 }

@@ -8,8 +8,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import me.vt.common.base.BaseController;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.Job;
 import me.vt.modules.system.service.client.JobService;
@@ -19,10 +22,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -63,7 +62,7 @@ public class JobController extends BaseController {
     @PreAuthorize("@el.check('job:add')")
     public Object createJob(@Valid Job resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         jobService.create(resources);
         return 1;
@@ -74,7 +73,7 @@ public class JobController extends BaseController {
     @POST
     @Path("edit")
     @PreAuthorize("@el.check('job:edit')")
-    public Object updateJob(/*@Validated(Job.Update.class)*/  Job resources) {
+    public Object updateJob(/*@Validated(Job.Update.class)*/ Job resources) {
         jobService.update(resources);
         return 1;
     }

@@ -6,6 +6,14 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.quartz.domain.QuartzJob;
@@ -20,15 +28,6 @@ import me.vt.utils.RedisUtils;
 import me.vt.utils.ValidationUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @author Zheng Jie
  * @since 2019-01-07
@@ -42,13 +41,13 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     @Inject
     QuartzLogRepository quartzLogRepository;
     //    @Inject
-//    QuartzManage quartzManage;
+    //    QuartzManage quartzManage;
     @Inject
     RedisUtils redisUtils;
 
     @Override
     public PageResult<QuartzJob> queryAll(JobQueryCriteria criteria, Page pageable) {
-// fixme:        return PageUtil.toPage(quartzJobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable));
+        // fixme:        return PageUtil.toPage(quartzJobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable));
         return null;
     }
 
@@ -73,26 +72,26 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     @Override
     public QuartzJob findById(Long id) {
         QuartzJob quartzJob = quartzJobRepository.findById(id);
-        ValidationUtil.isNull(quartzJob.getId(),"QuartzJob","id",id);
+        ValidationUtil.isNull(quartzJob.getId(), "QuartzJob", "id", id);
         return quartzJob;
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void create(QuartzJob resources) {
-// fixme        if (!org.quartz.CronExpression.isValidExpression(resources.getCronExpression())){
-//            throw new BadRequestException("cron表达式格式错误");
-//        }
+        // fixme        if (!org.quartz.CronExpression.isValidExpression(resources.getCronExpression())){
+        //            throw new BadRequestException("cron表达式格式错误");
+        //        }
         resources = quartzJobRepository.save(resources);
-//        quartzManage.addJob(resources);
+        //        quartzManage.addJob(resources);
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void update(QuartzJob resources) {
-//        if (!org.quartz.CronExpression.isValidExpression(resources.getCronExpression())){
-//            throw new BadRequestException("cron表达式格式错误");
-//        }
+        //        if (!org.quartz.CronExpression.isValidExpression(resources.getCronExpression())){
+        //            throw new BadRequestException("cron表达式格式错误");
+        //        }
         if (StringUtils.isNotBlank(resources.getSubTask())) {
             List<String> tasks = Arrays.asList(resources.getSubTask().split("[,，]"));
             if (tasks.contains(resources.getId().toString())) {
@@ -100,17 +99,17 @@ public class QuartzJobServiceImpl implements QuartzJobService {
             }
         }
         resources = quartzJobRepository.save(resources);
-//        quartzManage.updateJobCron(resources);
+        //        quartzManage.updateJobCron(resources);
     }
 
     @Override
     public void updateIsPause(QuartzJob quartzJob) {
         // 置换暂停状态
         if (quartzJob.getIsPause()) {
-//            quartzManage.resumeJob(quartzJob);
+            //            quartzManage.resumeJob(quartzJob);
             quartzJob.setIsPause(false);
         } else {
-//            quartzManage.pauseJob(quartzJob);
+            //            quartzManage.pauseJob(quartzJob);
             quartzJob.setIsPause(true);
         }
         quartzJobRepository.save(quartzJob);
@@ -118,7 +117,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
 
     @Override
     public void execution(QuartzJob quartzJob) {
-//        quartzManage.runJobNow(quartzJob);
+        //        quartzManage.runJobNow(quartzJob);
     }
 
     @Override
@@ -126,7 +125,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     public void delete(Set<Long> ids) {
         for (Long id : ids) {
             QuartzJob quartzJob = findById(id);
-//            quartzManage.deleteJob(quartzJob);
+            //            quartzManage.deleteJob(quartzJob);
             quartzJobRepository.delete(quartzJob);
         }
     }
@@ -152,7 +151,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
                 Thread.sleep(5000);
                 result = redisUtils.get(uuid, Boolean.class);
             }
-            if(!result){
+            if (!result) {
                 redisUtils.del(uuid);
                 break;
             }
@@ -163,7 +162,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     public File download(List<QuartzJob> quartzJobs) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (QuartzJob quartzJob : quartzJobs) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("任务名称", quartzJob.getJobName());
             map.put("Bean名称", quartzJob.getBeanName());
             map.put("执行方法", quartzJob.getMethodName());
@@ -181,7 +180,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     public File downloadLog(List<QuartzLog> queryAllLog) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (QuartzLog quartzLog : queryAllLog) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("任务名称", quartzLog.getJobName());
             map.put("Bean名称", quartzLog.getBeanName());
             map.put("执行方法", quartzLog.getMethodName());

@@ -1,9 +1,8 @@
 package me.vt.utils;
 
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
 import java.util.Date;
+import org.junit.jupiter.api.Test;
 
 public class DateUtilsTest {
     @Test

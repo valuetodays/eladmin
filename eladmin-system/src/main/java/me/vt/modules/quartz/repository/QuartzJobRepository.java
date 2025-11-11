@@ -1,10 +1,9 @@
 package me.vt.modules.quartz.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import me.vt.common.repository.MyPanacheRepository;
 import me.vt.modules.quartz.domain.QuartzJob;
-
-import java.util.List;
 
 /**
  * @author Zheng Jie

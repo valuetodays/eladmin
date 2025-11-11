@@ -10,9 +10,16 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.system.domain.Menu;
 import me.vt.modules.system.domain.vo.MenuVo;
@@ -25,14 +32,6 @@ import me.vt.utils.PageUtil;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -105,12 +104,12 @@ public class MenuController extends BaseController {
     @PreAuthorize("@el.check('menu:list')")
     public List<MenuDto> getMenuSuperior(List<Long> ids) {
         Set<MenuDto> menuDtos = new LinkedHashSet<>();
-        if(CollectionUtil.isNotEmpty(ids)){
+        if (CollectionUtil.isNotEmpty(ids)) {
             for (Long id : ids) {
                 MenuDto menuDto = menuService.findById(id);
                 List<MenuDto> menuDtoList = menuService.getSuperior(menuDto, new ArrayList<>());
                 for (MenuDto menu : menuDtoList) {
-                    if(menu.getId().equals(menuDto.getPid())) {
+                    if (menu.getId().equals(menuDto.getPid())) {
                         menu.setSubCount(menu.getSubCount() - 1);
                     }
                 }
@@ -130,7 +129,7 @@ public class MenuController extends BaseController {
     @PreAuthorize("@el.check('menu:add')")
     public Object createMenu(@Valid Menu resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         menuService.create(resources);
         return 1;

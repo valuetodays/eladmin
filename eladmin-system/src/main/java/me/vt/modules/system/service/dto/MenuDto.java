@@ -1,14 +1,13 @@
 package me.vt.modules.system.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseDTO;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Zheng Jie

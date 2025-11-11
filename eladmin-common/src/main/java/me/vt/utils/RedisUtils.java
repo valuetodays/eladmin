@@ -1,5 +1,9 @@
 package me.vt.utils;
 
+import cn.hutool.core.util.StrUtil;
+import cn.vt.util.JsonUtils;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,11 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import cn.hutool.core.util.StrUtil;
-import cn.vt.util.JsonUtils;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -135,7 +134,7 @@ public class RedisUtils {
      * 批量模糊删除key
      * @param pattern
      */
-    public void scanDel(String pattern){
+    public void scanDel(String pattern) {
         while (true) {
             Iterable<String> keys = redissonClient.getKeys().getKeysByPattern(pattern, 1000);
             Iterator<String> iterator = keys.iterator();
@@ -211,7 +210,7 @@ public class RedisUtils {
      * @return 值
      */
     public String getStr(String key) {
-        if(StrUtil.isBlank(key)){
+        if (StrUtil.isBlank(key)) {
             return null;
         }
         Object value = redissonClient.getBucket(key).get();

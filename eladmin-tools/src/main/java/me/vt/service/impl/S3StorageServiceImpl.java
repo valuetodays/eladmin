@@ -1,17 +1,17 @@
 /*
-*  Copyright 2019-2025 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
+ * Copyright 2019-2025 Zheng Jie
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package me.vt.service.impl;
 
@@ -22,6 +22,15 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.config.AmzS3ConfigProperty;
 import me.vt.domain.S3Storage;
@@ -49,16 +58,6 @@ import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
 * @description 服务实现
@@ -90,9 +89,9 @@ public class S3StorageServiceImpl implements S3StorageService {
     }
 
     @Override
-    public List<S3Storage> queryAll(S3StorageQueryCriteria criteria){
-//     fixme:    return s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
-//   fixme:              -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+    public List<S3Storage> queryAll(S3StorageQueryCriteria criteria) {
+        //     fixme:    return s3StorageRepository.findAll((root, criteriaQuery, criteriaBuilder)
+        //   fixme:              -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
         return s3StorageRepository.findAll().list();
     }
 
@@ -134,7 +133,7 @@ public class S3StorageServiceImpl implements S3StorageService {
         // 检查存储桶是否存在
         if (!bucketExists(bucketName)) {
             log.warn("存储桶 {} 不存在，尝试创建...", bucketName);
-            if (createBucket(bucketName)){
+            if (createBucket(bucketName)) {
                 log.info("存储桶 {} 创建成功。", bucketName);
             } else {
                 throw new BadRequestException("存储桶创建失败，请检查配置或权限。");
@@ -143,7 +142,7 @@ public class S3StorageServiceImpl implements S3StorageService {
         // fixme:
         String originalName = "fixme:";
         // 获取文件名
-//        String originalName = file.getOriginalFilename();
+        //        String originalName = file.getOriginalFilename();
         if (StringUtils.isBlank(originalName)) {
             throw new IllegalArgumentException("文件名不能为空");
         }
@@ -181,7 +180,7 @@ public class S3StorageServiceImpl implements S3StorageService {
     public File download(List<S3Storage> all) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (S3Storage s3Storage : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("文件名称", s3Storage.getFileName());
             map.put("真实存储的名称", s3Storage.getFileRealName());
             map.put("文件大小", s3Storage.getFileSize());
@@ -275,9 +274,8 @@ public class S3StorageServiceImpl implements S3StorageService {
                     .build();
             // 使用 WaiterResponse 等待存储桶存在
             WaiterResponse<HeadBucketResponse> waiterResponse = s3Waiter.waitUntilBucketExists(bucketRequestWait);
-            waiterResponse.matched().response().ifPresent(response ->
-                    log.info("存储桶 '{}' 创建成功，状态: {}", bucketName, response.sdkHttpResponse().statusCode())
-            );
+            waiterResponse.matched().response().ifPresent(
+                    response -> log.info("存储桶 '{}' 创建成功，状态: {}", bucketName, response.sdkHttpResponse().statusCode()));
         } catch (BucketAlreadyOwnedByYouException e) {
             log.warn("存储桶 '{}' 已经被您拥有，无需重复创建。", bucketName);
         } catch (S3Exception e) {

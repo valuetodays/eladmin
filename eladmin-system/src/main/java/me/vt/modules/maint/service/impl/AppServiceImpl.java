@@ -4,6 +4,13 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import me.vt.exception.BadRequestException;
 import me.vt.modules.maint.domain.App;
@@ -15,14 +22,6 @@ import me.vt.modules.maint.service.mapstruct.AppMapper;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.ValidationUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
 * @author zhanghouying
@@ -39,13 +38,13 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public PageResult<AppDto> queryAll(AppQueryCriteria criteria, Page pageable) {
-// fixme        Page<App> page = appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-// fixme         return PageUtil.toPage(page.map(appMapper::toDto));
+        // fixme        Page<App> page = appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        // fixme         return PageUtil.toPage(page.map(appMapper::toDto));
         return null;
     }
 
     @Override
-    public List<AppDto> queryAll(AppQueryCriteria criteria){
+    public List<AppDto> queryAll(AppQueryCriteria criteria) {
         // fixme      return appMapper.toDto(appRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
         return null;
     }
@@ -53,7 +52,7 @@ public class AppServiceImpl implements AppService {
     @Override
     public AppDto findById(Long id) {
         App app = appRepository.findById(id);
-        ValidationUtil.isNull(app.getId(),"App","id",id);
+        ValidationUtil.isNull(app.getId(), "App", "id", id);
         return appMapper.toDto(app);
     }
 
@@ -79,12 +78,12 @@ public class AppServiceImpl implements AppService {
         }
         verification(resources);
         App app = appRepository.findById(resources.getId());
-        ValidationUtil.isNull(app.getId(),"App","id",resources.getId());
+        ValidationUtil.isNull(app.getId(), "App", "id", resources.getId());
         app.copy(resources);
         appRepository.save(app);
     }
 
-    private void verification(App resources){
+    private void verification(App resources) {
         String opt = "/opt";
         String home = "/home";
         if (!(resources.getUploadPath().startsWith(opt) || resources.getUploadPath().startsWith(home))) {
@@ -110,7 +109,7 @@ public class AppServiceImpl implements AppService {
     public File download(List<AppDto> queryAll) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (AppDto appDto : queryAll) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("应用名称", appDto.getName());
             map.put("端口", appDto.getPort());
             map.put("上传目录", appDto.getUploadPath());

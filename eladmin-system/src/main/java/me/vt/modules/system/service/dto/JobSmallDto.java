@@ -1,7 +1,6 @@
 package me.vt.modules.system.service.dto;
 
 import java.io.Serializable;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;

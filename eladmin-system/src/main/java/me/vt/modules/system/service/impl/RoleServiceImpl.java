@@ -7,6 +7,18 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.exception.BadRequestException;
@@ -38,19 +50,6 @@ import me.vt.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -151,7 +150,7 @@ public class RoleServiceImpl implements RoleService {
         role.setName(resources.getName());
         role.setDescription(resources.getDescription());
         role.setDataScope(resources.getDataScope());
-// fixme        role.setDepts(resources.getDepts());
+        // fixme        role.setDepts(resources.getDepts());
         role.setLevel(resources.getLevel());
         roleRepository.save(role);
         // 更新相关缓存
@@ -225,12 +224,12 @@ public class RoleServiceImpl implements RoleService {
             final List<Long> roleIds = roles.stream().map(Role::getId).distinct().toList();
             List<Menu> menus = userAuthCompositeService.findMenusByRoleIds(new HashSet<>(roleIds));
             permissions = menus.stream()
-                .map(Menu::getPermission)
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toSet());
+                    .map(Menu::getPermission)
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.toSet());
             authorityDtos = permissions.stream()
-                .map(AuthorityDto::new)
-                .collect(Collectors.toList());
+                    .map(AuthorityDto::new)
+                    .collect(Collectors.toList());
             redisUtils.set(key, authorityDtos, 1, TimeUnit.HOURS);
         }
         return authorityDtos;

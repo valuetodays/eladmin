@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceUnitUtil;
 import jakarta.transaction.Transactional;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +38,7 @@ public class MyPanacheRepository<Entity> implements PanacheRepository<Entity> {
         em.merge(entity);
         return entity;
     }
+
     @Transactional
     public long deleteAllByIdIn(Set<Long> ids) {
         return delete(" where id in ?1", ids);

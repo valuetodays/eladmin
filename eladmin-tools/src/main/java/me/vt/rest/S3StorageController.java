@@ -9,10 +9,15 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.common.base.BaseController;
 import me.vt.annotation.Log;
+import me.vt.common.base.BaseController;
 import me.vt.config.AmzS3ConfigProperty;
 import me.vt.domain.S3Storage;
 import me.vt.service.client.S3StorageService;
@@ -21,12 +26,6 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * amz S3 协议云存储管理
@@ -69,10 +68,10 @@ public class S3StorageController extends BaseController {
     @Operation(summary = "上传文件")
     public Object uploadS3Storage(File file) { // fixme:
         S3Storage storage = s3StorageService.upload(file);
-        Map<String,Object> map = new HashMap<>(3);
-        map.put("id",storage.getId());
-        map.put("errno",0);
-        map.put("data", new String[]{amzS3ConfigProperty.domain() + "/" + storage.getFilePath()});
+        Map<String, Object> map = new HashMap<>(3);
+        map.put("id", storage.getId());
+        map.put("errno", 0);
+        map.put("data", new String[] {amzS3ConfigProperty.domain() + "/" + storage.getFilePath()});
         return map;
     }
 
@@ -81,7 +80,7 @@ public class S3StorageController extends BaseController {
     @GET
     @Path(value = "/download/{id}")
     public Object downloadS3Storage(@PathParam("id") Long id) {
-        Map<String,Object> map = new HashMap<>(1);
+        Map<String, Object> map = new HashMap<>(1);
         S3Storage storage = s3StorageService.getById(id);
         if (storage == null) {
             map.put("message", "文件不存在或已被删除");

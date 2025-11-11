@@ -1,11 +1,11 @@
 package me.vt.utils;
 
-import org.junit.jupiter.api.Test;
-
 import static me.vt.utils.FileUtil.getExtensionName;
 import static me.vt.utils.FileUtil.getFileNameNoEx;
 import static me.vt.utils.FileUtil.getSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class FileUtilTest {
 

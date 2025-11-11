@@ -1,13 +1,12 @@
 package me.vt.service.client;
 
+import java.io.File;
+import java.util.List;
 import me.vt.domain.ColumnInfo;
 import me.vt.domain.GenConfig;
 import me.vt.domain.vo.TableInfo;
 import me.vt.reqresp.GenPreviewResp;
 import me.vt.utils.PageResult;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * @author Zheng Jie

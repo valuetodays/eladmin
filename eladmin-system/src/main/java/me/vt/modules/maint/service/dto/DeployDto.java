@@ -1,11 +1,10 @@
 package me.vt.modules.maint.service.dto;
 
+import cn.hutool.core.collection.CollectionUtil;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import cn.hutool.core.collection.CollectionUtil;
 import lombok.Getter;
 import lombok.Setter;
 import me.vt.common.base.BaseDTO;
@@ -24,38 +23,38 @@ public class DeployDto extends BaseDTO implements Serializable {
     private String id;
 
     @Schema(description = "应用")
-	private AppDto app;
+    private AppDto app;
 
     @Schema(description = "服务器")
-	private Set<ServerDeployDto> deploys;
+    private Set<ServerDeployDto> deploys;
 
     @Schema(description = "服务器名称")
-	private String servers;
+    private String servers;
 
     @Schema(description = "服务状态")
-	private String status;
+    private String status;
 
-	public String getServers() {
-		if(CollectionUtil.isNotEmpty(deploys)){
-			return deploys.stream().map(ServerDeployDto::getName).collect(Collectors.joining(","));
-		}
-		return servers;
-	}
+    public String getServers() {
+        if (CollectionUtil.isNotEmpty(deploys)) {
+            return deploys.stream().map(ServerDeployDto::getName).collect(Collectors.joining(","));
+        }
+        return servers;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		DeployDto deployDto = (DeployDto) o;
-		return Objects.equals(id, deployDto.id);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DeployDto deployDto = (DeployDto) o;
+        return Objects.equals(id, deployDto.id);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
