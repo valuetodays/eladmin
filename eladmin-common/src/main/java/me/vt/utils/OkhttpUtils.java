@@ -19,6 +19,7 @@ import java.net.Proxy;
  */
 @Slf4j
 public class OkhttpUtils {
+    private OkhttpUtils() {}
 
     private static OkHttpClient createHttpClient(String proxyIp, int proxyPort) {
 

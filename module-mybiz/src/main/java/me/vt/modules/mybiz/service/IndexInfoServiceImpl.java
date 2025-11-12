@@ -1,7 +1,6 @@
 package me.vt.modules.mybiz.service;
 
 import cn.vt.util.DateUtils;
-import cn.vt.util.HttpClient4Utils;
 import cn.vt.util.JsonUtils;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -124,48 +123,69 @@ public class IndexInfoServiceImpl {
      * caller should call this method many times;
      * @return true when all records are updated, otherwise false
      */
-    @Transactional
-    public boolean updateMissingFieldsFromApiForTop10() {
-        List<IndexInfo> list = indexInfoRepository.findTop10ByReleaseDateNullOrderByIdAsc();
+    @Transactional(value = Transactional.TxType.REQUIRED)
+    public Pair<Boolean, Long> updateMissingFieldsFromApiForTop10(long lastId) {
+        List<IndexInfo> list = indexInfoRepository.findTop10ByReleaseDateNullOrderByIdAsc(lastId);
         if (CollectionUtils.isEmpty(list)) {
-            return true;
+            return Pair.of(true, 0L);
         }
         for (IndexInfo indexInfo : list) {
-            String code = indexInfo.getCode();
-            String url = "https://www.csindex.com.cn/csindex-home/indexInfo/index-basic-info/" + code;
-//            String respString = HttpClient4Utils.doGet(url);
-            String proxyIp = "221.231.13.198";
-            int proxyPort = 1080;
-            String respString = OkhttpUtils.doGet(url, proxyIp, proxyPort);
-            log.info("respString={}", respString);
-            CsIndexInfoResp csIndexInfoResp = JsonUtils.fromJson(respString, CsIndexInfoResp.class);
-            if (Objects.isNull(csIndexInfoResp) || Boolean.TRUE.compareTo(csIndexInfoResp.getSuccess()) == 0) {
-                CsIndexInfoData data = csIndexInfoResp.getData();
-                log.info("data={}", data);
-                LocalDateTime publishDate = DateUtils.getDate(data.getPublishDate());
-                if (Objects.nonNull(publishDate)) {
-                    indexInfo.setReleaseDate(publishDate.toLocalDate());
+            String proxyIp = "39.102.213.213";
+            int proxyPort = -3128;
+            try {
+                Long l = updateMissingFieldsOne(indexInfo, proxyIp, proxyPort);
+                if (l > 0L) {
+                    lastId = l;
                 }
-                LocalDateTime basicDate = DateUtils.getDate(data.getBasicDate());
-                if (Objects.nonNull(basicDate)) {
-                    indexInfo.setDataBaseDate(basicDate.toLocalDate());
-                }
-                BigDecimal basicIndex = data.getBasicIndex();
-                if (Objects.nonNull(basicIndex)) {
-                    indexInfo.setDataBaseVal(basicIndex);
-                }
-                String indexCnDesc = data.getIndexCnDesc();
-                if (StringUtils.isNotBlank(indexCnDesc)) {
-                    indexInfo.setDescription(indexCnDesc);
-                }
-                String adjFreqCn = data.getAdjFreqCn();
-                if (StringUtils.isNotBlank(adjFreqCn)) {
-                    indexInfo.setAdjFreq(adjFreqCn);
-                }
-                indexInfoRepository.update(indexInfo);
+                Thread.sleep(3000);
+            } catch (Exception e) {
+                log.error("error when updateMissingFieldsOne()", e);
             }
         }
-        return false;
+        return Pair.of(false, lastId);
+    }
+
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
+    public Long updateMissingFieldsOne(IndexInfo indexInfo, String proxyIp, int proxyPort) {
+        String code = indexInfo.getCode();
+        String url = "https://www.csindex.com.cn/csindex-home/indexInfo/index-basic-info/" + code;
+        String respString = OkhttpUtils.doGet(url, proxyIp, proxyPort);
+        log.info("respString={}", respString);
+        CsIndexInfoResp csIndexInfoResp = JsonUtils.fromJson(respString, CsIndexInfoResp.class);
+        if (Objects.isNull(csIndexInfoResp) || Boolean.TRUE.compareTo(csIndexInfoResp.getSuccess()) != 0) {
+            return -1L;
+        }
+        CsIndexInfoData data = csIndexInfoResp.getData();
+        log.info("data={}", data);
+        boolean toUpdate = false;
+        LocalDateTime publishDate = DateUtils.getDate(data.getPublishDate());
+        if (Objects.nonNull(publishDate)) {
+            indexInfo.setReleaseDate(publishDate.toLocalDate());
+            toUpdate = true;
+        }
+        LocalDateTime basicDate = DateUtils.getDate(data.getBasicDate());
+        if (Objects.nonNull(basicDate)) {
+            indexInfo.setDataBaseDate(basicDate.toLocalDate());
+        }
+        BigDecimal basicIndex = data.getBasicIndex();
+        if (Objects.nonNull(basicIndex)) {
+            indexInfo.setDataBaseVal(basicIndex);
+        }
+        String indexCnDesc = data.getIndexCnDesc();
+        if (StringUtils.isNotBlank(indexCnDesc)) {
+            indexInfo.setDescription(indexCnDesc);
+        }
+        String adjFreqCn = data.getAdjFreqCn();
+        if (StringUtils.isNotBlank(adjFreqCn)) {
+            indexInfo.setAdjFreq(adjFreqCn);
+        }
+        if (toUpdate) {
+            indexInfoRepository.update(indexInfo);
+            return -1L;
+        } else {
+            log.info("all null for id: {}, code: {}", indexInfo.getId(), indexInfo.getCode());
+        }
+        return indexInfo.getId();
     }
 
 }

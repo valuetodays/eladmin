@@ -3,6 +3,7 @@ package me.vt.service1;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import me.vt.modules.mybiz.service.IndexInfoServiceImpl;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -18,12 +19,15 @@ public class IndexInfoServiceImplTest {
 
     @Test
     public void updateMissingFieldsFromApi() throws InterruptedException {
+        long lastId = 209L;
         while (true) {
-            boolean done = indexInfoServiceImpl.updateMissingFieldsFromApiForTop10();
+            Pair<Boolean, Long> booleanLongPair = indexInfoServiceImpl.updateMissingFieldsFromApiForTop10(lastId);
+            boolean done = booleanLongPair.getLeft();
             if (done) {
                 break;
             }
-            Thread.sleep(1500);
+            lastId = booleanLongPair.getRight();
+            Thread.sleep(3000);
         }
     }
 }

@@ -14,8 +14,8 @@ import me.vt.modules.mybiz.domain.IndexInfo;
 @ApplicationScoped
 public class IndexInfoRepository extends MyPanacheRepository<IndexInfo> {
 
-    public List<IndexInfo> findTop10ByReleaseDateNullOrderByIdAsc() {
-        return find("releaseDate is null", Sort.ascending("id")).page(Page.of(0, 10)).list();
+    public List<IndexInfo> findTop10ByReleaseDateNullOrderByIdAsc(long lastId) {
+        return find("releaseDate is null and id > ?1", Sort.ascending("id"), lastId).page(Page.of(0, 10)).list();
     }
 
 }
