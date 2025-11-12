@@ -69,7 +69,7 @@ public class MetricDockerStatsServiceImpl {
 
     @Transactional(rollbackOn = Exception.class)
     public void create(MetricDockerStats resources) {
-        Snowflake snowflake = IdUtil.createSnowflake(1, 1);
+        Snowflake snowflake = IdUtil.getSnowflake(1, 1);
         resources.setId(snowflake.nextId());
         metricDockerStatsRepository.save(resources);
     }

@@ -26,7 +26,7 @@ quarkus:
     password: z1l78fkSMgq8o0
     jdbc:
       driver: com.p6spy.engine.spy.P6SpyDriver
-      url: jdbc:p6spy:postgresql://pgsql-srv-prod:5432/db_pg_eladmin
+      url: jdbc:p6spy:postgresql://pgsql-srv-prod-8g:5432/db_pg_eladmin
       max-size: 5
       min-size: 1
   # https://quarkus.io/guides/hibernate-orm
