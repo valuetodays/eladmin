@@ -19,7 +19,7 @@ public class IndexInfoServiceImplTest {
 
     @Test
     public void updateMissingFieldsFromApi() throws InterruptedException {
-        long lastId = 209L;
+        long lastId = 0L;
         while (true) {
             Pair<Boolean, Long> booleanLongPair = indexInfoServiceImpl.updateMissingFieldsFromApiForTop10(lastId);
             boolean done = booleanLongPair.getLeft();

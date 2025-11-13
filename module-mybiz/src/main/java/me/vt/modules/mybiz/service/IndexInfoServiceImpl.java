@@ -147,7 +147,7 @@ public class IndexInfoServiceImpl {
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public Long updateMissingFieldsOne(IndexInfo indexInfo, String proxyIp, int proxyPort) {
-        String code = indexInfo.getCode();
+        String code = indexInfo.getCsiCode();
         String url = "https://www.csindex.com.cn/csindex-home/indexInfo/index-basic-info/" + code;
         String respString = OkhttpUtils.doGet(url, proxyIp, proxyPort);
         log.info("respString={}", respString);

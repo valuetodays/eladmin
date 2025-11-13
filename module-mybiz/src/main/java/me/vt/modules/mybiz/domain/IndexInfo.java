@@ -33,9 +33,12 @@ public class IndexInfo implements Serializable {
     private Long id;
 
     @Column(name = "code", nullable = false)
-    @NotBlank
     @Schema(description = "编号")
     private String code;
+
+    @Column(name = "csi_code", nullable = false)
+    @Schema(description = "csi编号")
+    private String csiCode;
 
     @Column(name = "name", nullable = false)
     @NotBlank
