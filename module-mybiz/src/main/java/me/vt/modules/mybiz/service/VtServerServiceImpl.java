@@ -77,7 +77,7 @@ public class VtServerServiceImpl {
         VtServer vtServer = vtServerRepository.findById(resources.getId());
         ValidationUtil.isNull(vtServer.getId(), "VtServer", "id", resources.getId());
         vtServer.copy(resources);
-        vtServerRepository.save(vtServer);
+        vtServerRepository.update(vtServer);
     }
 
     public void deleteAll(Long[] ids) {

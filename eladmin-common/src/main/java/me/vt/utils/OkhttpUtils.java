@@ -1,15 +1,14 @@
 package me.vt.utils;
 
 import cn.vt.exception.CommonException;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 
 /**
  * .
@@ -30,10 +29,10 @@ public class OkhttpUtils {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp, proxyPort));
             builder.proxy(proxy);
             //若有鉴权方式：可添加一下配置,反之忽略此步骤
-//            .proxyAuthenticator((route, response) -> {
-    //            String credential = Credentials.basic(authKey, password);
-    //            return response.request().newBuilder().header("Proxy-Authorization", credential).build();
-    //        })
+            //            .proxyAuthenticator((route, response) -> {
+            //            String credential = Credentials.basic(authKey, password);
+            //            return response.request().newBuilder().header("Proxy-Authorization", credential).build();
+            //        })
         }
         return builder.build();
     }

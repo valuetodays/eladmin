@@ -15,6 +15,9 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Data
 public class VtServerDto extends BaseDTO {
 
+    @Schema(description = "ID")
+    private Long id;
+
     @Schema(description = "名称")
     private String name;
 
