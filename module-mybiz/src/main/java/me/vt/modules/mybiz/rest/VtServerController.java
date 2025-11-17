@@ -78,6 +78,10 @@ public class VtServerController extends BaseController {
     @Operation(summary = "修改VtServerController")
     @PreAuthorize("@el.check('vtServer:edit')")
     public Object updateVtServer(@Valid VtServer resources) {
+        AuthUser currentUser = getCurrentAccount();
+        String username = currentUser.getEmail();
+        resources.setUpdateBy(username);
+        resources.setUpdateTime(LocalDateTime.now());
         vtServerService.update(resources);
         return 1;
     }
