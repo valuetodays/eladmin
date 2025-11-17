@@ -19,11 +19,11 @@ public class BaseDTO implements Serializable {
     @Schema(description = "修改人")
     private String updateBy;
 
-    @Schema(description = "创建时间: yyyy-MM-ddTHH:mm:ss", hidden = true)
+    @Schema(description = "创建时间: yyyy-MM-dd'T'HH:mm:ss", hidden = true)
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
-    @Schema(description = "更新时间: yyyy-MM-ddTHH:mm:ss", hidden = true)
+    @Schema(description = "更新时间: yyyy-MM-dd'T'HH:mm:ss", hidden = true)
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
