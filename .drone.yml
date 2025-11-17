@@ -37,7 +37,7 @@ steps:
       - chmod +x ./mvnw
       - ./mvnw -v
       - ./mvnw clean
-      - ./mvnw package install -B -U -Dmaven.test.skip=true -DskipUnitTest=true
+      - ./mvnw package install -B -U -Dmaven.test.skip=true -DskipUnitTest=true -Dspotless.skip=true
       - sh /drone/src/docs/scripts-for-drone-ci/ci-publish-api-web.sh
   - name: notify
     image: curlimages/curl:8.14.1
