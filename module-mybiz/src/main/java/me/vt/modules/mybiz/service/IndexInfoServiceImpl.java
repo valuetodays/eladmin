@@ -194,6 +194,7 @@ public class IndexInfoServiceImpl {
         return indexInfo.getId();
     }
 
+    @Transactional
     public Long saveAllDailyStat(IndexInfo req) {
         Long id = req.getId();
         IndexInfo old = indexInfoRepository.findById(id);
