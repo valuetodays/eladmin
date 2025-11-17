@@ -138,8 +138,9 @@ public class StockDailyQuoteServiceImpl {
 
     private LocalDate saveBatch(String code, LocalDate endDateInclude, int days) {
         LocalDate beginDate = endDateInclude.minusDays(days);
-        log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, code);
-        List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(code, DateUtils.formatAsYyyyMMdd(beginDate), DateUtils.formatAsYyyyMMdd(endDateInclude));
+        String codeToUse = StockCodeUtils.buildForEhaifangzhou(code);
+        log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
+        List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate), DateUtils.formatAsYyyyMMdd(endDateInclude));
         if (CollectionUtils.isEmpty(dailyStats)) {
             return null;
         }
