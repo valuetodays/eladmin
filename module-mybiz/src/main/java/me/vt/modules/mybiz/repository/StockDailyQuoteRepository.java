@@ -15,6 +15,6 @@ import java.util.List;
 public class StockDailyQuoteRepository extends MyPanacheRepository<StockDailyQuote> {
 
     public StockDailyQuote findByCodeAndStatDate(String code, LocalDate localDate) {
-        return find("code = ?1 and statDate = ?2", code, localDate).singleResult();
+        return find("code = ?1 and statDate = ?2", code, localDate).firstResult();
     }
 }

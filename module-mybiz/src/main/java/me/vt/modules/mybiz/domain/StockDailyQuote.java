@@ -36,7 +36,7 @@ public class StockDailyQuote implements Serializable {
     @Schema(description = "编号")
     private String code;
 
-    @Column(name = "stat_date", nullable = false, columnDefinition = "date")
+    @Column(name = "stat_date", nullable = false/*, columnDefinition = "date"*/)
     @NotNull
     @Schema(description = "统计日期")
     private LocalDate statDate;
