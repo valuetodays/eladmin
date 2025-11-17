@@ -73,7 +73,7 @@ quarkus:
       enable: true
     file:
       enable: true
-      path: /root/workbench_dir/logs/eladmin/eladmin.log
+      path: /root/workbench/logs/eladmin/eladmin.log
       rotation:
         #        rotate-on-boot: true # 是否按服务启动滚动
         max-file-size: 10M
@@ -81,7 +81,9 @@ quarkus:
         file-suffix: .yyyy-MM-dd
   smallrye-openapi:
     enable: true
-
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 login:
   #  是否限制单用户登录
   single-login: false
