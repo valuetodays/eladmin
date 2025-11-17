@@ -80,7 +80,14 @@ public class IndexInfoController extends BaseController {
     @Operation(summary = "删除dd")
     @PreAuthorize("@el.check('indexInfo:del')")
     public Object deleteIndexInfo(Set<Long> ids) {
-        indexInfoService.delete(ids);
         return 1;
+    }
+    @POST
+    @Path("saveAllDailyStat")
+    @Log("同步所有日k数据")
+    @Operation(summary = "同步所有日k数据")
+    @PreAuthorize("@el.check('indexInfo:saveAllDailyStat')")
+    public Object saveAllDailyStat(IndexInfo req) {
+        return indexInfoService.saveAllDailyStat(req);
     }
 }

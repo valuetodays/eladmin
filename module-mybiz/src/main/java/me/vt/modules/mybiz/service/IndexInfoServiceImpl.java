@@ -188,4 +188,11 @@ public class IndexInfoServiceImpl {
         return indexInfo.getId();
     }
 
+    public Long saveAllDailyStat(IndexInfo req) {
+        Long id = req.getId();
+        // 要异步
+        // 要通知
+        // 要处理重复点击问题
+        return id;
+    }
 }
