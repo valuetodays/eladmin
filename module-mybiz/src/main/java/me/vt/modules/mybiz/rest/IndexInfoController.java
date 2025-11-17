@@ -82,6 +82,7 @@ public class IndexInfoController extends BaseController {
     public Object deleteIndexInfo(Set<Long> ids) {
         return 1;
     }
+
     @POST
     @Path("saveAllDailyStat")
     @Log("同步所有日k数据")

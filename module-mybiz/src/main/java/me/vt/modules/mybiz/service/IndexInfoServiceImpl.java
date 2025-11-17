@@ -1,5 +1,6 @@
 package me.vt.modules.mybiz.service;
 
+import cn.vt.exception.AssertUtils;
 import cn.vt.util.DateUtils;
 import cn.vt.util.JsonUtils;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -8,6 +9,7 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +42,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
-* @author valutodays
-* @since 2025-11-12 15:44
-**/
+ * @author valutodays
+ * @since 2025-11-12 15:44
+ **/
 @ApplicationScoped
 @Slf4j
 public class IndexInfoServiceImpl {
@@ -50,6 +53,8 @@ public class IndexInfoServiceImpl {
     IndexInfoRepository indexInfoRepository;
     @Inject
     IndexInfoMapper indexInfoMapper;
+    @Inject
+    StockDailyQuoteServiceImpl stockDailyQuoteService;
 
     public PageResult<IndexInfoDto> queryAll(IndexInfoQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -121,7 +126,8 @@ public class IndexInfoServiceImpl {
      * update only 10 record, because this operation should be in a transaction.
      * <p/>
      * caller should call this method many times;
-     * @return true when all records are updated, otherwise false
+     *
+     * @return when all records are updated, otherwise false
      */
     @Transactional(value = Transactional.TxType.REQUIRED)
     public Pair<Boolean, Long> updateMissingFieldsFromApiForTop10(long lastId) {
@@ -190,7 +196,10 @@ public class IndexInfoServiceImpl {
 
     public Long saveAllDailyStat(IndexInfo req) {
         Long id = req.getId();
+        IndexInfo old = indexInfoRepository.findById(id);
+        AssertUtils.assertNotNull(old);
         // 要异步
+        stockDailyQuoteService.getAndSaveToDb(old.getCode(), true);
         // 要通知
         // 要处理重复点击问题
         return id;

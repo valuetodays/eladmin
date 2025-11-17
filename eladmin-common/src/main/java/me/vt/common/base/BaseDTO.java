@@ -1,6 +1,5 @@
 package me.vt.common.base;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -20,11 +19,11 @@ public class BaseDTO implements Serializable {
     private String updateBy;
 
     @Schema(description = "创建时间: yyyy-MM-dd'T'HH:mm:ss", hidden = true)
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     @Schema(description = "更新时间: yyyy-MM-dd'T'HH:mm:ss", hidden = true)
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
 
