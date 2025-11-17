@@ -91,4 +91,12 @@ public class IndexInfoController extends BaseController {
     public Object saveAllDailyStat(IndexInfo req) {
         return indexInfoService.saveAllDailyStat(req);
     }
+    @POST
+    @Path("saveLatest30Days")
+    @Log("同步所有日k数据")
+    @Operation(summary = "同步所有日k数据")
+    @PreAuthorize("@el.check('indexInfo:saveLatest30Days')")
+    public Object saveLatest30Days() {
+        return indexInfoService.saveLatest30Days();
+    }
 }

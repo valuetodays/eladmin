@@ -205,4 +205,9 @@ public class IndexInfoServiceImpl {
         // 要处理重复点击问题
         return id;
     }
+
+    public Object saveLatest30Days() {
+        // todo
+        return 1;
+    }
 }
