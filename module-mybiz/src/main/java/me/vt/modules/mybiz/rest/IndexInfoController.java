@@ -86,7 +86,7 @@ public class IndexInfoController extends BaseController {
     @POST
     @Path("updateMissingFields")
     @Log("更新缺少字段")
-    @Operation(summary = "同步所有日k数据")
+    @Operation(summary = "更新缺少字段")
     @PreAuthorize("@el.check('indexInfo:updateMissingFields')")
     public Long updateMissingFields(IndexInfo req) {
         return indexInfoService.updateMissingFields(req);
