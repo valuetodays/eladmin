@@ -213,9 +213,9 @@ public class StockDailyQuoteServiceImpl {
     private void computeCci(String indexCode, boolean fully) {
         List<StockDailyQuote> stockDailyQuotes;
         if (fully) {
-            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDate(indexCode);
+            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDateDesc(indexCode);
         } else {
-            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDate(indexCode);
+            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDateDesc(indexCode);
         }
         if (CollectionUtils.isEmpty(stockDailyQuotes)) {
             return;

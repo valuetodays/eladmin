@@ -19,14 +19,14 @@ public class StockDailyQuoteRepository extends MyPanacheRepository<StockDailyQuo
         return find("code = ?1 and statDate = ?2", code, localDate).firstResult();
     }
 
-    public List<StockDailyQuote> findAllByCodeOrderByStatDate(String code) {
-        return find("code = ?1", Sort.ascending("statDate"), code).list();
+    public List<StockDailyQuote> findAllByCodeOrderByStatDateDesc(String code) {
+        return find("code = ?1", Sort.descending("statDate"), code).list();
     }
 
     /**
      * 计算cci14时，需要前13天的数据，所以查数据时多查一定天数的记录.
      */
-    public List<StockDailyQuote> findTop60ByCodeOrderByStatDate(String indexCode) {
-        return find("code = ?1", Sort.ascending("statDate"), indexCode).page(Page.ofSize(60)).list();
+    public List<StockDailyQuote> findTop60ByCodeOrderByStatDateDesc(String indexCode) {
+        return find("code = ?1", Sort.descending("statDate"), indexCode).page(Page.ofSize(60)).list();
     }
 }
