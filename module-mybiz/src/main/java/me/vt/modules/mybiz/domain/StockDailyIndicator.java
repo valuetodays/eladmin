@@ -3,14 +3,15 @@ package me.vt.modules.mybiz.domain;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
 * @author valuetodays
@@ -21,13 +22,9 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Table(name = "f_stock_daily_indicator")
 public class StockDailyIndicator implements Serializable {
 
-    @Column(name = "code")
-    @Schema(description = "code")
-    private String code;
+    @EmbeddedId
+    public StockDailyIndicatorPk id;
 
-    @Column(name = "stat_date")
-    @Schema(description = "统计日期")
-    private LocalDate statDate;
 
     @Column(name = "cci14", nullable = false)
     @NotNull
