@@ -151,6 +151,17 @@ public class IndexInfoServiceImpl {
         return Pair.of(false, lastId);
     }
 
+    @Transactional
+    public Long updateMissingFields(IndexInfo indexInfo) {
+        Long id = indexInfo.getId();
+        if (Objects.isNull(id)) {
+            return 0L;
+        }
+        IndexInfo indexInfoQueried = indexInfoRepository.findById(id);
+        AssertUtils.assertNotNull(indexInfoQueried);
+        return updateMissingFieldsOne(indexInfoQueried, null, 0);
+    }
+
     @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public Long updateMissingFieldsOne(IndexInfo indexInfo, String proxyIp, int proxyPort) {
         String code = indexInfo.getCsiCode();
