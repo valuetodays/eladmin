@@ -136,9 +136,20 @@ public class StockDailyQuoteServiceImpl {
 
     }
 
+    public static String formatCodeWithMarket(String rawCode) {
+        String codeToUse;
+        if (StringUtils.startsWith(rawCode, "9")) {
+            codeToUse = rawCode + ".SZ";
+        } else {
+            codeToUse = StockCodeUtils.buildForEhaifangzhou(rawCode);
+        }
+        return codeToUse;
+    }
+
+
     private LocalDate saveBatch(String code, LocalDate endDateInclude, int days) {
         LocalDate beginDate = endDateInclude.minusDays(days);
-        String codeToUse = StockCodeUtils.buildForEhaifangzhou(code);
+        String codeToUse = formatCodeWithMarket(code);
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
         List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate), DateUtils.formatAsYyyyMMdd(endDateInclude));
         if (CollectionUtils.isEmpty(dailyStats)) {
