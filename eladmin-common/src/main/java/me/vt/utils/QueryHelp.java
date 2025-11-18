@@ -1,8 +1,5 @@
 package me.vt.utils;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import jakarta.inject.Inject;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
@@ -17,9 +14,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.common.annotation.DataPermission;
 import me.vt.common.annotation.Query;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -46,7 +45,7 @@ public class QueryHelp {
         if (permission != null) {
             // 获取数据权限
             List<Long> dataScopes = securityUtils.getCurrentUserDataScope();
-            if (CollectionUtil.isNotEmpty(dataScopes)) {
+            if (CollectionUtils.isNotEmpty(dataScopes)) {
                 if (StringUtils.isNotBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
                     Join join = root.join(permission.joinName(), JoinType.LEFT);
                     list.add(getExpression(permission.fieldName(), join, root).in(dataScopes));
@@ -71,12 +70,12 @@ public class QueryHelp {
                     String attributeName = isBlank(propName) ? field.getName() : propName;
                     Class<?> fieldType = field.getType();
                     Object val = field.get(query);
-                    if (ObjectUtil.isNull(val) || "".equals(val)) {
+                    if (Objects.isNull(val) || "".equals(val)) {
                         continue;
                     }
                     Join join = null;
                     // 模糊多字段
-                    if (ObjectUtil.isNotEmpty(blurry)) {
+                    if (StringUtils.isNotEmpty(blurry)) {
                         String[] blurrys = blurry.split(",");
                         List<Predicate> orPredicate = new ArrayList<>();
                         for (String s : blurrys) {
@@ -86,28 +85,28 @@ public class QueryHelp {
                         list.add(cb.or(orPredicate.toArray(p)));
                         continue;
                     }
-                    if (ObjectUtil.isNotEmpty(joinName)) {
+                    if (StringUtils.isNotEmpty(joinName)) {
                         join = joinKey.get(joinName);
                         if (join == null) {
                             String[] joinNames = joinName.split(">");
                             for (String name : joinNames) {
                                 switch (q.join()) {
                                     case LEFT:
-                                        if (ObjectUtil.isNotNull(join) && ObjectUtil.isNotNull(val)) {
+                                        if (Objects.nonNull(join) && Objects.nonNull(val)) {
                                             join = join.join(name, JoinType.LEFT);
                                         } else {
                                             join = root.join(name, JoinType.LEFT);
                                         }
                                         break;
                                     case RIGHT:
-                                        if (ObjectUtil.isNotNull(join) && ObjectUtil.isNotNull(val)) {
+                                        if (Objects.nonNull(join) && Objects.nonNull(val)) {
                                             join = join.join(name, JoinType.RIGHT);
                                         } else {
                                             join = root.join(name, JoinType.RIGHT);
                                         }
                                         break;
                                     case INNER:
-                                        if (ObjectUtil.isNotNull(join) && ObjectUtil.isNotNull(val)) {
+                                        if (Objects.nonNull(join) && Objects.nonNull(val)) {
                                             join = join.join(name, JoinType.INNER);
                                         } else {
                                             join = root.join(name, JoinType.INNER);
@@ -150,12 +149,12 @@ public class QueryHelp {
                                     .as(String.class), val.toString() + "%"));
                             break;
                         case IN:
-                            if (CollUtil.isNotEmpty((Collection<Object>) val)) {
+                            if (CollectionUtils.isNotEmpty((Collection<Object>) val)) {
                                 list.add(getExpression(attributeName, join, root).in((Collection<Object>) val));
                             }
                             break;
                         case NOT_IN:
-                            if (CollUtil.isNotEmpty((Collection<Object>) val)) {
+                            if (CollectionUtils.isNotEmpty((Collection<Object>) val)) {
                                 list.add(getExpression(attributeName, join, root).in((Collection<Object>) val).not());
                             }
                             break;
@@ -196,7 +195,7 @@ public class QueryHelp {
 
     @SuppressWarnings("unchecked")
     private static <T, R> Expression<T> getExpression(String attributeName, Join join, Root<R> root) {
-        if (ObjectUtil.isNotEmpty(join)) {
+        if (Objects.nonNull(join)) {
             return join.get(attributeName);
         } else {
             return root.get(attributeName);

@@ -7,6 +7,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
@@ -20,11 +24,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author valutodays
@@ -121,7 +120,7 @@ public class IndexInfoController extends BaseController {
                 try {
                     indexInfoService.updateLatest30Days(indexInfoDto);
                 } catch (Exception e) {
-                   log.error("error when updateLatest30Days", e);
+                    log.error("error when updateLatest30Days", e);
                 }
             }
         });

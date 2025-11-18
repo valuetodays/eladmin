@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
 import ll.vt.quarkus.commons.base.RunAsync;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;

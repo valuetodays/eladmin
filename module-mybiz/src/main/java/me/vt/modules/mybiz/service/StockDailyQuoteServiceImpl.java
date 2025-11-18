@@ -1,6 +1,6 @@
 package me.vt.modules.mybiz.service;
-import java.math.BigDecimal;
 
+import cn.vt.exception.AssertUtils;
 import cn.vt.rest.third.utils.StockCodeUtils;
 import cn.vt.trade.api.HaitongApi;
 import cn.vt.trade.vo.DailyStatVo;
@@ -13,25 +13,27 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
+import me.vt.modules.mybiz.domain.IndexInfo;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.domain.StockDailyQuote;
+import me.vt.modules.mybiz.repository.IndexInfoRepository;
 import me.vt.modules.mybiz.repository.StockDailyQuoteRepository;
 import me.vt.modules.mybiz.service.dto.StockDailyQuoteQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.StockDailyQuoteMapper;
+import me.vt.modules.mybiz.service.ta4j.Ta4jUtils;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -39,6 +41,13 @@ import me.vt.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.ta4j.core.Bar;
+import org.ta4j.core.BaseBarSeries;
+import org.ta4j.core.BaseBarSeriesBuilder;
+import org.ta4j.core.bars.TimeBarBuilderFactory;
+import org.ta4j.core.indicators.CCIIndicator;
+import org.ta4j.core.num.DecimalNumFactory;
+import org.ta4j.core.num.Num;
 
 /**
 * @author valuetodays
@@ -51,7 +60,11 @@ public class StockDailyQuoteServiceImpl {
     @Inject
     StockDailyQuoteRepository stockDailyQuoteRepository;
     @Inject
+    IndexInfoRepository indexInfoRepository;
+    @Inject
     StockDailyQuoteMapper stockDailyQuoteMapper;
+    @Inject
+    StockDailyIndicatorServiceImpl stockDailyIndicatorService;
 
     public PageResult<StockDailyQuoteDto> queryAll(StockDailyQuoteQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -151,7 +164,8 @@ public class StockDailyQuoteServiceImpl {
         LocalDate beginDate = endDateInclude.minusDays(days);
         String codeToUse = formatCodeWithMarket(code);
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
-        List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate), DateUtils.formatAsYyyyMMdd(endDateInclude));
+        List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate),
+                DateUtils.formatAsYyyyMMdd(endDateInclude));
         if (CollectionUtils.isEmpty(dailyStats)) {
             return null;
         }
@@ -178,4 +192,62 @@ public class StockDailyQuoteServiceImpl {
         }
         return beginDate;
     }
+
+    @Transactional
+    public Long computeAllCciById(IndexInfo req) {
+        Long indexInfoId = req.getId();
+        IndexInfo old = indexInfoRepository.findById(indexInfoId);
+        AssertUtils.assertNotNull(old);
+        // 要异步
+        this.computeCci(old.getCode(), true);
+        // 要通知
+        // 要处理重复点击问题
+        return 1L;
+    }
+
+    @Transactional
+    public void computeLatest30DaysCci(String indexCode) {
+        this.computeCci(indexCode, false);
+    }
+
+    private void computeCci(String indexCode, boolean fully) {
+        List<StockDailyQuote> stockDailyQuotes;
+        if (fully) {
+            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDate(indexCode);
+        } else {
+            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDate(indexCode);
+        }
+        if (CollectionUtils.isEmpty(stockDailyQuotes)) {
+            return;
+        }
+        List<Bar> bars = stockDailyQuotes.stream().map(e -> Ta4jUtils.buildBar(
+                e.getStatDate(),
+                e.getOpenVal(), e.getCloseVal(),
+                e.getHighVal(), e.getLowVal(),
+                e.getVolumeVal(), e.getAmountVal(),
+                0)).toList();
+        BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
+        baseBarSeriesBuilder.withName(indexCode)
+                .withBars(bars)
+                .withNumFactory(DecimalNumFactory.getInstance(3))
+                .withBarBuilderFactory(new TimeBarBuilderFactory());
+        BaseBarSeries baseBarSeries = baseBarSeriesBuilder.build();
+        CCIIndicator cci14 = new CCIIndicator(
+                baseBarSeries, // 基于TP计算CCI
+                14 // 周期N=14
+        );
+        final int SIZE = fully ? 500 : 30;
+        for (int n = bars.size() - 1; n >= cci14.getCountOfUnstableBars() - 1; n--) {
+            Num value = cci14.getValue(n);
+            log.info("#n={}, date={} value={}", n, bars.get(n).getSystemZonedEndTime(), value);
+            LocalDate statDate = bars.get(n).getSystemZonedBeginTime().toLocalDate();
+            BigDecimal cci14BD = PriceUtilsEx.fixPrice(BigDecimal.valueOf(value.getDelegate().doubleValue()));
+            try {
+                stockDailyIndicatorService.upsert(indexCode, statDate, cci14BD);
+            } catch (Exception e) {
+                log.error("error when upsert", e);
+            }
+        }
+    }
+
 }
