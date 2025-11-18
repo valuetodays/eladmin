@@ -240,7 +240,7 @@ public class StockDailyQuoteServiceImpl {
         for (int n = bars.size() - 1; n >= cci14.getCountOfUnstableBars() - 1; n--) {
             Num value = cci14.getValue(n);
             log.info("#n={}, date={} value={}", n, bars.get(n).getSystemZonedEndTime(), value);
-            LocalDate statDate = bars.get(n).getSystemZonedBeginTime().toLocalDate();
+            LocalDate statDate = bars.get(n).getSystemZonedEndTime().toLocalDate();
             BigDecimal cci14BD = PriceUtilsEx.fixPrice(BigDecimal.valueOf(value.getDelegate().doubleValue()));
             try {
                 stockDailyIndicatorService.upsert(indexCode, statDate, cci14BD);
