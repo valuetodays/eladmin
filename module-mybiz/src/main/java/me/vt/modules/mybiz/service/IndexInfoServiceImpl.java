@@ -226,6 +226,7 @@ public class IndexInfoServiceImpl {
         return indexInfoMapper.toDto(popularList);
     }
 
+    @Transactional
     public void updateLatest30Days(IndexInfoDto indexInfoDto) {
         String code = indexInfoDto.getCode();
         stockDailyQuoteService.getAndSaveToDb(code, false);
