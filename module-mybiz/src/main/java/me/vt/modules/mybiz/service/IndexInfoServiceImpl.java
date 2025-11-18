@@ -197,6 +197,10 @@ public class IndexInfoServiceImpl {
         if (StringUtils.isNotBlank(adjFreqCn)) {
             indexInfo.setAdjFreq(adjFreqCn);
         }
+        String indexShortNameCn = data.getIndexShortNameCn();
+        if (StringUtils.isNotBlank(indexShortNameCn)) {
+            indexInfo.setName(indexShortNameCn);
+        }
         if (toUpdate) {
             indexInfoRepository.update(indexInfo);
             return -1L;
