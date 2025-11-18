@@ -8,6 +8,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
 import me.vt.common.base.BaseController;
 import me.vt.modules.mybiz.api.dto.IndexInfoDto;
@@ -32,8 +33,9 @@ import java.util.Set;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Tag(name = "dd")
+@Tag(name = "指数信息")
 @Path("/api/indexInfo")
+@Slf4j
 public class IndexInfoController extends BaseController {
 
     @Inject
@@ -116,7 +118,11 @@ public class IndexInfoController extends BaseController {
         }
         super.executeAsync(() -> {
             for (IndexInfoDto indexInfoDto : popularList) {
-                indexInfoService.updateLatest30Days(indexInfoDto);
+                try {
+                    indexInfoService.updateLatest30Days(indexInfoDto);
+                } catch (Exception e) {
+                   log.error("error when updateLatest30Days", e);
+                }
             }
         });
         return popularList.size();
