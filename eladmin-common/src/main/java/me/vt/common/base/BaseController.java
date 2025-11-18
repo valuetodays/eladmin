@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import ll.vt.quarkus.commons.base.RunAsync;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
@@ -33,7 +35,7 @@ import org.redisson.api.RedissonClient;
  * @since 2025-07-16
  */
 @Slf4j
-public abstract class BaseController /*extends BaseCrudController */ {
+public abstract class BaseController /*extends BaseCrudController */ extends RunAsync {
     private static final String UNKNOWN = "unknown";
     @Context
     HttpHeaders headers;

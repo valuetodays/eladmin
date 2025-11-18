@@ -114,9 +114,11 @@ public class IndexInfoController extends BaseController {
         if (CollectionUtils.isEmpty(popularList)) {
             return 0L;
         }
-        for (IndexInfoDto indexInfoDto : popularList) {
-            indexInfoService.updateLatest30Days(indexInfoDto);
-        }
+        super.executeAsync(() -> {
+            for (IndexInfoDto indexInfoDto : popularList) {
+                indexInfoService.updateLatest30Days(indexInfoDto);
+            }
+        });
         return popularList.size();
     }
 }
