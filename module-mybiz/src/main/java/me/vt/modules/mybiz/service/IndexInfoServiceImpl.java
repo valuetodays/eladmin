@@ -227,7 +227,11 @@ public class IndexInfoServiceImpl {
 
     @Transactional
     public void updateLatest30Days(IndexInfoDto indexInfoDto) {
-        String code = indexInfoDto.getCode();
-        stockDailyQuoteService.getAndSaveToDb(code, false);
+        Long id = indexInfoDto.getId();
+        IndexInfo indexInfo = indexInfoRepository.findById(id);
+        if (Objects.isNull(indexInfo)) {
+            return;
+        }
+        stockDailyQuoteService.getAndSaveToDb(indexInfo, false);
     }
 }
