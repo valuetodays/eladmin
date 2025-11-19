@@ -45,7 +45,7 @@ public class StockDailyIndicatorServiceImpl {
     SqlServiceImpl sqlService;
 
     public PageResult<StockDailyIndicatorDto> queryAll(StockDailyIndicatorQueryCriteria criteria, Page pageable) {
-        Sort sort = Sort.descending("statDate");
+        Sort sort = Sort.descending("id.statDate");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
         Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Stock.class);
         PanacheQuery<StockDailyIndicator> panacheQuery;
