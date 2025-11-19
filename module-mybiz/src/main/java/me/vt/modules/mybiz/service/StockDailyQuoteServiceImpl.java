@@ -1,7 +1,6 @@
 package me.vt.modules.mybiz.service;
 
 import cn.vt.exception.AssertUtils;
-import cn.vt.rest.third.utils.StockCodeUtils;
 import cn.vt.trade.api.HaitongApi;
 import cn.vt.trade.vo.DailyStatVo;
 import cn.vt.util.DateUtils;
@@ -131,7 +130,7 @@ public class StockDailyQuoteServiceImpl {
     }
 
 
-    public void getAndSaveToDb(String code, boolean fully) {
+    public void getAndSaveToDb(IndexInfo indexInfo, boolean fully) {
         LocalDate today = LocalDate.now();
 
         int days;
@@ -140,9 +139,9 @@ public class StockDailyQuoteServiceImpl {
         } else {
             days = 30; // 近30天
         }
-        LocalDate preDate = saveBatch(code, today, days);
+        LocalDate preDate = saveBatch(indexInfo, today, days);
         while (Objects.nonNull(preDate)) {
-            preDate = saveBatch(code, preDate.minusDays(1), days);
+            preDate = saveBatch(indexInfo, preDate.minusDays(1), days);
             if (!fully) {
                 break;
             }
@@ -150,20 +149,9 @@ public class StockDailyQuoteServiceImpl {
 
     }
 
-    public static String formatCodeWithMarket(String rawCode) {
-        String codeToUse;
-        if (StringUtils.startsWith(rawCode, "9")) {
-            codeToUse = rawCode + ".SZ";
-        } else {
-            codeToUse = StockCodeUtils.buildForEhaifangzhou(rawCode);
-        }
-        return codeToUse;
-    }
-
-
-    private LocalDate saveBatch(String code, LocalDate endDateInclude, int days) {
+    private LocalDate saveBatch(IndexInfo indexInfo, LocalDate endDateInclude, int days) {
         LocalDate beginDate = endDateInclude.minusDays(days);
-        String codeToUse = formatCodeWithMarket(code);
+        String codeToUse = indexInfo.getCode() + "." + indexInfo.getRegion();
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
         List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate),
                 DateUtils.formatAsYyyyMMdd(endDateInclude));
@@ -171,12 +159,11 @@ public class StockDailyQuoteServiceImpl {
             return null;
         }
         for (DailyStatVo dailyStat : dailyStats) {
-            String code1 = StockCodeUtils.parseFromEhaifangzhou(code);
             LocalDate localDate = DateUtils.formatYyyyMmDdAsLocalDateTime(dailyStat.getDate()).toLocalDate();
-            StockDailyQuote queried = stockDailyQuoteRepository.findByCodeAndStatDate(code1, localDate);
+            StockDailyQuote queried = stockDailyQuoteRepository.findByCodeAndStatDate(codeToUse, localDate);
             if (Objects.isNull(queried)) {
                 queried = new StockDailyQuote();
-                queried.setCode(code1);
+                queried.setCode(indexInfo.getCode());
                 queried.setStatDate(localDate);
                 queried.setOpenVal(PriceUtilsEx.fixPrice(dailyStat.getOpen()));
                 queried.setCloseVal(PriceUtilsEx.fixPrice(dailyStat.getClose()));

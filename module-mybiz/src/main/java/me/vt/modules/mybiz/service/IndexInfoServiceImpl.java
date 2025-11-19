@@ -214,7 +214,7 @@ public class IndexInfoServiceImpl {
         IndexInfo old = indexInfoRepository.findById(id);
         AssertUtils.assertNotNull(old);
         // 要异步
-        stockDailyQuoteService.getAndSaveToDb(old.getCode(), true);
+        stockDailyQuoteService.getAndSaveToDb(req, true);
         // 要通知
         // 要处理重复点击问题
         return id;
