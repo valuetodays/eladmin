@@ -10,21 +10,11 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.extern.slf4j.Slf4j;
+import me.vt.db.SqlServiceImpl;
 import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
 import me.vt.modules.mybiz.domain.IndexInfo;
 import me.vt.modules.mybiz.domain.Stock;
@@ -49,10 +39,24 @@ import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 /**
-* @author valuetodays
-* @since 2025-11-17 19:01
-**/
+ * @author valuetodays
+ * @since 2025-11-17 19:01
+ **/
 @ApplicationScoped
 @Slf4j
 public class StockDailyQuoteServiceImpl {
@@ -65,6 +69,23 @@ public class StockDailyQuoteServiceImpl {
     StockDailyQuoteMapper stockDailyQuoteMapper;
     @Inject
     StockDailyIndicatorServiceImpl stockDailyIndicatorService;
+    @Inject
+    SqlServiceImpl sqlService;
+
+    private static final String sqlUpsertTpl =
+        """
+            insert into f_stock_daily_quote(code, stat_date, open_val, close_val, high_val, low_val, volume_val, amount_val)
+            values('?code', '?stat_date', ?open_val, ?close_val, ?high_val, ?low_val, ?volume_val, ?amount_val)
+            ON CONFLICT (code, stat_date)
+            DO UPDATE SET
+                open_val   = EXCLUDED.open_val,
+                close_val  = EXCLUDED.close_val,
+                high_val   = EXCLUDED.high_val,
+                low_val    = EXCLUDED.low_val,
+                volume_val = EXCLUDED.volume_val,
+                amount_val = EXCLUDED.amount_val;
+            """;
+
 
     public PageResult<StockDailyQuoteDto> queryAll(StockDailyQuoteQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -130,6 +151,7 @@ public class StockDailyQuoteServiceImpl {
     }
 
 
+    @Transactional
     public void getAndSaveToDb(IndexInfo indexInfo, boolean fully) {
         LocalDate today = LocalDate.now();
 
@@ -154,31 +176,38 @@ public class StockDailyQuoteServiceImpl {
         String codeToUse = indexInfo.getCode() + "." + indexInfo.getRegion();
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
         List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate),
-                DateUtils.formatAsYyyyMMdd(endDateInclude));
+            DateUtils.formatAsYyyyMMdd(endDateInclude));
         if (CollectionUtils.isEmpty(dailyStats)) {
             return null;
         }
+        List<String> sqlsToExecute = new ArrayList<>(dailyStats.size());
         for (DailyStatVo dailyStat : dailyStats) {
-            LocalDate localDate = DateUtils.formatYyyyMmDdAsLocalDateTime(dailyStat.getDate()).toLocalDate();
-            StockDailyQuote queried = stockDailyQuoteRepository.findByCodeAndStatDate(codeToUse, localDate);
-            if (Objects.isNull(queried)) {
-                queried = new StockDailyQuote();
-                queried.setCode(indexInfo.getCode());
-                queried.setStatDate(localDate);
-                queried.setOpenVal(PriceUtilsEx.fixPrice(dailyStat.getOpen()));
-                queried.setCloseVal(PriceUtilsEx.fixPrice(dailyStat.getClose()));
-                queried.setHighVal(PriceUtilsEx.fixPrice(dailyStat.getHigh()));
-                queried.setLowVal(PriceUtilsEx.fixPrice(dailyStat.getLow()));
-                queried.setVolumeVal(dailyStat.getVolume());
-                queried.setAmountVal(dailyStat.getAmount());
-                try {
-                    stockDailyQuoteRepository.save(queried);
-                } catch (Exception e) {
-                    log.error("save error", e);
-                }
+            Map<String, Object> params = new HashMap<>();
+            params.put("code", indexInfo.getCode());
+            params.put("stat_date", dateIntToDateStr(dailyStat.getDate()));
+            params.put("open_val", PriceUtilsEx.fixPrice(dailyStat.getOpen()));
+            params.put("close_val", PriceUtilsEx.fixPrice(dailyStat.getClose()));
+            params.put("high_val", PriceUtilsEx.fixPrice(dailyStat.getHigh()));
+            params.put("low_val", PriceUtilsEx.fixPrice(dailyStat.getLow()));
+            params.put("volume_val", dailyStat.getVolume());
+            params.put("amount_val", dailyStat.getAmount());
+            String sql = sqlUpsertTpl;
+            for (Map.Entry<String, Object> stringObjectEntry : params.entrySet()) {
+                sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(), String.valueOf(stringObjectEntry.getValue()));
             }
+            sqlsToExecute.add(sql);
+        }
+        try {
+            sqlService.saveBySqls(sqlsToExecute);
+        } catch (Exception e) {
+            log.error("error when saveBySql", e);
         }
         return beginDate;
+    }
+
+    protected String dateIntToDateStr(int date) {
+        LocalDateTime t = DateUtils.formatYyyyMmDdAsLocalDateTime(date);
+        return DateUtils.formatDate(t);
     }
 
     @Transactional
@@ -210,35 +239,44 @@ public class StockDailyQuoteServiceImpl {
         }
         // 需要使用“正序”来计算cci
         List<Bar> bars = stockDailyQuotes.stream()
-                .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
-                .map(e -> Ta4jUtils.buildBar(
-                        e.getStatDate(),
-                        e.getOpenVal(), e.getCloseVal(),
-                        e.getHighVal(), e.getLowVal(),
-                        e.getVolumeVal(), e.getAmountVal(),
-                        0))
-                .toList();
+            .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
+            .map(e -> Ta4jUtils.buildBar(
+                e.getStatDate(),
+                e.getOpenVal(), e.getCloseVal(),
+                e.getHighVal(), e.getLowVal(),
+                e.getVolumeVal(), e.getAmountVal(),
+                0))
+            .toList();
         BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
         baseBarSeriesBuilder.withName(indexCode)
-                .withBars(bars)
-                .withNumFactory(DecimalNumFactory.getInstance(3))
-                .withBarBuilderFactory(new TimeBarBuilderFactory());
+            .withBars(bars)
+            .withNumFactory(DecimalNumFactory.getInstance(3))
+            .withBarBuilderFactory(new TimeBarBuilderFactory());
         BaseBarSeries baseBarSeries = baseBarSeriesBuilder.build();
         CCIIndicator cci14 = new CCIIndicator(
-                baseBarSeries, // 基于TP计算CCI
-                14 // 周期N=14
+            baseBarSeries, // 基于TP计算CCI
+            14 // 周期N=14
         );
         final int SIZE = fully ? 500 : 30;
+        List<String> sqlsToExecute = new ArrayList<>(SIZE);
         for (int n = bars.size() - 1; n >= cci14.getCountOfUnstableBars() - 1; n--) {
             Num value = cci14.getValue(n);
             log.info("#n={}, date={} value={}", n, bars.get(n).getSystemZonedEndTime(), value);
             LocalDate statDate = bars.get(n).getSystemZonedEndTime().toLocalDate();
             BigDecimal cci14BD = PriceUtilsEx.fixPrice(BigDecimal.valueOf(value.getDelegate().doubleValue()));
-            try {
-                stockDailyIndicatorService.upsert(indexCode, statDate, cci14BD);
-            } catch (Exception e) {
-                log.error("error when upsert", e);
+            String sql = stockDailyIndicatorService.buildUpsertSql(indexCode, statDate, cci14BD);
+            sqlsToExecute.add(sql);
+            if (sqlsToExecute.size() >= SIZE) {
+                sqlService.saveBySqls(sqlsToExecute);
+                sqlsToExecute.clear();
+                // 不是更新全部，就只更新30条
+                if (!fully) {
+                    return;
+                }
             }
+        }
+        if (CollectionUtils.isNotEmpty(sqlsToExecute)) {
+            sqlService.saveBySqls(sqlsToExecute);
         }
     }
 

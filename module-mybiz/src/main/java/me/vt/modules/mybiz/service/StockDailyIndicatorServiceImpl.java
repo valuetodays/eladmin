@@ -1,6 +1,7 @@
 package me.vt.modules.mybiz.service;
 
 import cn.vt.exception.AssertUtils;
+import cn.vt.util.DateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -10,9 +11,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.db.SqlServiceImpl;
@@ -26,8 +30,8 @@ import me.vt.modules.mybiz.service.dto.StockDailyIndicatorQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.StockDailyIndicatorMapper;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jdbi.v3.core.Jdbi;
 
 /**
  * @author valuetodays
@@ -44,6 +48,13 @@ public class StockDailyIndicatorServiceImpl {
     StockDailyIndicatorMapper stockDailyIndicatorMapper;
     @Inject
     SqlServiceImpl sqlService;
+
+    private static final String SQL_FOR_UPSERT = """
+            insert into f_stock_daily_indicator (code, stat_date, cci14) values('?code', '?stat_date', ?cci14)
+            ON CONFLICT (code, stat_date)
+            DO UPDATE SET
+                cci14   = EXCLUDED.cci14;
+        """;
 
     public PageResult<StockDailyIndicatorDto> queryAll(StockDailyIndicatorQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id.statDate");
@@ -77,19 +88,16 @@ public class StockDailyIndicatorServiceImpl {
     }
 
     @Transactional
-    public void upsert(String code, LocalDate statDate, BigDecimal cci14) {
-        entityManager.createNativeQuery(
-                """
-                        INSERT INTO f_stock_daily_indicator (code, stat_date, cci14)
-                        VALUES (:code, :statDate, :cci14)
-                        ON CONFLICT (code, stat_date)
-                        DO UPDATE SET
-                            cci14 = EXCLUDED.cci14
-                        """)
-                .setParameter("code", code)
-                .setParameter("statDate", statDate)
-                .setParameter("cci14", cci14)
-                .executeUpdate();
+    public String buildUpsertSql(String code, LocalDate statDate, BigDecimal cci14) {
+        Map<String, String> params = new HashMap<>();
+        params.put("code", code);
+        params.put("stat_date", statDate.format(DateUtils.DEFAULT_DATE_FORMATTER));
+        params.put("cci14", String.valueOf(cci14));
+        String sql = SQL_FOR_UPSERT;
+        for (Map.Entry<String, String> stringObjectEntry : params.entrySet()) {
+            sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(), stringObjectEntry.getValue());
+        }
+        return sql;
     }
 
     public List<Cci14_100DataDto> getAllCciLt_100ByStatDate(Cci14_100DataCriteria criteria) {
