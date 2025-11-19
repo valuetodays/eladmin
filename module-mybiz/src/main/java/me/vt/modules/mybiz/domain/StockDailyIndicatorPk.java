@@ -2,11 +2,10 @@ package me.vt.modules.mybiz.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Data;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.io.Serializable;
 import java.time.LocalDate;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * .

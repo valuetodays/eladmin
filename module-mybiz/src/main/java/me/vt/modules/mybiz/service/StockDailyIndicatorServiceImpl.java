@@ -1,5 +1,6 @@
 package me.vt.modules.mybiz.service;
 
+import cn.vt.exception.AssertUtils;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -14,10 +15,13 @@ import java.util.Objects;
 import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
+import me.vt.db.SqlServiceImpl;
+import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.domain.StockDailyIndicator;
 import me.vt.modules.mybiz.repository.StockDailyIndicatorRepository;
+import me.vt.modules.mybiz.service.dto.Cci14_100DataCriteria;
 import me.vt.modules.mybiz.service.dto.StockDailyIndicatorQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.StockDailyIndicatorMapper;
 import me.vt.utils.PageResult;
@@ -25,9 +29,9 @@ import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
-* @author valuetodays
-* @since 2025-11-18 20:01
-**/
+ * @author valuetodays
+ * @since 2025-11-18 20:01
+ **/
 @ApplicationScoped
 public class StockDailyIndicatorServiceImpl {
     @Inject
@@ -37,6 +41,8 @@ public class StockDailyIndicatorServiceImpl {
     StockDailyIndicatorRepository stockDailyIndicatorRepository;
     @Inject
     StockDailyIndicatorMapper stockDailyIndicatorMapper;
+    @Inject
+    SqlServiceImpl sqlService;
 
     public PageResult<StockDailyIndicatorDto> queryAll(StockDailyIndicatorQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("statDate");
@@ -83,6 +89,20 @@ public class StockDailyIndicatorServiceImpl {
                 .setParameter("statDate", statDate)
                 .setParameter("cci14", cci14)
                 .executeUpdate();
+    }
+
+    public List<Cci14_100DataDto> getAllCciLt_100ByStatDate(Cci14_100DataCriteria criteria) {
+        LocalDate statDate = criteria.getStatDate();
+        AssertUtils.assertNotNull(statDate);
+
+        String sql = """
+                SELECT sdi.code, sdi.stat_date as statDAte, sdi.cci14, ii.name
+                FROM "f_stock_daily_indicator" sdi
+                left join f_index_info ii on ii.code = sdi.code
+                WHERE "stat_date"::date = ?1 and cci14 < -100
+                ORDER BY "stat_date" DESC
+                """;
+        return sqlService.queryForList(sql, Cci14_100DataDto.class, statDate);
     }
 
 }

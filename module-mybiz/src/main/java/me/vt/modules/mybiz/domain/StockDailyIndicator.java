@@ -7,11 +7,10 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @author valuetodays

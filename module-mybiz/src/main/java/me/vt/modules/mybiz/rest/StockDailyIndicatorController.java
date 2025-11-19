@@ -9,10 +9,13 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.vt.common.base.BaseController;
+import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
 import me.vt.modules.mybiz.service.StockDailyIndicatorServiceImpl;
+import me.vt.modules.mybiz.service.dto.Cci14_100DataCriteria;
 import me.vt.modules.mybiz.service.dto.StockDailyIndicatorQueryCriteria;
 import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -49,5 +52,13 @@ public class StockDailyIndicatorController extends BaseController {
     @PreAuthorize("@el.check('stockDailyIndicator:list')")
     public PageResult<StockDailyIndicatorDto> query(StockDailyIndicatorQueryCriteria criteria) {
         return stockDailyIndicatorService.queryAll(criteria, criteria.toPageRequest());
+    }
+
+    @POST
+    @Path(value = "/getAllCciLt_100ByStatDate")
+    @Operation(summary = "获取指定条件内cci14小于-100的数据")
+    @PreAuthorize("@el.check('stockDailyIndicator:getAllCciLt_100ByStatDate')")
+    public List<Cci14_100DataDto> getAllCciLt_100ByStatDate(Cci14_100DataCriteria criteria) {
+        return stockDailyIndicatorService.getAllCciLt_100ByStatDate(criteria);
     }
 }

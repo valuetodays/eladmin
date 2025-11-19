@@ -40,7 +40,6 @@ import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import me.vt.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ta4j.core.Bar;
@@ -224,14 +223,14 @@ public class StockDailyQuoteServiceImpl {
         }
         // 需要使用“正序”来计算cci
         List<Bar> bars = stockDailyQuotes.stream()
-            .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
-            .map(e -> Ta4jUtils.buildBar(
-                e.getStatDate(),
-                e.getOpenVal(), e.getCloseVal(),
-                e.getHighVal(), e.getLowVal(),
-                e.getVolumeVal(), e.getAmountVal(),
-                0)
-            ).toList();
+                .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
+                .map(e -> Ta4jUtils.buildBar(
+                        e.getStatDate(),
+                        e.getOpenVal(), e.getCloseVal(),
+                        e.getHighVal(), e.getLowVal(),
+                        e.getVolumeVal(), e.getAmountVal(),
+                        0))
+                .toList();
         BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
         baseBarSeriesBuilder.withName(indexCode)
                 .withBars(bars)
