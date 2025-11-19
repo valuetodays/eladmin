@@ -27,6 +27,7 @@ import me.vt.modules.mybiz.service.mapstruct.StockDailyIndicatorMapper;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jdbi.v3.core.Jdbi;
 
 /**
  * @author valuetodays
@@ -95,14 +96,19 @@ public class StockDailyIndicatorServiceImpl {
         LocalDate statDate = criteria.getStatDate();
         AssertUtils.assertNotNull(statDate);
 
-        String sql = """
+        final String sql = """
                 SELECT sdi.code, sdi.stat_date as statDate, sdi.cci14, ii.name
                 FROM f_stock_daily_indicator sdi
                 left join f_index_info ii on ii.code = sdi.code
-                WHERE stat_date = ?1 and cci14 < -100
+                WHERE sdi.stat_date::date = :statDate::date and cci14 < -100
                 ORDER BY "stat_date" DESC
                 """;
-        return sqlService.queryForList(sql, Cci14_100DataDto.class, statDate);
+        return sqlService.getJdbi().withHandle(handle ->
+            handle.createQuery(sql)
+                .bind("statDate", statDate)
+                .mapTo(Cci14_100DataDto.class)
+                .list()
+        );
     }
 
 }

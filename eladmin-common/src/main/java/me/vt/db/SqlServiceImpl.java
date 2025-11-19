@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 import javax.sql.DataSource;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,6 +28,7 @@ import org.jdbi.v3.core.statement.Query;
 public class SqlServiceImpl {
 
     private final DataSource ds;
+    @Getter
     private final Jdbi jdbi;
 
     public SqlServiceImpl(DataSource dataSource) {
