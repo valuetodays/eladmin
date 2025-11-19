@@ -96,10 +96,10 @@ public class StockDailyIndicatorServiceImpl {
         AssertUtils.assertNotNull(statDate);
 
         String sql = """
-                SELECT sdi.code, sdi.stat_date as statDAte, sdi.cci14, ii.name
-                FROM "f_stock_daily_indicator" sdi
+                SELECT sdi.code, sdi.stat_date as statDate, sdi.cci14, ii.name
+                FROM f_stock_daily_indicator sdi
                 left join f_index_info ii on ii.code = sdi.code
-                WHERE "stat_date" = ?1 and cci14 < -100
+                WHERE stat_date = ?1 and cci14 < -100
                 ORDER BY "stat_date" DESC
                 """;
         return sqlService.queryForList(sql, Cci14_100DataDto.class, statDate);
