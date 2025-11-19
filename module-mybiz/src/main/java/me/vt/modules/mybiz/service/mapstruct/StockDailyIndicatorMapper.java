@@ -5,6 +5,7 @@ import me.vt.common.base.BaseMapper;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
 import me.vt.modules.mybiz.domain.StockDailyIndicator;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -16,4 +17,8 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StockDailyIndicatorMapper extends BaseMapper<StockDailyIndicatorDto, StockDailyIndicator> {
 
+    @Override
+    @Mapping(target = "code", source = "id.code")
+    @Mapping(target = "statDate", source = "id.statDate")
+    StockDailyIndicatorDto toDto(StockDailyIndicator entity);
 }
