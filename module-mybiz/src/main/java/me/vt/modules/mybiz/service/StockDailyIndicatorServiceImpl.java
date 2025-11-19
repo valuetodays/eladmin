@@ -106,7 +106,7 @@ public class StockDailyIndicatorServiceImpl {
         return sqlService.getJdbi().withHandle(handle ->
             handle.createQuery(sql)
                 .bind("statDate", statDate)
-                .mapTo(Cci14_100DataDto.class)
+                .mapToBean(Cci14_100DataDto.class)
                 .list()
         );
     }
