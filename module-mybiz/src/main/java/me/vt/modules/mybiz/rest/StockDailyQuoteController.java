@@ -7,6 +7,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
+
+import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
@@ -38,6 +40,8 @@ public class StockDailyQuoteController extends BaseController {
     IndexInfoServiceImpl indexInfoService;
     @Inject
     StockDailyQuoteServiceImpl stockDailyQuoteService;
+    @Inject
+    IVtNatsClient vtNatsClient;
 
     //    @Operation(summary = "导出数据")
     //    @POST
@@ -93,7 +97,11 @@ public class StockDailyQuoteController extends BaseController {
     @Operation(summary = "计算指定指数的所有cci值")
     @PreAuthorize("@el.check('stockDailyQuote:computeAllCciById')")
     public Long computeAllCciById(IndexInfo req) {
-        return stockDailyQuoteService.computeAllCciById(req);
+        Long l = stockDailyQuoteService.computeAllCciById(req);
+        super.executeAsync(() -> {
+            vtNatsClient.publishApplicationMessage("计算cci14完成：");
+        });
+        return l;
     }
 
     @POST
@@ -114,6 +122,8 @@ public class StockDailyQuoteController extends BaseController {
                     log.error("error when updateLatest30Days", e);
                 }
             }
+
+            vtNatsClient.publishApplicationMessage("计算cci14完成");
         });
         return (long) popularList.size();
     }

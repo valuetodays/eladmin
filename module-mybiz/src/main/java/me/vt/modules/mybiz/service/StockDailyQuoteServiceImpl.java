@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
+import ll.vt.quarkus.commons.base.RunAsync;
+import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.db.SqlServiceImpl;
 import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
@@ -59,7 +61,7 @@ import java.util.Set;
  **/
 @ApplicationScoped
 @Slf4j
-public class StockDailyQuoteServiceImpl {
+public class StockDailyQuoteServiceImpl extends RunAsync {
 
     @Inject
     StockDailyQuoteRepository stockDailyQuoteRepository;
@@ -71,6 +73,8 @@ public class StockDailyQuoteServiceImpl {
     StockDailyIndicatorServiceImpl stockDailyIndicatorService;
     @Inject
     SqlServiceImpl sqlService;
+    @Inject
+    IVtNatsClient vtNatsClient;
 
     private static final String sqlUpsertTpl =
         """

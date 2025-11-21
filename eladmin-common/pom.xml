@@ -36,6 +36,17 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>ll.vt.quarkus</groupId>
+            <artifactId>quarkus-common-nats</artifactId>
+            <version>${valuetodays.quarkus-commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>

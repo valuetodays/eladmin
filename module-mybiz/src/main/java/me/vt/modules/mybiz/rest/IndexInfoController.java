@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
+import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
@@ -39,6 +41,8 @@ public class IndexInfoController extends BaseController {
 
     @Inject
     IndexInfoServiceImpl indexInfoService;
+    @Inject
+    IVtNatsClient vtNatsClient;
 
     @Operation(summary = "导出数据")
     @POST
@@ -123,6 +127,7 @@ public class IndexInfoController extends BaseController {
                     log.error("error when updateLatest30Days", e);
                 }
             }
+            vtNatsClient.publishApplicationMessage("同步所有popular指数的近30日k数据完成");
         });
         return popularList.size();
     }
