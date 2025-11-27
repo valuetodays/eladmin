@@ -43,7 +43,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 @Slf4j
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-@Path("/auth")
+@Path("/api/auth")
 @Tag(name = "系统：系统授权接口")
 public class AuthController extends BaseController {
     @Inject

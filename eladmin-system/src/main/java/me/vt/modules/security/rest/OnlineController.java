@@ -28,7 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
-@Path("/auth/online")
+@Path("/api/online")
 @Tag(name = "系统：在线用户管理")
 public class OnlineController extends BaseController {
 
