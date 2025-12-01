@@ -9,14 +9,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import me.vt.db.SqlServiceImpl;
@@ -32,6 +24,14 @@ import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author valuetodays
@@ -111,12 +111,10 @@ public class StockDailyIndicatorServiceImpl {
                 WHERE sdi.stat_date::date = :statDate::date and cci14 < -100
                 ORDER BY code DESC
                 """;
-        return sqlService.getJdbi().withHandle(handle ->
-            handle.createQuery(sql)
+        return sqlService.getJdbi().withHandle(handle -> handle.createQuery(sql)
                 .bind("statDate", statDate)
                 .mapToBean(Cci14_100DataDto.class)
-                .list()
-        );
+            .list());
     }
 
 }

@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>me.vt</groupId>
-        <artifactId>eladmin</artifactId>
-        <version>3.0</version>
+        <artifactId>portal</artifactId>
+        <version>v2025-12-01</version>
     </parent>
 
     <artifactId>module-mybiz-api</artifactId>

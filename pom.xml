@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.vt</groupId>
-    <artifactId>eladmin</artifactId>
+    <artifactId>portal</artifactId>
     <packaging>pom</packaging>
-    <version>3.0</version>
+    <version>v2025-12-01</version>
 
     <parent>
         <groupId>ll.vt.quarkus</groupId>

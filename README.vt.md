@@ -8,7 +8,7 @@
 - [ ] 修正所有的fixme
 - [x] 配置跨域 见 quarkus.http.cors.origins in application.yml
 - [ ] ResponseEntity不应该出现在controller之外
-- [x] 本工程版本升级到3.0
+- [x] 本工程版本升级到    <version>v2025-12-01</version>
 - 不要使用@Getter/@Setter，直接使用@Data
 - 方法重命名
   + [x] downloadExcel -> writeExcel

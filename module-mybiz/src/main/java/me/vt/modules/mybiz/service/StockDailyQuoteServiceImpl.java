@@ -197,7 +197,8 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
             params.put("amount_val", dailyStat.getAmount());
             String sql = sqlUpsertTpl;
             for (Map.Entry<String, Object> stringObjectEntry : params.entrySet()) {
-                sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(), String.valueOf(stringObjectEntry.getValue()));
+                sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(),
+                    String.valueOf(stringObjectEntry.getValue()));
             }
             sqlsToExecute.add(sql);
         }
