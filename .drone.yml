@@ -1,7 +1,7 @@
 # for gitee
 kind: pipeline
 type: docker
-name: eladmin-system-quarkus-ci/cd
+name: quarkus-system-quarkus-ci/cd
 
 workspace:
   path: /drone/src
