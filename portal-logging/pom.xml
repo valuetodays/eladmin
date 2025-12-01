@@ -7,12 +7,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eladmin-logging</artifactId>
+    <artifactId>portal-logging</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-common</artifactId>
+            <artifactId>portal-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

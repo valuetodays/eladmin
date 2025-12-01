@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-common</artifactId>
+            <artifactId>portal-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

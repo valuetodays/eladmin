@@ -7,8 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eladmin-system</artifactId>
-    <description>核心模块</description>
+    <artifactId>portal-system</artifactId>
 
     <properties>
         <!-- oshi监控需要指定jna版本, 问题详见 https://github.com/oshi/oshi/issues/1040 -->
@@ -19,12 +18,12 @@
         <!-- 代码生成模块 -->
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-generator</artifactId>
+            <artifactId>portal-generator</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>me.vt</groupId>
-                    <artifactId>eladmin-common</artifactId>
+                    <artifactId>portal-common</artifactId>
                 </exclusion>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -36,7 +35,7 @@
         <!-- tools 模块包含了 common 和 logging 模块 -->
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-tools</artifactId>
+            <artifactId>portal-tools</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
@@ -108,7 +107,7 @@
 
     <!-- 打包 -->
     <build>
-        <finalName>eladmin-system-quarkus</finalName>
+        <finalName>portal-system-quarkus</finalName>
         <plugins>
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>

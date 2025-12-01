@@ -29,17 +29,14 @@
     </properties>
 
     <modules>
-        <module>eladmin-common</module>
-        <module>eladmin-logging</module>
-        <module>eladmin-system</module>
-        <module>eladmin-tools</module>
-        <module>eladmin-generator</module>
+        <module>portal-common</module>
+        <module>portal-logging</module>
+        <module>portal-system</module>
+        <module>portal-tools</module>
+        <module>portal-generator</module>
         <module>module-mybiz-api</module>
         <module>module-mybiz</module>
     </modules>
-
-    <description>ELADMIN 后台管理</description>
-    <url>https://eladmin.vip</url>
 
     <dependencies>
         <dependency>

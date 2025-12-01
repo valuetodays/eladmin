@@ -6,8 +6,8 @@ WORKSPACE_PATH=/drone/src
 WORKBENCH_DIR=/root/workbench_dir
 WORKBENCH_BAK_DIR=${WORKBENCH_DIR}'/backup'
 WORKBENCH_DEPLOY_DIR=${WORKBENCH_DIR}'/deploy'
-APP_JAR_NAME=eladmin-system-quarkus-runner.jar
-APP_JAR_DIR=${WORKSPACE_PATH}/eladmin-system/target
+APP_JAR_NAME=portal-system-quarkus-runner.jar
+APP_JAR_DIR=${WORKSPACE_PATH}/portal-system/target
 
 echo start on $(date "+%Y-%m-%d %H:%M:%S")
 shell_directory=$(cd `dirname $0`; pwd)

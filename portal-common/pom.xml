@@ -10,7 +10,7 @@
         <hutool.version>5.8.35</hutool.version>
     </properties>
 
-    <artifactId>eladmin-common</artifactId>
+    <artifactId>portal-common</artifactId>
 
     <dependencies>
         <dependency>

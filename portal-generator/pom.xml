@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eladmin-generator</artifactId>
+    <artifactId>portal-generator</artifactId>
 
     <properties>
         <configuration.version>1.10</configuration.version>
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-common</artifactId>
+            <artifactId>portal-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

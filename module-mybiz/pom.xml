@@ -19,12 +19,12 @@
         </dependency>
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-tools</artifactId>
+            <artifactId>portal-tools</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.vt</groupId>
-            <artifactId>eladmin-common</artifactId>
+            <artifactId>portal-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
