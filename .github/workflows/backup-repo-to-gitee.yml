@@ -6,6 +6,7 @@ on:
       - master
       - main
       - dev
+      - dev-quarkus
 
 jobs:
   build:
@@ -21,4 +22,3 @@ jobs:
           #        giteeuser: valuetodays
           # must not be empty
           giteetoken: ${{ secrets.GITEE_TOKEN }}
-        
