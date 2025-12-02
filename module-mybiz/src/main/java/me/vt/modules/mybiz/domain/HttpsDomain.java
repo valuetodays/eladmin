@@ -19,7 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 **/
 @Entity
 @Data
-@Table(name = "ex_https_domain_item")
+@Table(name = "ex_https_domain")
 public class HttpsDomain implements Serializable {
 
     @Id
