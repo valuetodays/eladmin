@@ -4,7 +4,6 @@ import cn.hutool.core.util.IdUtil;
 import cn.vt.auth.AuthUser;
 import cn.vt.auth.AuthUserHolder;
 import cn.vt.encrypt.BCryptUtils;
-import cn.vt.util.TokenUtils;
 import com.wf.captcha.base.Captcha;
 import io.vertx.core.http.CookieSameSite;
 import io.vertx.core.http.impl.CookieImpl;
@@ -18,9 +17,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
-
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -110,7 +107,7 @@ public class AuthController extends BaseController {
 
 
     private void refreshTokenAndAddToResponse(RoutingContext ctx, JwtUserDto jwtUser,
-                                              TokenInfoResp tokenInfoVO) {
+            TokenInfoResp tokenInfoVO) {
         // 生成令牌
         String token = tokenProvider.createToken();
         tokenInfoVO.setToken(token);
@@ -123,7 +120,7 @@ public class AuthController extends BaseController {
         String scheme = ctx.request().scheme(); // http 或 https
         CookieImpl cookieToAdd = new CookieImpl("portal_" + AuthUserHolder.AUTH_HEADER_KEY, token);
         cookieToAdd.setDomain(".valuetodays.xyz") // TODO how to get domain in request
-            .setPath("/").setMaxAge(Duration.ofDays(7).toSeconds()).setHttpOnly(true);
+                .setPath("/").setMaxAge(Duration.ofDays(7).toSeconds()).setHttpOnly(true);
         if (scheme.equalsIgnoreCase("https")) {
             cookieToAdd.setSecure(true).setSameSite(CookieSameSite.NONE);
         } else {
@@ -138,6 +135,7 @@ public class AuthController extends BaseController {
 
         ctx.response().putHeader(AuthUserHolder.AUTH_HEADER_KEY, token).addCookie(cookieToAdd);
     }
+
     @Operation(summary = "获取用户信息")
     @POST
     @Path(value = "/info")

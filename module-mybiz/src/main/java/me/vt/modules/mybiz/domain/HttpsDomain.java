@@ -1,8 +1,6 @@
 package me.vt.modules.mybiz.domain;
 
-import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import cn.hutool.core.bean.copier.CopyOptions;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
+import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
 * @author valuetodays
@@ -19,8 +19,8 @@ import java.io.Serializable;
 **/
 @Entity
 @Data
-@Table(name="ex_https_domain_item")
-public class HttpsDomainItem implements Serializable {
+@Table(name = "ex_https_domain_item")
+public class HttpsDomain implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,12 +28,12 @@ public class HttpsDomainItem implements Serializable {
     @Schema(description = "主键")
     private Long id;
 
-    @Column(name = "title",nullable = false)
+    @Column(name = "title", nullable = false)
     @NotBlank
     @Schema(description = "标题")
     private String title;
 
-    @Column(name = "domain",nullable = false)
+    @Column(name = "domain", nullable = false)
     @NotBlank
     @Schema(description = "域名")
     private String domain;
@@ -42,7 +42,7 @@ public class HttpsDomainItem implements Serializable {
     @Schema(description = "备注")
     private String remark;
 
-    public void copy(HttpsDomainItem source) {
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    public void copy(HttpsDomain source) {
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

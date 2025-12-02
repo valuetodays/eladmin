@@ -1,7 +1,7 @@
 package me.vt.modules.mybiz.api.dto;
 
-import lombok.Data;
 import java.io.Serializable;
+import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
@@ -9,7 +9,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 * @since 2025-12-01 22:19
 **/
 @Data
-public class HttpsDomainItemDto implements Serializable {
+public class HttpsDomainDto implements Serializable {
 
     @Schema(description = "主键")
     private Long id;

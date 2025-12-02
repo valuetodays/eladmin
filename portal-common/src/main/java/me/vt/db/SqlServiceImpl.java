@@ -2,6 +2,10 @@ package me.vt.db;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.List;
+import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,11 +15,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.result.ResultIterable;
 import org.jdbi.v3.core.statement.PreparedBatch;
 import org.jdbi.v3.core.statement.Query;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.List;
 
 /**
  * .

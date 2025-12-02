@@ -10,6 +10,19 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
@@ -41,20 +54,6 @@ import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 /**
  * @author valuetodays
  * @since 2025-11-17 19:01
@@ -77,18 +76,18 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     IVtNatsClient vtNatsClient;
 
     private static final String sqlUpsertTpl =
-        """
-            insert into f_stock_daily_quote(code, stat_date, open_val, close_val, high_val, low_val, volume_val, amount_val)
-            values('?code', '?stat_date', ?open_val, ?close_val, ?high_val, ?low_val, ?volume_val, ?amount_val)
-            ON CONFLICT (code, stat_date)
-            DO UPDATE SET
-                open_val   = EXCLUDED.open_val,
-                close_val  = EXCLUDED.close_val,
-                high_val   = EXCLUDED.high_val,
-                low_val    = EXCLUDED.low_val,
-                volume_val = EXCLUDED.volume_val,
-                amount_val = EXCLUDED.amount_val;
-            """;
+            """
+                    insert into f_stock_daily_quote(code, stat_date, open_val, close_val, high_val, low_val, volume_val, amount_val)
+                    values('?code', '?stat_date', ?open_val, ?close_val, ?high_val, ?low_val, ?volume_val, ?amount_val)
+                    ON CONFLICT (code, stat_date)
+                    DO UPDATE SET
+                        open_val   = EXCLUDED.open_val,
+                        close_val  = EXCLUDED.close_val,
+                        high_val   = EXCLUDED.high_val,
+                        low_val    = EXCLUDED.low_val,
+                        volume_val = EXCLUDED.volume_val,
+                        amount_val = EXCLUDED.amount_val;
+                    """;
 
 
     public PageResult<StockDailyQuoteDto> queryAll(StockDailyQuoteQueryCriteria criteria, Page pageable) {
@@ -180,7 +179,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         String codeToUse = indexInfo.getCode() + "." + indexInfo.getRegion();
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
         List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate),
-            DateUtils.formatAsYyyyMMdd(endDateInclude));
+                DateUtils.formatAsYyyyMMdd(endDateInclude));
         if (CollectionUtils.isEmpty(dailyStats)) {
             return null;
         }
@@ -198,7 +197,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
             String sql = sqlUpsertTpl;
             for (Map.Entry<String, Object> stringObjectEntry : params.entrySet()) {
                 sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(),
-                    String.valueOf(stringObjectEntry.getValue()));
+                        String.valueOf(stringObjectEntry.getValue()));
             }
             sqlsToExecute.add(sql);
         }
@@ -244,23 +243,23 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         }
         // 需要使用“正序”来计算cci
         List<Bar> bars = stockDailyQuotes.stream()
-            .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
-            .map(e -> Ta4jUtils.buildBar(
-                e.getStatDate(),
-                e.getOpenVal(), e.getCloseVal(),
-                e.getHighVal(), e.getLowVal(),
-                e.getVolumeVal(), e.getAmountVal(),
-                0))
-            .toList();
+                .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
+                .map(e -> Ta4jUtils.buildBar(
+                        e.getStatDate(),
+                        e.getOpenVal(), e.getCloseVal(),
+                        e.getHighVal(), e.getLowVal(),
+                        e.getVolumeVal(), e.getAmountVal(),
+                        0))
+                .toList();
         BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
         baseBarSeriesBuilder.withName(indexCode)
-            .withBars(bars)
-            .withNumFactory(DecimalNumFactory.getInstance(3))
-            .withBarBuilderFactory(new TimeBarBuilderFactory());
+                .withBars(bars)
+                .withNumFactory(DecimalNumFactory.getInstance(3))
+                .withBarBuilderFactory(new TimeBarBuilderFactory());
         BaseBarSeries baseBarSeries = baseBarSeriesBuilder.build();
         CCIIndicator cci14 = new CCIIndicator(
-            baseBarSeries, // 基于TP计算CCI
-            14 // 周期N=14
+                baseBarSeries, // 基于TP计算CCI
+                14 // 周期N=14
         );
         final int SIZE = fully ? 500 : 30;
         List<String> sqlsToExecute = new ArrayList<>(SIZE);

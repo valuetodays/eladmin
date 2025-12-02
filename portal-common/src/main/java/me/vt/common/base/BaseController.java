@@ -1,6 +1,7 @@
 package me.vt.common.base;
 
 import cn.vt.auth.AuthUser;
+import cn.vt.auth.AuthUserParser;
 import cn.vt.exception.CommonException;
 import cn.vt.util.JsonUtils;
 import jakarta.inject.Inject;
@@ -18,10 +19,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import ll.vt.quarkus.commons.base.RunAsync;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.reactive.server.multipart.FileItem;
 import org.jboss.resteasy.reactive.server.multipart.FormValue;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
@@ -38,6 +39,9 @@ public abstract class BaseController /*extends BaseCrudController */ extends Run
     private static final String UNKNOWN = "unknown";
     @Context
     HttpHeaders headers;
+    @Inject
+    @Getter
+    AuthUserParser<HttpHeaders> authUserParser;
 
     protected Response download(File file) {
         //response为HttpServletResponse对象
@@ -83,20 +87,18 @@ public abstract class BaseController /*extends BaseCrudController */ extends Run
     }
 
     protected AuthUser getCurrentAccount() {
-        String token = headers.getHeaderString("authorization");
-        if (StringUtils.isBlank(token)) {
-            throw new CommonException("login timeout");
+        try {
+            return getAuthUserParser().parse(headers);
+        } catch (Exception e) {
+            log.error("error in getCurrentAccount()", e);
         }
-        Object cached = redissonClient.getBucket("login:users:" + token).get();
-        if (Objects.isNull(cached)) {
-            throw new CommonException("login timeout #2");
-        }
-        return JsonUtils.fromJson(cached.toString(), AuthUser.class);
+        throw new CommonException("user not login");
     }
 
     protected void putLoginAccount(AuthUser authUser) {
         redissonClient.getBucket("login:users:" + authUser.getLoginToken()).set(JsonUtils.toJson(authUser), 1,
                 TimeUnit.HOURS);
+        getAuthUserParser().put(authUser);
     }
 
     /**

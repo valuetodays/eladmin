@@ -1,16 +1,14 @@
 package me.vt.modules.mybiz.service.dto;
 
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import ll.vt.quarkus.commons.base.PageIO;
+import ll.vt.quarkus.commons.base.QuerySearch;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.QuerySearchable;
 import me.vt.common.annotation.Query;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import ll.vt.quarkus.commons.base.PageIO;
-import ll.vt.quarkus.commons.base.QuerySearch;
 
 /**
 * @author valuetodays
@@ -18,7 +16,7 @@ import ll.vt.quarkus.commons.base.QuerySearch;
 **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class HttpsDomainItemQueryCriteria extends PageIO implements QuerySearchable {
+public class HttpsDomainQueryCriteria extends PageIO implements QuerySearchable {
 
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE)
