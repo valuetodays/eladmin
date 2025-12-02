@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @Provider
+@PreMatching // 让本filter比NotFoundExceptionMapper更早执行
 @Priority(Priorities.AUTHENTICATION) // 确保优先执行
 @Slf4j
 public class AuthTokenFilter implements ContainerRequestFilter {
