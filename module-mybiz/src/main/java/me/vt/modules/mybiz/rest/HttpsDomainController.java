@@ -62,7 +62,7 @@ public class HttpsDomainController extends BaseController {
     @Operation(summary = "查询https域名列表")
     @PreAuthorize("@el.check('httpsDomain:public_list')")
     public List<String> publicList() {
-        List<HttpsDomainDto> list = httpsDomainService.queryAll(null);
+        List<HttpsDomainDto> list = httpsDomainService.queryAll(new HttpsDomainQueryCriteria());
         if (CollectionUtils.isEmpty(list)) {
             return List.of();
         }
