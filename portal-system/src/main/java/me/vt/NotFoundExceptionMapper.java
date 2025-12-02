@@ -20,6 +20,6 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
     public Response toResponse(NotFoundException exception) {
         String path = uriInfo != null ? uriInfo.getRequestUri().toString() : "<unknown>";
         log.error("404 - Not Found URL: {}", path);
-        return Response.status(Response.Status.OK).entity(R.fail("not found")).build();
+        return Response.status(Response.Status.OK).entity(R.fail("404 not found")).build();
     }
 }
