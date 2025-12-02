@@ -2,8 +2,13 @@ package me.vt.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
 import cn.vt.auth.AuthUser;
+import cn.vt.auth.AuthUserHolder;
 import cn.vt.encrypt.BCryptUtils;
+import cn.vt.util.TokenUtils;
 import com.wf.captcha.base.Captcha;
+import io.vertx.core.http.CookieSameSite;
+import io.vertx.core.http.impl.CookieImpl;
+import io.vertx.ext.web.RoutingContext;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -13,6 +18,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +31,7 @@ import me.vt.exception.BadRequestException;
 import me.vt.modules.security.config.CaptchaFactory;
 import me.vt.modules.security.config.LoginProperties;
 import me.vt.modules.security.config.enums.LoginCodeEnum;
+import me.vt.modules.security.req.TokenInfoResp;
 import me.vt.modules.security.security.TokenProvider;
 import me.vt.modules.security.service.OnlineUserService;
 import me.vt.modules.security.service.UserDetailsServiceImpl;
@@ -65,9 +73,9 @@ public class AuthController extends BaseController {
 
     @Log("用户登录")
     @Operation(summary = "用户登录")
-    @Path(value = "/login")
+    @Path(value = "/public/login")
     @POST
-    public Object login(@Valid AuthUserDto authUser) throws Exception {
+    public TokenInfoResp login(@Valid AuthUserDto authUser, @Context RoutingContext ctx) throws Exception {
         // 密码解密
         String password = RsaUtils.decryptByPrivateKey(rsaProperties.getPrivateKey(), authUser.getPassword());
         // 查询验证码
@@ -86,26 +94,50 @@ public class AuthController extends BaseController {
         if (!BCryptUtils.checkpw(password, jwtUser.getPassword())) {
             throw new BadRequestException("账号或密码错误");
         }
-        // 生成令牌
-        String token = tokenProvider.createToken();
-        AuthUser authUserToPut = new AuthUser();
-        authUserToPut.setUserId(jwtUser.getUser().getId().toString());
-        authUserToPut.setEmail(jwtUser.getUser().getUsername());
-        authUserToPut.setExtra(new HashMap<>(2));
-        authUserToPut.setLoginToken(token);
-        putLoginAccount(authUserToPut);
-        // 返回 token 与 用户信息
-        Map<String, Object> authInfo = Map.of("token", token, "user", jwtUser);
+
+        TokenInfoResp tokenInfoResp = new TokenInfoResp();
+        tokenInfoResp.setUser(jwtUser);
+        refreshTokenAndAddToResponse(ctx, jwtUser, tokenInfoResp);
         if (loginProperties.singleLogin()) {
             // 踢掉之前已经登录的token
             onlineUserService.kickOutForUsername(authUser.getUsername());
         }
         // 保存在线信息
-        onlineUserService.save(jwtUser, token, headers.getHeaderString("User-Agent"), getIp());
+        onlineUserService.save(jwtUser, tokenInfoResp.getToken(), headers.getHeaderString("User-Agent"), getIp());
         // 返回登录信息
-        return authInfo;
+        return tokenInfoResp;
     }
 
+
+    private void refreshTokenAndAddToResponse(RoutingContext ctx, JwtUserDto jwtUser,
+                                              TokenInfoResp tokenInfoVO) {
+        // 生成令牌
+        String token = tokenProvider.createToken();
+        tokenInfoVO.setToken(token);
+        AuthUser authUser = new AuthUser();
+        authUser.setUserId(String.valueOf(jwtUser.getUser().getId()));
+        authUser.setEmail(jwtUser.getUser().getEmail());
+        authUser.setLoginToken(token);
+        super.putLoginAccount(authUser);
+
+        String scheme = ctx.request().scheme(); // http 或 https
+        CookieImpl cookieToAdd = new CookieImpl("portal_" + AuthUserHolder.AUTH_HEADER_KEY, token);
+        cookieToAdd.setDomain(".valuetodays.xyz") // TODO how to get domain in request
+            .setPath("/").setMaxAge(Duration.ofDays(7).toSeconds()).setHttpOnly(true);
+        if (scheme.equalsIgnoreCase("https")) {
+            cookieToAdd.setSecure(true).setSameSite(CookieSameSite.NONE);
+        } else {
+            cookieToAdd.setSameSite(CookieSameSite.LAX);
+        }
+
+        String host = ctx.request().host();
+        String domain = host.contains(":") ? host.split(":")[0] : host;
+        if (domain.endsWith("valuetodays.xyz")) {
+            cookieToAdd.setDomain(".valuetodays.xyz");
+        }
+
+        ctx.response().putHeader(AuthUserHolder.AUTH_HEADER_KEY, token).addCookie(cookieToAdd);
+    }
     @Operation(summary = "获取用户信息")
     @POST
     @Path(value = "/info")
@@ -116,7 +148,7 @@ public class AuthController extends BaseController {
     }
 
     @Operation(summary = "获取验证码")
-    @Path(value = "/code")
+    @Path(value = "/public/code")
     @POST
     public Object getCode() {
         // 获取运算的结果
