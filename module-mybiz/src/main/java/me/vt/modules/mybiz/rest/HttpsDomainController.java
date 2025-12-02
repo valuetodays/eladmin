@@ -19,6 +19,8 @@ import me.vt.modules.mybiz.domain.HttpsDomain;
 import me.vt.modules.mybiz.service.HttpsDomainServiceImpl;
 import me.vt.modules.mybiz.service.dto.HttpsDomainQueryCriteria;
 import me.vt.utils.PageResult;
+import me.vt.utils.StringExUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,9 +62,15 @@ public class HttpsDomainController extends BaseController {
     @Operation(summary = "查询https域名列表")
     @PreAuthorize("@el.check('httpsDomain:public_list')")
     public List<String> publicList() {
-        //        return httpsDomainItemService.queryAll(null);
-        return List.of("eblog.sisiruyi.fun:443", "www.sisiruyi.fun:443", "doc.sisiruyi.fun:443",
-                "chat.sisiruyi.fun:443");
+        List<HttpsDomainDto> list = httpsDomainService.queryAll(null);
+        if (CollectionUtils.isEmpty(list)) {
+            return List.of();
+        }
+        return list.stream()
+            .map(HttpsDomainDto::getDomain)
+            .map(e -> cn.vt.util.StringExUtils.makeSuffix(e, ":443"))
+            .distinct()
+            .toList();
     }
 
     @POST
