@@ -114,6 +114,7 @@ public class AuthController extends BaseController {
         AuthUser authUser = new AuthUser();
         authUser.setUserId(String.valueOf(jwtUser.getUser().getId()));
         authUser.setEmail(jwtUser.getUser().getEmail());
+        authUser.setUsername(jwtUser.getUser().getUsername());
         authUser.setLoginToken(token);
         super.putLoginAccount(authUser);
 
@@ -141,7 +142,7 @@ public class AuthController extends BaseController {
     @Path(value = "/info")
     public JwtUserDto getUserInfo() {
         AuthUser currentAccount = getCurrentAccount();
-        String username = currentAccount.getEmail();
+        String username = currentAccount.getUsername();
         return userDetailsService.loadUserByUsername(username);
     }
 
