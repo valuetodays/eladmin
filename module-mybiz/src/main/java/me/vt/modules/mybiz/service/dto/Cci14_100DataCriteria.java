@@ -1,8 +1,9 @@
 package me.vt.modules.mybiz.service.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import lombok.Data;
 
 /**
  * .
@@ -13,4 +14,5 @@ import lombok.Data;
 @Data
 public class Cci14_100DataCriteria implements Serializable {
     private LocalDate statDate;
+    private boolean pushMsg = false;
 }

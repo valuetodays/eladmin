@@ -7,17 +7,10 @@ import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
+import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import me.vt.db.SqlServiceImpl;
 import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
@@ -32,14 +25,20 @@ import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * @author valuetodays
  * @since 2025-11-18 20:01
  **/
 @ApplicationScoped
 public class StockDailyIndicatorServiceImpl {
-    @Inject
-    EntityManager entityManager;
 
     @Inject
     StockDailyIndicatorRepository stockDailyIndicatorRepository;
@@ -47,6 +46,8 @@ public class StockDailyIndicatorServiceImpl {
     StockDailyIndicatorMapper stockDailyIndicatorMapper;
     @Inject
     SqlServiceImpl sqlService;
+    @Inject
+    IVtNatsClient vtNatsClient;
 
     private static final String SQL_FOR_UPSERT = """
                 insert into f_stock_daily_indicator (code, stat_date, cci14) values('?code', '?stat_date', ?cci14)
@@ -110,10 +111,16 @@ public class StockDailyIndicatorServiceImpl {
                 WHERE sdi.stat_date::date = :statDate::date and cci14 < -100
                 ORDER BY code DESC
                 """;
-        return sqlService.getJdbi().withHandle(handle -> handle.createQuery(sql)
-                .bind("statDate", statDate)
-                .mapToBean(Cci14_100DataDto.class)
-                .list());
+        List<Cci14_100DataDto> list = sqlService.getJdbi().withHandle(handle -> handle.createQuery(sql)
+            .bind("statDate", statDate)
+            .mapToBean(Cci14_100DataDto.class)
+            .list());
+        boolean pushMsg = criteria.isPushMsg();
+        if (pushMsg) {
+            String msg = StringUtils.joinWith("\n", list);
+            vtNatsClient.publishApplicationMessage(msg);
+        }
+        return list;
     }
 
 }

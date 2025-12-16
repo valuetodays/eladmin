@@ -2,10 +2,6 @@ package me.vt.db;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.List;
-import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -15,6 +11,11 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.result.ResultIterable;
 import org.jdbi.v3.core.statement.PreparedBatch;
 import org.jdbi.v3.core.statement.Query;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.List;
 
 /**
  * .
@@ -46,13 +47,14 @@ public class SqlServiceImpl {
 
     private static <T> ResultIterable<T> buildQueryResultIterable(Handle handle, String sql,
             Object[] params, Class<T> clazz) {
-        Query query = handle.createQuery(sql);
-        if (ArrayUtils.isNotEmpty(params)) {
-            for (int i = 0; i < params.length; i++) {
-                query.bind(i, params[i]); // 从0开始
+        try (Query query = handle.createQuery(sql)) {
+            if (ArrayUtils.isNotEmpty(params)) {
+                for (int i = 0; i < params.length; i++) {
+                    query.bind(i, params[i]); // 从0开始
+                }
             }
+            return query.mapToBean(clazz);
         }
-        return query.mapToBean(clazz);
     }
 
     private int saveBySql(String sql) {
