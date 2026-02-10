@@ -9,6 +9,16 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.extern.slf4j.Slf4j;
@@ -28,17 +38,6 @@ import me.vt.utils.ValidationUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author valutodays
@@ -207,32 +206,5 @@ public class IndexInfoServiceImpl {
             log.info("all null for id: {}, code: {}", indexInfo.getId(), indexInfo.getCode());
         }
         return indexInfo.getId();
-    }
-
-    @Transactional
-    public Long saveAllDailyStat(IndexInfo req) {
-        Long id = req.getId();
-        IndexInfo old = indexInfoRepository.findById(id);
-        AssertUtils.assertNotNull(old);
-        // 要异步
-        stockDailyQuoteService.getAndSaveToDb(old, true);
-        // 要通知
-        // 要处理重复点击问题
-        return id;
-    }
-
-    public List<IndexInfoDto> findPopularList() {
-        List<IndexInfo> popularList = indexInfoRepository.findPopularList();
-        return indexInfoMapper.toDto(popularList);
-    }
-
-    @Transactional
-    public void updateLatest30Days(IndexInfoDto indexInfoDto) {
-        Long id = indexInfoDto.getId();
-        IndexInfo indexInfo = indexInfoRepository.findById(id);
-        if (Objects.isNull(indexInfo)) {
-            return;
-        }
-        stockDailyQuoteService.getAndSaveToDb(indexInfo, false);
     }
 }

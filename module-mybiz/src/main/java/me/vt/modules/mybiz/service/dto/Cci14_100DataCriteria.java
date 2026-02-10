@@ -1,9 +1,8 @@
 package me.vt.modules.mybiz.service.dto;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDate;
+import lombok.Data;
 
 /**
  * .

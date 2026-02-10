@@ -8,6 +8,13 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import ll.vt.quarkus.commons.msg.IVtNatsClient;
@@ -24,14 +31,6 @@ import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author valuetodays
@@ -112,9 +111,9 @@ public class StockDailyIndicatorServiceImpl {
                 ORDER BY code DESC
                 """;
         List<Cci14_100DataDto> list = sqlService.getJdbi().withHandle(handle -> handle.createQuery(sql)
-            .bind("statDate", statDate)
-            .mapToBean(Cci14_100DataDto.class)
-            .list());
+                .bind("statDate", statDate)
+                .mapToBean(Cci14_100DataDto.class)
+                .list());
         boolean pushMsg = criteria.isPushMsg();
         if (pushMsg) {
             String msg = StringUtils.joinWith("\n", list);

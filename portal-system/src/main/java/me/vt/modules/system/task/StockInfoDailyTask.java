@@ -3,21 +3,20 @@ package me.vt.modules.system.task;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
 import ll.vt.quarkus.commons.base.RunAsync;
 import lombok.extern.slf4j.Slf4j;
-import me.vt.modules.mybiz.rest.IndexInfoController;
 import me.vt.modules.mybiz.rest.StockDailyIndicatorController;
 import me.vt.modules.mybiz.rest.StockDailyQuoteController;
+import me.vt.modules.mybiz.rest.StockInfoController;
 import me.vt.modules.mybiz.service.dto.Cci14_100DataCriteria;
-
-import java.time.LocalDate;
 
 @Slf4j
 @ApplicationScoped
-public class IndexDailyInfoTask extends RunAsync {
+public class StockInfoDailyTask extends RunAsync {
 
     @Inject
-    IndexInfoController indexInfoController;
+    StockInfoController stockInfoController;
     @Inject
     StockDailyQuoteController stockDailyQuoteController;
     @Inject
@@ -27,7 +26,7 @@ public class IndexDailyInfoTask extends RunAsync {
     @Scheduled(cron = "35 0 15 * * ?")
     public void saveLatest30Days() {
         super.executeAsync(() -> {
-            indexInfoController.saveLatest30Days();
+            stockInfoController.saveLatest30Days();
         });
     }
 

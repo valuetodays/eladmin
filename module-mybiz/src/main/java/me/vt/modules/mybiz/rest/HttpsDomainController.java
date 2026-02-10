@@ -19,7 +19,6 @@ import me.vt.modules.mybiz.domain.HttpsDomain;
 import me.vt.modules.mybiz.service.HttpsDomainServiceImpl;
 import me.vt.modules.mybiz.service.dto.HttpsDomainQueryCriteria;
 import me.vt.utils.PageResult;
-import me.vt.utils.StringExUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -67,10 +66,10 @@ public class HttpsDomainController extends BaseController {
             return List.of();
         }
         return list.stream()
-            .map(HttpsDomainDto::getDomain)
-            .map(e -> cn.vt.util.StringExUtils.makeSuffix(e, ":443"))
-            .distinct()
-            .toList();
+                .map(HttpsDomainDto::getDomain)
+                .map(e -> cn.vt.util.StringExUtils.makeSuffix(e, ":443"))
+                .distinct()
+                .toList();
     }
 
     @POST

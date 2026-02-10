@@ -9,7 +9,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import me.vt.modules.mybiz.domain.IndexInfo;
 import me.vt.modules.mybiz.service.IndexInfoServiceImpl;
 import me.vt.modules.mybiz.service.dto.IndexInfoQueryCriteria;
 import me.vt.utils.PageResult;
-import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -99,35 +97,4 @@ public class IndexInfoController extends BaseController {
         return indexInfoService.updateMissingFields(req);
     }
 
-    @POST
-    @Path("saveAllDailyStat")
-    @Log("同步所有日k数据")
-    @Operation(summary = "同步所有日k数据")
-    @PreAuthorize("@el.check('indexInfo:saveAllDailyStat')")
-    public Object saveAllDailyStat(IndexInfo req) {
-        return indexInfoService.saveAllDailyStat(req);
-    }
-
-    @POST
-    @Path("saveLatest30Days")
-    @Log("同步所有popular指数的近30日k数据")
-    @Operation(summary = "同步所有popular指数的近30日k数据")
-    @PreAuthorize("@el.check('indexInfo:saveLatest30Days')")
-    public Object saveLatest30Days() {
-        List<IndexInfoDto> popularList = indexInfoService.findPopularList();
-        if (CollectionUtils.isEmpty(popularList)) {
-            return 0L;
-        }
-        super.executeAsync(() -> {
-            for (IndexInfoDto indexInfoDto : popularList) {
-                try {
-                    indexInfoService.updateLatest30Days(indexInfoDto);
-                } catch (Exception e) {
-                    log.error("error when updateLatest30Days", e);
-                }
-            }
-            vtNatsClient.publishApplicationMessage("同步所有popular指数的近30日k数据完成");
-        });
-        return popularList.size();
-    }
 }

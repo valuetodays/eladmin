@@ -34,6 +34,7 @@ import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
 import me.vt.modules.mybiz.domain.IndexInfo;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.domain.StockDailyQuote;
+import me.vt.modules.mybiz.domain.StockInfoPersist;
 import me.vt.modules.mybiz.repository.IndexInfoRepository;
 import me.vt.modules.mybiz.repository.StockDailyQuoteRepository;
 import me.vt.modules.mybiz.service.dto.StockDailyQuoteQueryCriteria;
@@ -155,7 +156,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
 
 
     @Transactional
-    public void getAndSaveToDb(IndexInfo indexInfo, boolean fully) {
+    public void getAndSaveToDb(StockInfoPersist indexInfo, boolean fully) {
         LocalDate today = LocalDate.now();
 
         int days;
@@ -174,7 +175,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
 
     }
 
-    private LocalDate saveBatch(IndexInfo indexInfo, LocalDate endDateInclude, int days) {
+    private LocalDate saveBatch(StockInfoPersist indexInfo, LocalDate endDateInclude, int days) {
         LocalDate beginDate = endDateInclude.minusDays(days);
         String codeToUse = indexInfo.getCode() + "." + indexInfo.getRegion();
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);

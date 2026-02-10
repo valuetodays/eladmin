@@ -12,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.annotation.Log;
 import me.vt.common.base.BaseController;
-import me.vt.modules.mybiz.api.dto.IndexInfoDto;
 import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
+import me.vt.modules.mybiz.api.dto.StockInfoDto;
 import me.vt.modules.mybiz.domain.IndexInfo;
-import me.vt.modules.mybiz.service.IndexInfoServiceImpl;
 import me.vt.modules.mybiz.service.StockDailyQuoteServiceImpl;
+import me.vt.modules.mybiz.service.StockInfoServiceImpl;
 import me.vt.modules.mybiz.service.dto.StockDailyQuoteQueryCriteria;
 import me.vt.utils.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,7 +36,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Slf4j
 public class StockDailyQuoteController extends BaseController {
     @Inject
-    IndexInfoServiceImpl indexInfoService;
+    StockInfoServiceImpl stockInfoService;
     @Inject
     StockDailyQuoteServiceImpl stockDailyQuoteService;
     @Inject
@@ -109,12 +109,12 @@ public class StockDailyQuoteController extends BaseController {
     @Operation(summary = "计算popular指数的近30天cci值")
     @PreAuthorize("@el.check('stockDailyQuote:computeLatest30DaysCci')")
     public Long computeLatest30DaysCci() {
-        List<IndexInfoDto> popularList = indexInfoService.findPopularList();
+        List<StockInfoDto> popularList = stockInfoService.findPopularList();
         if (CollectionUtils.isEmpty(popularList)) {
             return 0L;
         }
         super.executeAsync(() -> {
-            for (IndexInfoDto indexInfoDto : popularList) {
+            for (StockInfoDto indexInfoDto : popularList) {
                 try {
                     stockDailyQuoteService.computeLatest30DaysCci(indexInfoDto.getCode());
                 } catch (Exception e) {
