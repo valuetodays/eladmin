@@ -30,6 +30,9 @@ public class StockInfoPersist extends JpaCrudLongIdBasePersist {
     @Column(name = "popular_flag", nullable = false)
     @Schema(description = "是否常见")
     private Boolean popularFlag;
+    @Column(name = "t0_flag", nullable = false)
+    @Schema(description = "是否t0")
+    private Boolean t0Flag;
     @Column(name = "release_date")
     private String releaseDate;
     @Column(name = "scale")

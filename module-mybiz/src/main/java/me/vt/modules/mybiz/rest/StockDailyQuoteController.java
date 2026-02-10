@@ -6,6 +6,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
+import java.sql.SQLException;
 import java.util.List;
 import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +97,7 @@ public class StockDailyQuoteController extends BaseController {
     @Log("计算指定指数的所有cci值")
     @Operation(summary = "计算指定指数的所有cci值")
     @PreAuthorize("@el.check('stockDailyQuote:computeAllCciById')")
-    public Long computeAllCciById(IndexInfo req) {
+    public Long computeAllCciById(IndexInfo req) throws SQLException {
         Long l = stockDailyQuoteService.computeAllCciById(req);
         super.executeAsync(() -> {
             vtNatsClient.publishApplicationMessage("计算cci14完成：");

@@ -104,9 +104,9 @@ public class StockDailyIndicatorServiceImpl {
         AssertUtils.assertNotNull(statDate);
 
         final String sql = """
-                SELECT sdi.code, sdi.stat_date as statDate, sdi.cci14, ii.name
+                SELECT sdi.code, sdi.stat_date as statDate, sdi.cci14, ii.short_name as name
                 FROM f_stock_daily_indicator sdi
-                left join f_index_info ii on ii.code = sdi.code
+                left join f_stock_info ii on ii.code = sdi.code
                 WHERE sdi.stat_date::date = :statDate::date and cci14 < -100
                 ORDER BY code DESC
                 """;

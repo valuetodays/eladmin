@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     }
 
 
-    @Transactional
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public void getAndSaveToDb(StockInfoPersist indexInfo, boolean fully) {
         LocalDate today = LocalDate.now();
 
@@ -165,17 +166,20 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         } else {
             days = 30; // 近30天
         }
-        LocalDate preDate = saveBatch(indexInfo, today, days);
-        while (Objects.nonNull(preDate)) {
-            preDate = saveBatch(indexInfo, preDate.minusDays(1), days);
-            if (!fully) {
-                break;
+        try {
+            LocalDate preDate = saveBatch(indexInfo, today, days);
+            while (Objects.nonNull(preDate)) {
+                preDate = saveBatch(indexInfo, preDate.minusDays(1), days);
+                if (!fully) {
+                    break;
+                }
             }
+        } catch (Exception e) {
+            log.error("error when getAndSaveToDb()", e);
         }
-
     }
 
-    private LocalDate saveBatch(StockInfoPersist indexInfo, LocalDate endDateInclude, int days) {
+    private LocalDate saveBatch(StockInfoPersist indexInfo, LocalDate endDateInclude, int days) throws SQLException {
         LocalDate beginDate = endDateInclude.minusDays(days);
         String codeToUse = indexInfo.getCode() + "." + indexInfo.getRegion();
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
@@ -202,11 +206,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
             }
             sqlsToExecute.add(sql);
         }
-        try {
-            sqlService.saveBySqls(sqlsToExecute);
-        } catch (Exception e) {
-            log.error("error when saveBySql", e);
-        }
+        sqlService.saveBySqls(sqlsToExecute);
         return beginDate;
     }
 
@@ -216,7 +216,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     }
 
     @Transactional
-    public Long computeAllCciById(IndexInfo req) {
+    public Long computeAllCciById(IndexInfo req) throws SQLException {
         Long indexInfoId = req.getId();
         IndexInfo old = indexInfoRepository.findById(indexInfoId);
         AssertUtils.assertNotNull(old);
@@ -228,11 +228,11 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     }
 
     @Transactional
-    public void computeLatest30DaysCci(String indexCode) {
+    public void computeLatest30DaysCci(String indexCode) throws SQLException {
         this.computeCci(indexCode, false);
     }
 
-    private void computeCci(String indexCode, boolean fully) {
+    private void computeCci(String indexCode, boolean fully) throws SQLException {
         List<StockDailyQuote> stockDailyQuotes;
         if (fully) {
             stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDateDesc(indexCode);

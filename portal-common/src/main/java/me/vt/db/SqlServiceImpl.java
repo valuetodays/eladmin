@@ -4,6 +4,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 import javax.sql.DataSource;
 import lombok.Getter;
@@ -35,13 +38,21 @@ public class SqlServiceImpl {
         this.jdbi = Jdbi.create(ds);
     }
 
-    @Transactional
-    public AffectedRowsResp saveBySqls(List<String> sqls) {
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
+    public AffectedRowsResp saveBySqls(List<String> sqls) throws SQLException {
         if (CollectionUtils.isEmpty(sqls)) {
             return AffectedRowsResp.empty();
         }
-        int sum = sqls.stream().mapToInt(this::saveBySql).sum();
-        return AffectedRowsResp.of(sum);
+
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
+            for (String sql : sqls) {
+                stmt.addBatch(sql);
+            }
+            int[] ints = stmt.executeBatch();
+            return AffectedRowsResp.of(Arrays.stream(ints).sum());
+        }
+
     }
 
     private static <T> ResultIterable<T> buildQueryResultIterable(Handle handle, String sql,
@@ -56,14 +67,11 @@ public class SqlServiceImpl {
         }
     }
 
-    private int saveBySql(String sql) {
+    private int saveBySql(String sql) throws SQLException {
         try (Connection conn = ds.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             return stmt.executeUpdate();
-        } catch (Exception e) {
-            log.error("error when saveBySql", e);
         }
-        return 0;
     }
 
     public <T> T queryForObject(String sql, Class<T> clazz, final Object... params) {
