@@ -70,23 +70,19 @@ public class VtServer implements Serializable {
     private Boolean enabled;
 
     @Column(name = "create_by", nullable = false)
-    @NotBlank
     @Schema(description = "创建者")
     private String createBy;
 
     @Column(name = "update_by", nullable = false)
-    @NotBlank
     @Schema(description = "更新者")
     private String updateBy;
 
     @Column(name = "create_time", nullable = false)
-    @NotNull
     @CreationTimestamp
     @Schema(description = "创建日期")
     private LocalDateTime createTime;
 
     @Column(name = "update_time", nullable = false)
-    @NotNull
     @UpdateTimestamp
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
