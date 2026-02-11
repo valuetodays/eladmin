@@ -80,6 +80,7 @@ public class VtServerServiceImpl {
         vtServerRepository.update(vtServer);
     }
 
+    @Transactional(rollbackOn = Exception.class)
     public void deleteAll(Long[] ids) {
         for (Long id : ids) {
             vtServerRepository.deleteById(id);
