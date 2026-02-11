@@ -61,9 +61,10 @@ quarkus:
     core-threads: 20
     queue-size: 1000
   redis:
-    hosts: redis://localhost:6379
+    hosts: redis://localhost:6379/0
     password: 'abc123'
     timeout: 10s
+    # me.vt.config.RedissonProperty
     database: 0
   log:
     debug: true

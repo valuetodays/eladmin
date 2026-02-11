@@ -45,7 +45,7 @@ public class SqlServiceImpl {
         }
 
         try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             for (String sql : sqls) {
                 stmt.addBatch(sql);
             }
