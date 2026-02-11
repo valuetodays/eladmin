@@ -13,7 +13,7 @@ quarkus:
       max-body-size: 12M
     cors:
       enabled: true
-      origins: https://portal.valuetodays.xyz,http://127.0.0.1,http://v66:8013
+      origins: https://portal.valuetodays.xyz,http://127.0.0.1,http://v66:8013,http://v200:8013,
       methods: GET,POST,OPTIONS
       headers: '*'
     #    cors.exposed-headers: location,info
