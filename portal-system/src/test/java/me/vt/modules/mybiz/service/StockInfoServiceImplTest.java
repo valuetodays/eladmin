@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.mybiz.api.dto.StockInfoDto;
@@ -80,11 +81,12 @@ public class StockInfoServiceImplTest {
     }
 
     @Test
-    void saveAllDailyQutoe() {
+    void saveAllDailyQutoe() throws InterruptedException {
         List<StockInfoDto> popularList = stockInfoService.findPopularList();
         for (StockInfoDto stockInfoDto : popularList) {
             StockInfoPersist persist = stockInfoConverter.toEntity(stockInfoDto);
             stockDailyQuoteService.getAndSaveToDb(persist, true);
+            TimeUnit.MILLISECONDS.sleep(500);
         }
     }
 
