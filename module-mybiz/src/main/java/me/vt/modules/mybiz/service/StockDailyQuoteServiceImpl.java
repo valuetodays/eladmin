@@ -10,20 +10,6 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
@@ -36,8 +22,8 @@ import me.vt.modules.mybiz.domain.IndexInfo;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.domain.StockDailyQuote;
 import me.vt.modules.mybiz.domain.StockInfoPersist;
-import me.vt.modules.mybiz.repository.IndexInfoRepository;
 import me.vt.modules.mybiz.repository.StockDailyQuoteRepository;
+import me.vt.modules.mybiz.repository.StockInfoRepository;
 import me.vt.modules.mybiz.service.dto.StockDailyQuoteQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.StockDailyQuoteMapper;
 import me.vt.modules.mybiz.service.ta4j.Ta4jUtils;
@@ -56,6 +42,21 @@ import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * @author valuetodays
  * @since 2025-11-17 19:01
@@ -67,7 +68,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     @Inject
     StockDailyQuoteRepository stockDailyQuoteRepository;
     @Inject
-    IndexInfoRepository indexInfoRepository;
+    StockInfoRepository stockInfoRepository;
     @Inject
     StockDailyQuoteMapper stockDailyQuoteMapper;
     @Inject
@@ -217,11 +218,11 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
 
     @Transactional
     public Long computeAllCciById(IndexInfo req) throws SQLException {
-        Long indexInfoId = req.getId();
-        IndexInfo old = indexInfoRepository.findById(indexInfoId);
-        AssertUtils.assertNotNull(old);
+        Long stockInfoId = req.getId();
+        StockInfoPersist stockInfoPersist = stockInfoRepository.findById(stockInfoId);
+        AssertUtils.assertNotNull(stockInfoPersist);
         // 要异步
-        this.computeCci(old.getCode(), true);
+        this.computeCci(stockInfoPersist.getCode(), true);
         // 要通知
         // 要处理重复点击问题
         return 1L;
