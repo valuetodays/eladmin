@@ -8,12 +8,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.vt.common.base.BaseController;
 import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
+import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjReq;
+import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjResp;
 import me.vt.modules.mybiz.service.StockDailyIndicatorServiceImpl;
 import me.vt.modules.mybiz.service.dto.Cci14_100DataCriteria;
 import me.vt.modules.mybiz.service.dto.StockDailyIndicatorQueryCriteria;
@@ -21,6 +21,9 @@ import me.vt.utils.PageResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author valuetodays
@@ -60,5 +63,13 @@ public class StockDailyIndicatorController extends BaseController {
     @PreAuthorize("@el.check('stockDailyIndicator:getAllCciLt_100ByStatDate')")
     public List<Cci14_100DataDto> getAllCciLt_100ByStatDate(Cci14_100DataCriteria criteria) {
         return stockDailyIndicatorService.getAllCciLt_100ByStatDate(criteria);
+    }
+
+    @POST
+    @Path(value = "/getStocksToBuyByKdj")
+    @Operation(summary = "根据kdj获取超买")
+    @PreAuthorize("@el.check('stockDailyIndicator:getStocksToBuyByKdj')")
+    public List<StockDailyIndicatorGetStockToBuyByKdjResp> getStocksToBuyByKdj(StockDailyIndicatorGetStockToBuyByKdjReq req) {
+        return stockDailyIndicatorService.getStocksToBuyByKdj(req);
     }
 }

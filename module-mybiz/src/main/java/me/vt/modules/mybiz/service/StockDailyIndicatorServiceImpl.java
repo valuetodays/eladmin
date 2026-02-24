@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.vt.db.SqlServiceImpl;
 import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
+import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjReq;
+import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjResp;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.domain.StockDailyIndicator;
 import me.vt.modules.mybiz.repository.StockDailyIndicatorRepository;
@@ -146,4 +148,26 @@ public class StockDailyIndicatorServiceImpl {
         return list;
     }
 
+    public List<StockDailyIndicatorGetStockToBuyByKdjResp> getStocksToBuyByKdj(StockDailyIndicatorGetStockToBuyByKdjReq req) {
+        LocalDate statDate = req.getStatDate();
+
+        final String sql = """
+            SELECT sdi.code, sdi.stat_date as statDate, sdi.kdj_k as k, sdi.kdj_d as d, sdi.kdj_j as j, ii.short_name as name
+            FROM f_stock_daily_indicator sdi
+            left join f_stock_info ii on ii.code = sdi.code
+            WHERE sdi.stat_date::date = :statDate::date
+                and (sdi.kdj_k < 20 and sdi.kdj_d < 20 and sdi.kdj_j < 20)
+            ORDER BY code DESC
+            """;
+        List<StockDailyIndicatorGetStockToBuyByKdjResp> list = sqlService.getJdbi().withHandle(handle -> handle.createQuery(sql)
+            .bind("statDate", statDate)
+            .mapToBean(StockDailyIndicatorGetStockToBuyByKdjResp.class)
+            .list());
+        boolean pushMsg = req.isPushMsg();
+        if (pushMsg) {
+            String msg = StringUtils.joinWith("\n", list);
+            vtNatsClient.publishApplicationMessage(msg);
+        }
+        return list;
+    }
 }
