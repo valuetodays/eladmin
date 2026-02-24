@@ -2,6 +2,7 @@ package me.vt.modules.mybiz.service;
 
 import cn.vt.exception.AssertUtils;
 import cn.vt.util.DateUtils;
+import com.p6spy.engine.common.P6Util;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -96,7 +97,7 @@ public class StockDailyIndicatorServiceImpl {
         params.put("code", code);
         params.put("stat_date", statDate.format(DateUtils.DEFAULT_DATE_FORMATTER));
         params.put("cci14", String.valueOf(cci14));
-        String sql = SQL_FOR_UPSERT_CCI;
+        String sql = P6Util.singleLine(SQL_FOR_UPSERT_CCI);
         for (Map.Entry<String, String> stringObjectEntry : params.entrySet()) {
             sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(), stringObjectEntry.getValue());
         }
@@ -115,7 +116,7 @@ public class StockDailyIndicatorServiceImpl {
         params.put("kdj_k", String.valueOf(k));
         params.put("kdj_d", String.valueOf(d));
         params.put("kdj_j", String.valueOf(j));
-        String sql = SQL_FOR_UPDATE_KDJ;
+        String sql = P6Util.singleLine(SQL_FOR_UPDATE_KDJ);
         for (Map.Entry<String, String> stringObjectEntry : params.entrySet()) {
             sql = Strings.CS.replace(sql, "?" + stringObjectEntry.getKey(), stringObjectEntry.getValue());
         }
