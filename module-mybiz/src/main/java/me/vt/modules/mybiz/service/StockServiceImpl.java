@@ -20,7 +20,7 @@ import me.vt.modules.mybiz.api.dto.StockDto;
 import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.repository.StockRepository;
 import me.vt.modules.mybiz.service.dto.StockQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.StockMapper;
+import me.vt.modules.mybiz.service.mapstruct.StockConverter;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -39,7 +39,7 @@ public class StockServiceImpl {
     @Inject
     StockRepository stockRepository;
     @Inject
-    StockMapper stockMapper;
+    StockConverter stockConverter;
 
     public PageResult<StockDto> queryAll(StockQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -53,7 +53,7 @@ public class StockServiceImpl {
         }
 
         PanacheQuery<Stock> all = panacheQuery.page(pageable);
-        List<StockDto> list = stockMapper.toDto(all.list());
+        List<StockDto> list = stockConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 
@@ -64,7 +64,7 @@ public class StockServiceImpl {
     public StockDto findById(Long id) {
         Stock stock = stockRepository.findById(id);
         ValidationUtil.isNull(stock.getId(), "Stock", "id", id);
-        return stockMapper.toDto(stock);
+        return stockConverter.toDto(stock);
     }
 
     @Transactional(rollbackOn = Exception.class)

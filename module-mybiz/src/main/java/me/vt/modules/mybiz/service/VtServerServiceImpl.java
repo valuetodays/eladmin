@@ -19,7 +19,7 @@ import me.vt.modules.mybiz.api.dto.VtServerDto;
 import me.vt.modules.mybiz.domain.VtServer;
 import me.vt.modules.mybiz.repository.VtServerRepository;
 import me.vt.modules.mybiz.service.dto.VtServerQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.VtServerMapper;
+import me.vt.modules.mybiz.service.mapstruct.VtServerConverter;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -38,7 +38,7 @@ public class VtServerServiceImpl {
     @Inject
     VtServerRepository vtServerRepository;
     @Inject
-    VtServerMapper vtServerMapper;
+    VtServerConverter vtServerConverter;
 
     public PageResult<VtServerDto> queryAll(VtServerQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -52,7 +52,7 @@ public class VtServerServiceImpl {
         }
 
         PanacheQuery<VtServer> all = panacheQuery.page(pageable);
-        List<VtServerDto> list = vtServerMapper.toDto(all.list());
+        List<VtServerDto> list = vtServerConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 
@@ -64,7 +64,7 @@ public class VtServerServiceImpl {
     public VtServerDto findById(Long id) {
         VtServer vtServer = vtServerRepository.findById(id);
         ValidationUtil.isNull(vtServer.getId(), "VtServer", "id", id);
-        return vtServerMapper.toDto(vtServer);
+        return vtServerConverter.toDto(vtServer);
     }
 
     @Transactional(rollbackOn = Exception.class)

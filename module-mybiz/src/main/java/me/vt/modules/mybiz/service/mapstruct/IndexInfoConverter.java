@@ -14,6 +14,6 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "jakarta",
         config = MapStructMapperConfig.class,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface IndexInfoMapper extends BaseMapper<IndexInfoDto, IndexInfo> {
+public interface IndexInfoConverter extends BaseMapper<IndexInfoDto, IndexInfo> {
 
 }

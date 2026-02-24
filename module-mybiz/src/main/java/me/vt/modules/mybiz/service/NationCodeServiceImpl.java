@@ -19,7 +19,7 @@ import me.vt.modules.mybiz.api.dto.NationCodeDto;
 import me.vt.modules.mybiz.domain.NationCode;
 import me.vt.modules.mybiz.repository.NationCodeRepository;
 import me.vt.modules.mybiz.service.dto.NationCodeQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.NationCodeMapper;
+import me.vt.modules.mybiz.service.mapstruct.NationCodeConverter;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -37,7 +37,7 @@ public class NationCodeServiceImpl {
     @Inject
     NationCodeRepository nationCodeRepository;
     @Inject
-    NationCodeMapper nationCodeMapper;
+    NationCodeConverter nationCodeConverter;
 
     public PageResult<NationCodeDto> queryAll(NationCodeQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -50,7 +50,7 @@ public class NationCodeServiceImpl {
             panacheQuery = nationCodeRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
         }
         PanacheQuery<NationCode> all = panacheQuery.page(pageable);
-        List<NationCodeDto> list = nationCodeMapper.toDto(all.list());
+        List<NationCodeDto> list = nationCodeConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 
@@ -62,7 +62,7 @@ public class NationCodeServiceImpl {
     public NationCodeDto findById(Long id) {
         NationCode nationCode = nationCodeRepository.findById(id);
         ValidationUtil.isNull(nationCode.getId(), "NationCode", "id", id);
-        return nationCodeMapper.toDto(nationCode);
+        return nationCodeConverter.toDto(nationCode);
     }
 
     @Transactional(rollbackOn = Exception.class)

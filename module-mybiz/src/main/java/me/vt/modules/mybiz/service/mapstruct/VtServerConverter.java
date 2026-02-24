@@ -12,6 +12,6 @@ import org.mapstruct.ReportingPolicy;
  * @since 2025-07-11
  **/
 @Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface VtServerMapper extends BaseMapper<VtServerDto, VtServer> {
+public interface VtServerConverter extends BaseMapper<VtServerDto, VtServer> {
 
 }

@@ -11,6 +11,6 @@ import org.mapstruct.ReportingPolicy;
 * @since 2025-07-14 22:15
 **/
 @Mapper(componentModel = "jakarta", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface NationCodeMapper extends BaseMapper<NationCodeDto, NationCode> {
+public interface NationCodeConverter extends BaseMapper<NationCodeDto, NationCode> {
 
 }

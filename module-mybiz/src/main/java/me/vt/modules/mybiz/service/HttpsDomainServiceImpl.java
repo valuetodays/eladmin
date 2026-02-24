@@ -21,7 +21,7 @@ import me.vt.modules.mybiz.domain.HttpsDomain;
 import me.vt.modules.mybiz.domain.NationCode;
 import me.vt.modules.mybiz.repository.HttpsDomainRepository;
 import me.vt.modules.mybiz.service.dto.HttpsDomainQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.HttpsDomainMapper;
+import me.vt.modules.mybiz.service.mapstruct.HttpsDomainConverter;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -38,7 +38,7 @@ public class HttpsDomainServiceImpl {
     @Inject
     HttpsDomainRepository httpsDomainRepository;
     @Inject
-    HttpsDomainMapper httpsDomainMapper;
+    HttpsDomainConverter httpsDomainConverter;
 
     public PageResult<HttpsDomainDto> queryAll(HttpsDomainQueryCriteria criteria, Page pageable) {
         //        Page<HttpsDomain> page = httpsDomainRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
@@ -53,7 +53,7 @@ public class HttpsDomainServiceImpl {
             panacheQuery = httpsDomainRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
         }
         PanacheQuery<HttpsDomain> all = panacheQuery.page(pageable);
-        List<HttpsDomainDto> list = httpsDomainMapper.toDto(all.list());
+        List<HttpsDomainDto> list = httpsDomainConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 
@@ -64,7 +64,7 @@ public class HttpsDomainServiceImpl {
     public HttpsDomainDto findById(Long id) {
         HttpsDomain httpsDomain = httpsDomainRepository.findById(id);
         ValidationUtil.isNull(httpsDomain.getId(), "HttpsDomain", "id", id);
-        return httpsDomainMapper.toDto(httpsDomain);
+        return httpsDomainConverter.toDto(httpsDomain);
     }
 
     @Transactional(rollbackOn = Exception.class)

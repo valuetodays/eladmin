@@ -26,7 +26,7 @@ import me.vt.modules.mybiz.domain.StockDailyIndicator;
 import me.vt.modules.mybiz.repository.StockDailyIndicatorRepository;
 import me.vt.modules.mybiz.service.dto.Cci14_100DataCriteria;
 import me.vt.modules.mybiz.service.dto.StockDailyIndicatorQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.StockDailyIndicatorMapper;
+import me.vt.modules.mybiz.service.mapstruct.StockDailyIndicatorConverter;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,7 @@ public class StockDailyIndicatorServiceImpl {
     @Inject
     StockDailyIndicatorRepository stockDailyIndicatorRepository;
     @Inject
-    StockDailyIndicatorMapper stockDailyIndicatorMapper;
+    StockDailyIndicatorConverter stockDailyIndicatorConverter;
     @Inject
     SqlServiceImpl sqlService;
     @Inject
@@ -67,7 +67,7 @@ public class StockDailyIndicatorServiceImpl {
         }
 
         PanacheQuery<StockDailyIndicator> all = panacheQuery.page(pageable);
-        List<StockDailyIndicatorDto> list = stockDailyIndicatorMapper.toDto(all.list());
+        List<StockDailyIndicatorDto> list = stockDailyIndicatorConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 

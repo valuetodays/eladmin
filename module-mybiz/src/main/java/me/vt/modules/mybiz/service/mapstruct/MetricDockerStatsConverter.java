@@ -2,18 +2,18 @@ package me.vt.modules.mybiz.service.mapstruct;
 
 import me.vt.common.MapStructMapperConfig;
 import me.vt.common.base.BaseMapper;
-import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
-import me.vt.modules.mybiz.domain.StockDailyQuote;
+import me.vt.modules.mybiz.api.dto.MetricDockerStatsDto;
+import me.vt.modules.mybiz.domain.MetricDockerStats;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 /**
- * @author valuetodays
- * @since 2025-11-17 19:01
+ * @author vt
+ * @since 2025-09-14 20:30
  **/
 @Mapper(componentModel = "jakarta",
         config = MapStructMapperConfig.class,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface StockDailyQuoteMapper extends BaseMapper<StockDailyQuoteDto, StockDailyQuote> {
+public interface MetricDockerStatsConverter extends BaseMapper<MetricDockerStatsDto, MetricDockerStats> {
 
 }

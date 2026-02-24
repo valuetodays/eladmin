@@ -27,7 +27,7 @@ import me.vt.modules.mybiz.domain.IndexInfo;
 import me.vt.modules.mybiz.domain.NationCode;
 import me.vt.modules.mybiz.repository.IndexInfoRepository;
 import me.vt.modules.mybiz.service.dto.IndexInfoQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.IndexInfoMapper;
+import me.vt.modules.mybiz.service.mapstruct.IndexInfoConverter;
 import me.vt.modules.mybiz.thirdparty.csindex.CsIndexInfoResp;
 import me.vt.modules.mybiz.thirdparty.csindex.data.CsIndexInfoData;
 import me.vt.utils.FileUtil;
@@ -50,7 +50,7 @@ public class IndexInfoServiceImpl {
     @Inject
     IndexInfoRepository indexInfoRepository;
     @Inject
-    IndexInfoMapper indexInfoMapper;
+    IndexInfoConverter indexInfoConverter;
     @Inject
     StockDailyQuoteServiceImpl stockDailyQuoteService;
 
@@ -65,7 +65,7 @@ public class IndexInfoServiceImpl {
             panacheQuery = indexInfoRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
         }
         PanacheQuery<IndexInfo> all = panacheQuery.page(pageable);
-        List<IndexInfoDto> list = indexInfoMapper.toDto(all.list());
+        List<IndexInfoDto> list = indexInfoConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 
@@ -76,7 +76,7 @@ public class IndexInfoServiceImpl {
     public IndexInfoDto findById(Long id) {
         IndexInfo indexInfo = indexInfoRepository.findById(id);
         ValidationUtil.isNull(indexInfo.getId(), "IndexInfo", "id", id);
-        return indexInfoMapper.toDto(indexInfo);
+        return indexInfoConverter.toDto(indexInfo);
     }
 
     @Transactional(rollbackOn = Exception.class)

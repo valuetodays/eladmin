@@ -15,7 +15,7 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "jakarta",
         config = MapStructMapperConfig.class,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface StockDailyIndicatorMapper extends BaseMapper<StockDailyIndicatorDto, StockDailyIndicator> {
+public interface StockDailyIndicatorConverter extends BaseMapper<StockDailyIndicatorDto, StockDailyIndicator> {
 
     @Override
     @Mapping(target = "code", source = "id.code")

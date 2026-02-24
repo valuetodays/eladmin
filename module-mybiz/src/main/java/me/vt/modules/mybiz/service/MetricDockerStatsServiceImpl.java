@@ -23,7 +23,7 @@ import me.vt.modules.mybiz.api.dto.MetricDockerStatsDto;
 import me.vt.modules.mybiz.domain.MetricDockerStats;
 import me.vt.modules.mybiz.repository.MetricDockerStatsRepository;
 import me.vt.modules.mybiz.service.dto.MetricDockerStatsQueryCriteria;
-import me.vt.modules.mybiz.service.mapstruct.MetricDockerStatsMapper;
+import me.vt.modules.mybiz.service.mapstruct.MetricDockerStatsConverter;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -40,7 +40,7 @@ public class MetricDockerStatsServiceImpl {
     @Inject
     MetricDockerStatsRepository metricDockerStatsRepository;
     @Inject
-    MetricDockerStatsMapper metricDockerStatsMapper;
+    MetricDockerStatsConverter metricDockerStatsConverter;
 
     public PageResult<MetricDockerStatsDto> queryAll(MetricDockerStatsQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
@@ -53,7 +53,7 @@ public class MetricDockerStatsServiceImpl {
             panacheQuery = metricDockerStatsRepository.find(hqlAndParams.getLeft(), sort, hqlAndParams.getRight());
         }
         PanacheQuery<MetricDockerStats> all = panacheQuery.page(pageable);
-        List<MetricDockerStatsDto> list = metricDockerStatsMapper.toDto(all.list());
+        List<MetricDockerStatsDto> list = metricDockerStatsConverter.toDto(all.list());
         return PageUtil.toPage(list, all.count());
     }
 
@@ -64,7 +64,7 @@ public class MetricDockerStatsServiceImpl {
     public MetricDockerStatsDto findById(Long id) {
         MetricDockerStats metricDockerStats = metricDockerStatsRepository.findById(id);
         ValidationUtil.isNull(metricDockerStats.getId(), "MetricDockerStats", "id", id);
-        return metricDockerStatsMapper.toDto(metricDockerStats);
+        return metricDockerStatsConverter.toDto(metricDockerStats);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -116,6 +116,6 @@ public class MetricDockerStatsServiceImpl {
         String name = "api2-by-quarkus";
         List<MetricDockerStats> list = metricDockerStatsRepository.findAllByNameOrderByStatDatetimeDesc(name);
         list.sort(Comparator.comparing(MetricDockerStats::getStatDatetime));
-        return metricDockerStatsMapper.toDto(list);
+        return metricDockerStatsConverter.toDto(list);
     }
 }
