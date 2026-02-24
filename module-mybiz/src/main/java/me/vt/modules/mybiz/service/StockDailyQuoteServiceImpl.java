@@ -10,22 +10,6 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
@@ -59,15 +43,23 @@ import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.bars.TimeBarBuilderFactory;
 import org.ta4j.core.indicators.CCIIndicator;
-import org.ta4j.core.indicators.CachedIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.indicators.helpers.HighPriceIndicator;
-import org.ta4j.core.indicators.helpers.HighestValueIndicator;
-import org.ta4j.core.indicators.helpers.LowPriceIndicator;
-import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
-import org.ta4j.core.num.NumFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author valuetodays
@@ -326,7 +318,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         // 遍历所有K线（从第9根开始才有有效KDJ，索引从0开始）
         for (int i = 0; i < baseBarSeries.getBarCount(); i++) {
             Bar bar = baseBarSeries.getBar(i);
-            String date = bar.getZonedBeginTime().toString().substring(0, 10); // 提取日期（格式按需调整）
+            LocalDate statDate = bar.getSystemZonedEndTime().toLocalDate(); // 提取日期（格式按需调整）
 
             BigDecimal kValue = k.getValue(i).bigDecimalValue();
             BigDecimal dValue = d.getValue(i).bigDecimalValue();
@@ -334,11 +326,11 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
 
             // 格式化输出：前8天标注“无有效值”，后续保留3位小数
             if (i < rsvPeriod - 1) {
-                log.info("{}\t\t无有效值\t无有效值\t无有效值", date);
+                log.info("{}\t\t无有效值\t无有效值\t无有效值", statDate);
                 continue;
             }
-            log.info(String.format("%s\t\t%.3f\t\t%.3f\t\t%.3f", date, kValue, dValue, jValue));
-            String updateSqlForKdj = stockDailyIndicatorService.buildUpdateSqlForKdj(code, bar.getZonedBeginTime().toLocalDate(), kValue, dValue, jValue);
+//            log.info(String.format("%s\t\t%.3f\t\t%.3f\t\t%.3f", statDate, kValue, dValue, jValue));
+            String updateSqlForKdj = stockDailyIndicatorService.buildUpdateSqlForKdj(code, statDate, kValue, dValue, jValue);
             log.info("updateSqlForKdj={}", updateSqlForKdj);
             sqlsToExecute.add(updateSqlForKdj);
             if (sqlsToExecute.size() >= SIZE) {
