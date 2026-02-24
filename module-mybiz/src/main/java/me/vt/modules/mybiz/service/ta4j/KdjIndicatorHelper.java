@@ -172,6 +172,10 @@ public final class KdjIndicatorHelper {
         }
         KdjContextResp kdjContextResp = new KdjContextResp();
         kdjContextResp.setBaseBarSeries(series);
+        kdjContextResp.setK(k);
+        kdjContextResp.setD(d);
+        kdjContextResp.setJ(j);
+        kdjContextResp.setRsvPeriod(rsvPeriod);
         return kdjContextResp;
     }
 
