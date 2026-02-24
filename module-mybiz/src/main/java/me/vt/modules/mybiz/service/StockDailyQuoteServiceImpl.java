@@ -10,6 +10,7 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
@@ -40,7 +42,9 @@ import me.vt.modules.mybiz.repository.StockDailyQuoteRepository;
 import me.vt.modules.mybiz.repository.StockInfoRepository;
 import me.vt.modules.mybiz.service.dto.StockDailyQuoteQueryCriteria;
 import me.vt.modules.mybiz.service.mapstruct.StockDailyQuoteConverter;
+import me.vt.modules.mybiz.service.ta4j.KdjIndicatorHelper;
 import me.vt.modules.mybiz.service.ta4j.Ta4jUtils;
+import me.vt.modules.mybiz.service.ta4j.pojo.KdjContextResp;
 import me.vt.utils.FileUtil;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
@@ -49,12 +53,21 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ta4j.core.Bar;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
+import org.ta4j.core.Indicator;
 import org.ta4j.core.bars.TimeBarBuilderFactory;
 import org.ta4j.core.indicators.CCIIndicator;
+import org.ta4j.core.indicators.CachedIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.helpers.HighPriceIndicator;
+import org.ta4j.core.indicators.helpers.HighestValueIndicator;
+import org.ta4j.core.indicators.helpers.LowPriceIndicator;
+import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
+import org.ta4j.core.num.NumFactory;
 
 /**
  * @author valuetodays
@@ -78,18 +91,18 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     IVtNatsClient vtNatsClient;
 
     private static final String sqlUpsertTpl =
-            """
-                    insert into f_stock_daily_quote(code, stat_date, open_val, close_val, high_val, low_val, volume_val, amount_val)
-                    values('?code', '?stat_date', ?open_val, ?close_val, ?high_val, ?low_val, ?volume_val, ?amount_val)
-                    ON CONFLICT (code, stat_date)
-                    DO UPDATE SET
-                        open_val   = EXCLUDED.open_val,
-                        close_val  = EXCLUDED.close_val,
-                        high_val   = EXCLUDED.high_val,
-                        low_val    = EXCLUDED.low_val,
-                        volume_val = EXCLUDED.volume_val,
-                        amount_val = EXCLUDED.amount_val;
-                    """;
+        """
+            insert into f_stock_daily_quote(code, stat_date, open_val, close_val, high_val, low_val, volume_val, amount_val)
+            values('?code', '?stat_date', ?open_val, ?close_val, ?high_val, ?low_val, ?volume_val, ?amount_val)
+            ON CONFLICT (code, stat_date)
+            DO UPDATE SET
+                open_val   = EXCLUDED.open_val,
+                close_val  = EXCLUDED.close_val,
+                high_val   = EXCLUDED.high_val,
+                low_val    = EXCLUDED.low_val,
+                volume_val = EXCLUDED.volume_val,
+                amount_val = EXCLUDED.amount_val;
+            """;
 
 
     public PageResult<StockDailyQuoteDto> queryAll(StockDailyQuoteQueryCriteria criteria, Page pageable) {
@@ -184,7 +197,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         String codeToUse = indexInfo.getCode() + "." + indexInfo.getRegion();
         log.info("processing record from {} to {} for code {}", beginDate, endDateInclude, codeToUse);
         List<DailyStatVo> dailyStats = HaitongApi.getDailyStats(codeToUse, DateUtils.formatAsYyyyMMdd(beginDate),
-                DateUtils.formatAsYyyyMMdd(endDateInclude));
+            DateUtils.formatAsYyyyMMdd(endDateInclude));
         if (CollectionUtils.isEmpty(dailyStats)) {
             return null;
         }
@@ -202,7 +215,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
             String sql = sqlUpsertTpl;
             for (Map.Entry<String, Object> stringObjectEntry : params.entrySet()) {
                 sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(),
-                        String.valueOf(stringObjectEntry.getValue()));
+                    String.valueOf(stringObjectEntry.getValue()));
             }
             sqlsToExecute.add(sql);
         }
@@ -222,55 +235,112 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         AssertUtils.assertNotNull(stockInfoPersist);
         // 要异步
         this.computeCci(stockInfoPersist.getCode(), true);
+        this.computeKdj(stockInfoPersist.getCode(), true);
         // 要通知
         // 要处理重复点击问题
         return 1L;
     }
 
     @Transactional
-    public void computeLatest30DaysCci(String indexCode) throws SQLException {
-        this.computeCci(indexCode, false);
+    public void computeLatest30DaysCci(String code) throws SQLException {
+        this.computeCci(code, false);
+        this.computeKdj(code, false);
     }
 
-    private void computeCci(String indexCode, boolean fully) throws SQLException {
+    private void computeCci(String code, boolean fully) throws SQLException {
         List<StockDailyQuote> stockDailyQuotes;
         if (fully) {
-            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDateDesc(indexCode);
+            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDateDesc(code);
         } else {
-            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDateDesc(indexCode);
+            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDateDesc(code);
         }
         if (CollectionUtils.isEmpty(stockDailyQuotes)) {
             return;
         }
         // 需要使用“正序”来计算cci
         List<Bar> bars = stockDailyQuotes.stream()
-                .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
-                .map(e -> Ta4jUtils.buildBar(
-                        e.getStatDate(),
-                        e.getOpenVal(), e.getCloseVal(),
-                        e.getHighVal(), e.getLowVal(),
-                        e.getVolumeVal(), e.getAmountVal(),
-                        0))
-                .toList();
+            .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
+            .map(e -> Ta4jUtils.buildBar(
+                e.getStatDate(),
+                e.getOpenVal(), e.getCloseVal(),
+                e.getHighVal(), e.getLowVal(),
+                e.getVolumeVal(), e.getAmountVal(),
+                0))
+            .toList();
         BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
-        baseBarSeriesBuilder.withName(indexCode)
-                .withBars(bars)
-                .withNumFactory(DecimalNumFactory.getInstance(3))
-                .withBarBuilderFactory(new TimeBarBuilderFactory());
+        baseBarSeriesBuilder.withName(code)
+            .withBars(bars)
+            .withNumFactory(DecimalNumFactory.getInstance(3))
+            .withBarBuilderFactory(new TimeBarBuilderFactory());
         BaseBarSeries baseBarSeries = baseBarSeriesBuilder.build();
         CCIIndicator cci14 = new CCIIndicator(
-                baseBarSeries, // 基于TP计算CCI
-                14 // 周期N=14
+            baseBarSeries, // 基于TP计算CCI
+            14 // 周期N=14
         );
         final int SIZE = fully ? 500 : 30;
         List<String> sqlsToExecute = new ArrayList<>(SIZE);
         for (int n = bars.size() - 1; n >= cci14.getCountOfUnstableBars() - 1; n--) {
             Num value = cci14.getValue(n);
-            log.info("#n={}, date={} value={}", n, bars.get(n).getSystemZonedEndTime(), value);
+//            log.info("#n={}, date={} value={}", n, bars.get(n).getSystemZonedEndTime(), value);
             LocalDate statDate = bars.get(n).getSystemZonedEndTime().toLocalDate();
             BigDecimal cci14BD = PriceUtilsEx.fixPrice(BigDecimal.valueOf(value.getDelegate().doubleValue()));
-            String sql = stockDailyIndicatorService.buildUpsertSql(indexCode, statDate, cci14BD);
+            String sql = stockDailyIndicatorService.buildUpsertSqlForCCi(code, statDate, cci14BD);
             sqlsToExecute.add(sql);
+            if (sqlsToExecute.size() >= SIZE) {
+                sqlService.saveBySqls(sqlsToExecute);
+                sqlsToExecute.clear();
+                // 不是更新全部，就只更新30条
+                if (!fully) {
+                    return;
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(sqlsToExecute)) {
+            sqlService.saveBySqls(sqlsToExecute);
+        }
+    }
+
+    private void computeKdj(String code, boolean fully) throws SQLException {
+        // 1. 获取日K数据
+        List<StockDailyQuote> stockDailyQuotes;
+        if (fully) {
+            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDateDesc(code);
+        } else {
+            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDateDesc(code);
+        }
+        if (CollectionUtils.isEmpty(stockDailyQuotes)) {
+            return;
+        }
+        final int rsvPeriod = 9;
+        KdjContextResp kdjContextResp = KdjIndicatorHelper.computeKdj(stockDailyQuotes, rsvPeriod);
+        if (Objects.isNull(kdjContextResp)) {
+            return;
+        }
+        BarSeries baseBarSeries = kdjContextResp.getBaseBarSeries();
+        Indicator<Num> k = kdjContextResp.getK();
+        Indicator<Num> d = kdjContextResp.getD();
+        Indicator<Num> j = kdjContextResp.getJ();
+
+        final int SIZE = fully ? 500 : 30;
+        List<String> sqlsToExecute = new ArrayList<>(SIZE);
+        // 遍历所有K线（从第9根开始才有有效KDJ，索引从0开始）
+        for (int i = 0; i < baseBarSeries.getBarCount(); i++) {
+            Bar bar = baseBarSeries.getBar(i);
+            String date = bar.getZonedBeginTime().toString().substring(0, 10); // 提取日期（格式按需调整）
+
+            BigDecimal kValue = k.getValue(i).bigDecimalValue();
+            BigDecimal dValue = d.getValue(i).bigDecimalValue();
+            BigDecimal jValue = j.getValue(i).bigDecimalValue();
+
+            // 格式化输出：前8天标注“无有效值”，后续保留3位小数
+            if (i < rsvPeriod - 1) {
+                log.info("{}\t\t无有效值\t无有效值\t无有效值", date);
+                continue;
+            }
+            log.info(String.format("%s\t\t%.3f\t\t%.3f\t\t%.3f", date, kValue, dValue, jValue));
+            String updateSqlForKdj = stockDailyIndicatorService.buildUpdateSqlForKdj(code, bar.getZonedBeginTime().toLocalDate(), kValue, dValue, jValue);
+            log.info("updateSqlForKdj={}", updateSqlForKdj);
+            sqlsToExecute.add(updateSqlForKdj);
             if (sqlsToExecute.size() >= SIZE) {
                 sqlService.saveBySqls(sqlsToExecute);
                 sqlsToExecute.clear();

@@ -6,7 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import lombok.Data;
@@ -24,11 +23,21 @@ public class StockDailyIndicator implements Serializable {
     @EmbeddedId
     public StockDailyIndicatorPk id;
 
-
-    @Column(name = "cci14", nullable = false)
-    @NotNull
+    @Column(name = "cci14")
     @Schema(description = "cci14")
     private BigDecimal cci14;
+
+    @Column(name = "kdj_k")
+    @Schema(description = "kdj_k")
+    private BigDecimal kdjK;
+
+    @Column(name = "kdj_d")
+    @Schema(description = "kdj_d")
+    private BigDecimal kdjD;
+
+    @Column(name = "kdj_j")
+    @Schema(description = "kdj_j")
+    private BigDecimal kdjJ;
 
     public void copy(StockDailyIndicator source) {
         BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));

@@ -93,21 +93,21 @@ public class StockDailyQuoteController extends BaseController {
 
     @POST
     @Path("computeAllCciById")
-    @Log("计算指定股票的所有cci值")
-    @Operation(summary = "计算指定股票的所有cci值")
+    @Log("计算指定股票的所有cci值&kdj值") // fixme rename
+    @Operation(summary = "计算指定股票的所有cci值&kdj值")
     @PreAuthorize("@el.check('stockDailyQuote:computeAllCciById')")
     public Long computeAllCciById(IndexInfo req) throws SQLException {
         Long l = stockDailyQuoteService.computeAllCciById(req);
         super.executeAsync(() -> {
-            vtNatsClient.publishApplicationMessage("计算cci14完成：");
+            vtNatsClient.publishApplicationMessage("计算cci14完成：" + req.getCode());
         });
         return l;
     }
 
     @POST
     @Path("computeLatest30DaysCci")
-    @Log("计算popular指数的近30天cci值")
-    @Operation(summary = "计算popular指数的近30天cci值")
+    @Log("计算popular指数的近30天cci值&kdj值") // fixme rename
+    @Operation(summary = "计算popular指数的近30天cci值&kdj值")
     @PreAuthorize("@el.check('stockDailyQuote:computeLatest30DaysCci')")
     public Long computeLatest30DaysCci() {
         List<StockInfoDto> popularList = stockInfoService.findPopularList();
@@ -120,6 +120,7 @@ public class StockDailyQuoteController extends BaseController {
                     stockDailyQuoteService.computeLatest30DaysCci(indexInfoDto.getCode());
                 } catch (Exception e) {
                     log.error("error when updateLatest30Days", e);
+                    vtNatsClient.publishApplicationException("计算cci14失败", e);
                 }
             }
 

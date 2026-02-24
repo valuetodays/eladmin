@@ -8,16 +8,10 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import ll.vt.quarkus.commons.msg.IVtNatsClient;
+import lombok.extern.slf4j.Slf4j;
 import me.vt.db.SqlServiceImpl;
 import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
@@ -30,12 +24,22 @@ import me.vt.modules.mybiz.service.mapstruct.StockDailyIndicatorConverter;
 import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author valuetodays
  * @since 2025-11-18 20:01
  **/
+@Slf4j
 @ApplicationScoped
 public class StockDailyIndicatorServiceImpl {
 
@@ -47,13 +51,6 @@ public class StockDailyIndicatorServiceImpl {
     SqlServiceImpl sqlService;
     @Inject
     IVtNatsClient vtNatsClient;
-
-    private static final String SQL_FOR_UPSERT = """
-                insert into f_stock_daily_indicator (code, stat_date, cci14) values('?code', '?stat_date', ?cci14)
-                ON CONFLICT (code, stat_date)
-                DO UPDATE SET
-                    cci14   = EXCLUDED.cci14;
-            """;
 
     public PageResult<StockDailyIndicatorDto> queryAll(StockDailyIndicatorQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id.statDate");
@@ -87,14 +84,40 @@ public class StockDailyIndicatorServiceImpl {
     }
 
     @Transactional
-    public String buildUpsertSql(String code, LocalDate statDate, BigDecimal cci14) {
+    public String buildUpsertSqlForCCi(String code, LocalDate statDate, BigDecimal cci14) {
+        final String SQL_FOR_UPSERT_CCI = """
+                insert into f_stock_daily_indicator (code, stat_date, cci14) values('?code', '?stat_date', ?cci14)
+                ON CONFLICT (code, stat_date)
+                DO UPDATE SET
+                    cci14   = EXCLUDED.cci14;
+            """;
+
         Map<String, String> params = new HashMap<>();
         params.put("code", code);
         params.put("stat_date", statDate.format(DateUtils.DEFAULT_DATE_FORMATTER));
         params.put("cci14", String.valueOf(cci14));
-        String sql = SQL_FOR_UPSERT;
+        String sql = SQL_FOR_UPSERT_CCI;
         for (Map.Entry<String, String> stringObjectEntry : params.entrySet()) {
             sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey(), stringObjectEntry.getValue());
+        }
+        return sql;
+    }
+
+    public String buildUpdateSqlForKdj(String code, LocalDate statDate, BigDecimal k, BigDecimal d, BigDecimal j) {
+        final String SQL_FOR_UPDATE_KDJ = """
+            update f_stock_daily_indicator
+            set kdj_k = ?kdj_k, kdj_d = ?kdj_d, kdj_j = ?kdj_j
+            where code = '?code' and stat_date = '?stat_date';
+        """;
+        Map<String, String> params = new HashMap<>();
+        params.put("code", code);
+        params.put("stat_date", statDate.format(DateUtils.DEFAULT_DATE_FORMATTER));
+        params.put("kdj_k", String.valueOf(k));
+        params.put("kdj_d", String.valueOf(d));
+        params.put("kdj_j", String.valueOf(j));
+        String sql = SQL_FOR_UPDATE_KDJ;
+        for (Map.Entry<String, String> stringObjectEntry : params.entrySet()) {
+            sql = Strings.CS.replace(sql, "?" + stringObjectEntry.getKey(), stringObjectEntry.getValue());
         }
         return sql;
     }

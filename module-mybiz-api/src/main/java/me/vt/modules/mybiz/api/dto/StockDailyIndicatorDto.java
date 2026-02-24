@@ -3,6 +3,7 @@ package me.vt.modules.mybiz.api.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -21,4 +22,13 @@ public class StockDailyIndicatorDto implements Serializable {
 
     @Schema(description = "cci14")
     private BigDecimal cci14;
+
+    @Schema(description = "kdj_k")
+    private BigDecimal kdjK;
+
+    @Schema(description = "kdj_d")
+    private BigDecimal kdjD;
+
+    @Schema(description = "kdj_j")
+    private BigDecimal kdjJ;
 }
