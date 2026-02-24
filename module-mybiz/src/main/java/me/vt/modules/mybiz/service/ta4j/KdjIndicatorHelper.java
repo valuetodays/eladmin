@@ -1,14 +1,10 @@
 package me.vt.modules.mybiz.service.ta4j;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.mybiz.domain.StockDailyQuote;
 import me.vt.modules.mybiz.service.ta4j.pojo.KdjContextResp;
 import org.apache.commons.collections4.CollectionUtils;
 import org.ta4j.core.Bar;
-import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
@@ -22,6 +18,9 @@ import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.NumFactory;
+
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * .
@@ -37,7 +36,7 @@ public final class KdjIndicatorHelper {
     /**
      *
      * @param stockDailyQuotes datalist
-     * @param rsvPeriod 定义KDJ参数（国内通用9,3,3）
+     * @param rsvPeriod        定义KDJ参数（国内通用9,3,3）
      */
     public static KdjContextResp computeKdj(List<StockDailyQuote> stockDailyQuotes, int rsvPeriod) {
         // 1. 获取日K数据
@@ -45,13 +44,15 @@ public final class KdjIndicatorHelper {
             return null;
         }
         String code = stockDailyQuotes.getFirst().getCode();
-        List<Bar> bars = stockDailyQuotes.stream().map(e -> Ta4jUtils.buildBar(
-            e.getStatDate(),
-            e.getOpenVal(), e.getCloseVal(),
-            e.getHighVal(), e.getLowVal(),
-            e.getVolumeVal(), e.getAmountVal(),
-            0
-        )).toList();
+        List<Bar> bars = stockDailyQuotes.stream()
+            .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
+            .map(e -> Ta4jUtils.buildBar(
+                e.getStatDate(),
+                e.getOpenVal(), e.getCloseVal(),
+                e.getHighVal(), e.getLowVal(),
+                e.getVolumeVal(), e.getAmountVal(),
+                0
+            )).toList();
 
         // 2. 构建BarSeries
         BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
