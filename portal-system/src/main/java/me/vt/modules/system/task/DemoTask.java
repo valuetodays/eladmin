@@ -12,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2026-02-25
  */
 @Slf4j
-//@ApplicationScoped
+@ApplicationScoped
 public class DemoTask extends RunAsync {
-    @Scheduled(cron = "*/20 * * * * ?")
-    public void interval1() {
-        super.executeAsync(() -> {
-            log.info("interval1 begins");
-            log.info("interval1 ends");
-        });
-    }
+//    @Scheduled(cron = "*/20 * * * * ?")
+//    public void interval1() {
+//        super.executeAsync(() -> {
+//            log.info("interval1 begins");
+//            log.info("interval1 ends");
+//        });
+//    }
 }
