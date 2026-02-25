@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
 import ll.vt.quarkus.commons.base.RunAsync;
+import ll.vt.quarkus.commons.msg.IVtNatsClient;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.mybiz.rest.StockDailyIndicatorController;
 import me.vt.modules.mybiz.rest.StockDailyQuoteController;
@@ -21,19 +22,29 @@ public class StockInfoDailyTask extends RunAsync {
     StockDailyQuoteController stockDailyQuoteController;
     @Inject
     StockDailyIndicatorController stockDailyIndicatorController;
+    @Inject
+    IVtNatsClient vtNatsClient;
 
     // 每天15:00:35
     @Scheduled(cron = "35 0 15 * * ?")
     public void saveLatest30Days() {
         super.executeAsync(() -> {
-            stockInfoController.saveLatest30Days();
+            try {
+                stockInfoController.saveLatest30Days();
+            } catch (Exception e) {
+                vtNatsClient.publishApplicationException("saveLatest30Days", e);
+            }
         });
     }
 
     @Scheduled(cron = "35 2 15 * * ?")
     public void computeLatest30DaysCci() {
         super.executeAsync(() -> {
-            stockDailyQuoteController.computeLatest30DaysCci();
+            try {
+                stockDailyQuoteController.computeLatest30DaysCci();
+            } catch (Exception e) {
+                vtNatsClient.publishApplicationException("computeLatest30DaysCci", e);
+            }
         });
     }
 
@@ -43,7 +54,11 @@ public class StockInfoDailyTask extends RunAsync {
             Cci14_100DataCriteria c = new Cci14_100DataCriteria();
             c.setStatDate(LocalDate.now());
             c.setPushMsg(true);
-            stockDailyIndicatorController.getAllCciLt_100ByStatDate(c);
+            try {
+                stockDailyIndicatorController.getAllCciLt_100ByStatDate(c);
+            } catch (Exception e) {
+                vtNatsClient.publishApplicationException("getAllCciLt_100ByStatDate", e);
+            }
         });
     }
 
