@@ -111,11 +111,11 @@ public class StockDailyIndicatorRealtimeServiceImpl {
             .toList();
         CCIIndicator cci14 = CciIndicatorHelper.buildCci(bars, code, realtimeStockQuoteVo);
 
-        int last = bars.size() - 1;
+        int last = cci14.getBarSeries().getBarCount() - 1;
         Num value = cci14.getValue(last);
-        LocalDate statDate = bars.get(last).getSystemZonedEndTime().toLocalDate();
+        LocalDate statDate = cci14.getBarSeries().getBar(last).getSystemZonedEndTime().toLocalDate();
         BigDecimal cci14BD = PriceUtilsEx.fixPrice(BigDecimal.valueOf(value.getDelegate().doubleValue()));
-        log.info("cci14BD: {}", cci14BD);
+        log.info("statDate={}, cci14BD: {}", statDate, cci14BD);
         StockDailyIndicatorRealtimeCciResp resp = new StockDailyIndicatorRealtimeCciResp();
         resp.setCode(code);
         resp.setCci14(cci14BD);

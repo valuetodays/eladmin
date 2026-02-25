@@ -23,7 +23,7 @@ public class StockDailyIndicatorRealtimeServiceImplTest {
     @Test
     void test() {
         var req = new StockDailyIndicatorRealtimeCciReq();
-        req.setCodes(List.of("513870"));
+        req.setCodes(List.of("512070"));
         List<StockDailyIndicatorRealtimeCciResp> resps = stockDailyIndicatorRealtimeService.realtimeCci(req);
         log.info("resps={}", resps);
     }
