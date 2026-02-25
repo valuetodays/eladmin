@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import cn.vt.rest.third.utils.StockCodeUtils;
 import cn.vt.trade.api.HaitongApi;
 import cn.vt.trade.vo.FullTickVo;
+import cn.vt.util.DateUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
@@ -41,7 +42,7 @@ import org.ta4j.core.num.Num;
 @Slf4j
 @ApplicationScoped
 public class StockDailyIndicatorRealtimeServiceImpl {
-    private static final String CACHE_KEY_PREFIX_ = "rt:";
+    private static final String CACHE_KEY_PREFIX = "rt:";
 
     @Inject
     StockDailyIndicatorServiceImpl stockDailyIndicatorService;
@@ -65,7 +66,7 @@ public class StockDailyIndicatorRealtimeServiceImpl {
             StockDailyIndicatorRealtimeCciResp resp = computeRealtimeCci(code, realtimeStockQuoteVo);
             CollectionUtils.addIgnoreNull(resps, resp);
         }
-        return null;
+        return resps;
     }
 
     private static RealtimeStockQuoteVo toRealtimeStockQuoteVo(String code, Map<String, FullTickVo> codeTickMap) {
@@ -81,8 +82,9 @@ public class StockDailyIndicatorRealtimeServiceImpl {
         return realtimeStockQuoteVo;
     }
 
-    public StockDailyIndicatorRealtimeCciResp computeRealtimeCci(String code, RealtimeStockQuoteVo realtimeStockQuoteVo) {
-        final String name = CACHE_KEY_PREFIX_ + code;
+    private StockDailyIndicatorRealtimeCciResp computeRealtimeCci(String code, RealtimeStockQuoteVo realtimeStockQuoteVo) {
+        Integer yyyyMMdd = DateUtils.formatAsYyyyMMdd(LocalDate.now());
+        final String name = CACHE_KEY_PREFIX + yyyyMMdd + ":" + code;
         RBucket<List<StockDailyQuote>> bucket = redissonClient.getBucket(name);
         List<StockDailyQuote> cachedList = bucket.get();
         if (CollectionUtils.isEmpty(cachedList)) {
@@ -113,6 +115,7 @@ public class StockDailyIndicatorRealtimeServiceImpl {
         Num value = cci14.getValue(last);
         LocalDate statDate = bars.get(last).getSystemZonedEndTime().toLocalDate();
         BigDecimal cci14BD = PriceUtilsEx.fixPrice(BigDecimal.valueOf(value.getDelegate().doubleValue()));
+        log.info("cci14BD: {}", cci14BD);
         StockDailyIndicatorRealtimeCciResp resp = new StockDailyIndicatorRealtimeCciResp();
         resp.setCode(code);
         resp.setCci14(cci14BD);

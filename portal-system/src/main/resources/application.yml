@@ -57,9 +57,9 @@ quarkus:
       type: UBER_JAR
     runner-suffix: -runner
   thread-pool:
-    max-threads: 200
-    core-threads: 20
-    queue-size: 1000
+    max-threads: 100
+    core-threads: 10
+    queue-size: 300
   redis:
     hosts: redis://localhost:6379/0
     password: 'abc123'
@@ -80,8 +80,9 @@ quarkus:
         max-file-size: 10M
         max-backup-index: 15
         file-suffix: .yyyy-MM-dd
+  # io.quarkus.smallrye.openapi.runtime.OpenApiRuntimeConfig
   smallrye-openapi:
-    enable: true
+    enabled: true
   jackson:
     date-format: yyyy-MM-dd'T'HH:mm:ss
     time-zone: GMT+8
