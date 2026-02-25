@@ -200,10 +200,9 @@ public class StockDailyIndicatorServiceImpl {
 
         final int SIZE = fully ? 500 : 30;
         List<String> sqlsToExecute = new ArrayList<>(SIZE);
-        // 遍历所有K线（从第9根开始才有有效KDJ，索引从0开始）
-        for (int i = 0; i < baseBarSeries.getBarCount(); i++) {
+        for (int i = baseBarSeries.getBarCount() - 1; i >= 0; i--) {
             Bar bar = baseBarSeries.getBar(i);
-            LocalDate statDate = bar.getSystemZonedEndTime().toLocalDate(); // 提取日期（格式按需调整）
+            LocalDate statDate = bar.getSystemZonedEndTime().toLocalDate();
 
             BigDecimal kValue = k.getValue(i).bigDecimalValue();
             BigDecimal dValue = d.getValue(i).bigDecimalValue();
