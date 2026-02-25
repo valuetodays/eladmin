@@ -15,7 +15,6 @@ import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.mybiz.api.dto.StockInfoDto;
 import me.vt.modules.mybiz.domain.IndexInfo;
-import me.vt.modules.mybiz.domain.NationCode;
 import me.vt.modules.mybiz.domain.StockInfoPersist;
 import me.vt.modules.mybiz.repository.StockInfoRepository;
 import me.vt.modules.mybiz.service.dto.StockInfoQueryCriteria;
@@ -43,7 +42,7 @@ public class StockInfoServiceImpl {
     public PageResult<StockInfoDto> queryAll(StockInfoQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
-        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, NationCode.class);
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, StockInfoPersist.class);
         PanacheQuery<StockInfoPersist> panacheQuery;
         if (Objects.isNull(hqlAndParams)) {
             panacheQuery = stockInfoRepository.findAll(sort);

@@ -19,8 +19,6 @@ import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
 import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjReq;
 import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjResp;
-import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorRealtimeCciResp;
-import me.vt.modules.mybiz.domain.Stock;
 import me.vt.modules.mybiz.domain.StockDailyIndicator;
 import me.vt.modules.mybiz.domain.StockDailyQuote;
 import me.vt.modules.mybiz.repository.StockDailyIndicatorRepository;
@@ -40,12 +38,8 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
-import org.ta4j.core.BaseBarSeries;
-import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
-import org.ta4j.core.bars.TimeBarBuilderFactory;
 import org.ta4j.core.indicators.CCIIndicator;
-import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
 
 import java.math.BigDecimal;
@@ -81,7 +75,7 @@ public class StockDailyIndicatorServiceImpl {
     public PageResult<StockDailyIndicatorDto> queryAll(StockDailyIndicatorQueryCriteria criteria, Page pageable) {
         Sort sort = Sort.descending("id.statDate");
         List<QuerySearch> querySearchList = criteria.toQuerySearches();
-        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, Stock.class);
+        Pair<String, Object[]> hqlAndParams = QueryPart.toHqlAndParams(querySearchList, StockDailyIndicator.class);
         PanacheQuery<StockDailyIndicator> panacheQuery;
         if (Objects.isNull(hqlAndParams)) {
             panacheQuery = stockDailyIndicatorRepository.findAll(sort);
