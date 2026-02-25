@@ -100,7 +100,7 @@ public class RedisUtils {
      */
     public boolean hasKey(String key) {
         try {
-            boolean exists = redissonClient.getKeys().countExists("yourKey") > 0;
+            boolean exists = redissonClient.getKeys().countExists(key) > 0;
             return exists;
         } catch (Exception e) {
             log.error(e.getMessage(), e);

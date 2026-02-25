@@ -14,6 +14,9 @@ import me.vt.modules.mybiz.api.dto.Cci14_100DataDto;
 import me.vt.modules.mybiz.api.dto.StockDailyIndicatorDto;
 import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjReq;
 import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorGetStockToBuyByKdjResp;
+import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorRealtimeCciReq;
+import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorRealtimeCciResp;
+import me.vt.modules.mybiz.service.StockDailyIndicatorRealtimeServiceImpl;
 import me.vt.modules.mybiz.service.StockDailyIndicatorServiceImpl;
 import me.vt.modules.mybiz.service.dto.Cci14_100DataCriteria;
 import me.vt.modules.mybiz.service.dto.StockDailyIndicatorQueryCriteria;
@@ -38,6 +41,8 @@ public class StockDailyIndicatorController extends BaseController {
 
     @Inject
     StockDailyIndicatorServiceImpl stockDailyIndicatorService;
+    @Inject
+    StockDailyIndicatorRealtimeServiceImpl stockDailyIndicatorRealtimeService;
 
     @Operation(summary = "导出数据")
     @POST
@@ -71,5 +76,13 @@ public class StockDailyIndicatorController extends BaseController {
     @PreAuthorize("@el.check('stockDailyIndicator:getStocksToBuyByKdj')")
     public List<StockDailyIndicatorGetStockToBuyByKdjResp> getStocksToBuyByKdj(StockDailyIndicatorGetStockToBuyByKdjReq req) {
         return stockDailyIndicatorService.getStocksToBuyByKdj(req);
+    }
+
+    @POST
+    @Path(value = "/realtimeCci")
+    @Operation(summary = "获取实时cci")
+    @PreAuthorize("@el.check('stockDailyIndicator:realtimeCci')")
+    public List<StockDailyIndicatorRealtimeCciResp> realtimeCci(StockDailyIndicatorRealtimeCciReq req) {
+        return stockDailyIndicatorRealtimeService.realtimeCci(req);
     }
 }
