@@ -5,9 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import cn.vt.rest.third.utils.StockCodeUtils;
+import cn.vt.trade.api.HaitongApi;
+import cn.vt.trade.vo.FullTickVo;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
@@ -18,7 +24,7 @@ import me.vt.modules.mybiz.domain.StockDailyQuote;
 import me.vt.modules.mybiz.repository.StockDailyQuoteRepository;
 import me.vt.modules.mybiz.service.ta4j.CciIndicatorHelper;
 import me.vt.modules.mybiz.service.ta4j.Ta4jUtils;
-import me.vt.utils.RedisUtils;
+import me.vt.modules.mybiz.service.ta4j.pojo.RealtimeStockQuoteVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -47,14 +53,35 @@ public class StockDailyIndicatorRealtimeServiceImpl {
     public List<StockDailyIndicatorRealtimeCciResp> realtimeCci(StockDailyIndicatorRealtimeCciReq req) {
         List<StockDailyIndicatorRealtimeCciResp> resps = new ArrayList<>();
         List<String> codes = req.getCodes();
+        List<FullTickVo> fullTicks = HaitongApi.getFullTick(codes.stream().map(StockCodeUtils::buildForEhaifangzhou).toList());
+        Map<String, FullTickVo> codeTickMap;
+        if (CollectionUtils.isNotEmpty(fullTicks)) {
+            codeTickMap = fullTicks.stream().collect(Collectors.toMap(e -> StockCodeUtils.parseFromEhaifangzhou(e.getCode()), e -> e));
+        } else {
+            codeTickMap = new HashMap<>();
+        }
         for (String code : codes) {
-            StockDailyIndicatorRealtimeCciResp resp = computeRealtimeCci(code);
+            RealtimeStockQuoteVo realtimeStockQuoteVo = toRealtimeStockQuoteVo(code, codeTickMap);
+            StockDailyIndicatorRealtimeCciResp resp = computeRealtimeCci(code, realtimeStockQuoteVo);
             CollectionUtils.addIgnoreNull(resps, resp);
         }
         return null;
     }
 
-    public StockDailyIndicatorRealtimeCciResp computeRealtimeCci(String code) {
+    private static RealtimeStockQuoteVo toRealtimeStockQuoteVo(String code, Map<String, FullTickVo> codeTickMap) {
+        FullTickVo fullTickVo = codeTickMap.get(code);
+        RealtimeStockQuoteVo realtimeStockQuoteVo = new RealtimeStockQuoteVo();
+        realtimeStockQuoteVo.setCode(code);
+        realtimeStockQuoteVo.setOpenVal(fullTickVo.getOpen());
+        realtimeStockQuoteVo.setCloseVal(fullTickVo.getLastClose());
+        realtimeStockQuoteVo.setHighVal(fullTickVo.getHigh());
+        realtimeStockQuoteVo.setLowVal(fullTickVo.getLow());
+        realtimeStockQuoteVo.setVolumeVal(fullTickVo.getVolume());
+        realtimeStockQuoteVo.setAmountVal(fullTickVo.getAmount());
+        return realtimeStockQuoteVo;
+    }
+
+    public StockDailyIndicatorRealtimeCciResp computeRealtimeCci(String code, RealtimeStockQuoteVo realtimeStockQuoteVo) {
         final String name = CACHE_KEY_PREFIX_ + code;
         RBucket<List<StockDailyQuote>> bucket = redissonClient.getBucket(name);
         List<StockDailyQuote> cachedList = bucket.get();
@@ -80,7 +107,7 @@ public class StockDailyIndicatorRealtimeServiceImpl {
                 e.getVolumeVal(), e.getAmountVal(),
                 0))
             .toList();
-        CCIIndicator cci14 = CciIndicatorHelper.buildCci(bars, code, null);
+        CCIIndicator cci14 = CciIndicatorHelper.buildCci(bars, code, realtimeStockQuoteVo);
 
         int last = bars.size() - 1;
         Num value = cci14.getValue(last);
