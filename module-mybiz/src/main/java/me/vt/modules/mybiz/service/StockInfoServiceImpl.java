@@ -96,6 +96,7 @@ public class StockInfoServiceImpl {
         return id;
     }
 
+    @Transactional
     public List<StockInfoDto> findPopularList() {
         List<StockInfoPersist> popularList = stockInfoRepository.findPopularList();
         return stockInfoConverter.toDto(popularList);
