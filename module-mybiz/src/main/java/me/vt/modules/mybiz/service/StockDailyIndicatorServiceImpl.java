@@ -38,8 +38,15 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.BaseBarSeries;
+import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
+import org.ta4j.core.bars.TimeBarBuilderFactory;
 import org.ta4j.core.indicators.CCIIndicator;
+import org.ta4j.core.indicators.averages.SMAIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.helpers.VolumeIndicator;
+import org.ta4j.core.num.DecimalNumFactory;
 import org.ta4j.core.num.Num;
 
 import java.math.BigDecimal;
@@ -224,7 +231,7 @@ public class StockDailyIndicatorServiceImpl {
             sqlService.saveBySqls(sqlsToExecute);
         }
     }
-    public String buildUpdateSqlForKdj(String code, LocalDate statDate, BigDecimal k, BigDecimal d, BigDecimal j) {
+    private String buildUpdateSqlForKdj(String code, LocalDate statDate, BigDecimal k, BigDecimal d, BigDecimal j) {
         final String SQL_FOR_UPDATE_KDJ = """
             update f_stock_daily_indicator
             set kdj_k = ?kdj_k, kdj_d = ?kdj_d, kdj_j = ?kdj_j
@@ -239,6 +246,103 @@ public class StockDailyIndicatorServiceImpl {
         String sql = P6Util.singleLine(SQL_FOR_UPDATE_KDJ);
         for (Map.Entry<String, String> stringObjectEntry : params.entrySet()) {
             sql = Strings.CS.replace(sql, "?" + stringObjectEntry.getKey(), stringObjectEntry.getValue());
+        }
+        return sql;
+    }
+
+    public void computeMa(String code, boolean fully) throws SQLException {
+        List<StockDailyQuote> stockDailyQuotes;
+        if (fully) {
+            stockDailyQuotes = stockDailyQuoteRepository.findAllByCodeOrderByStatDateDesc(code);
+        } else {
+            stockDailyQuotes = stockDailyQuoteRepository.findTop60ByCodeOrderByStatDateDesc(code);
+        }
+        if (CollectionUtils.isEmpty(stockDailyQuotes)) {
+            return;
+        }
+        // 需要使用“正序”
+        List<Bar> bars = stockDailyQuotes.stream()
+            .sorted(Comparator.comparing(StockDailyQuote::getStatDate))
+            .map(e -> Ta4jUtils.buildBar(
+                e.getStatDate(),
+                e.getOpenVal(), e.getCloseVal(),
+                e.getHighVal(), e.getLowVal(),
+                e.getVolumeVal(), e.getAmountVal(),
+                0))
+            .toList();
+        BaseBarSeriesBuilder baseBarSeriesBuilder = new BaseBarSeriesBuilder();
+        baseBarSeriesBuilder.withName(code)
+            .withBars(bars)
+            .withNumFactory(DecimalNumFactory.getInstance())
+            .withBarBuilderFactory(new TimeBarBuilderFactory());
+        BaseBarSeries baseBarSeries = baseBarSeriesBuilder.build();
+        ClosePriceIndicator closePriceIndicator = new ClosePriceIndicator(baseBarSeries);
+        SMAIndicator ma5Indicator = new SMAIndicator(closePriceIndicator, 5);
+        SMAIndicator ma20Indicator = new SMAIndicator(closePriceIndicator, 20);
+        SMAIndicator ma30Indicator = new SMAIndicator(closePriceIndicator, 30);
+        SMAIndicator ma60Indicator = new SMAIndicator(closePriceIndicator, 60);
+        SMAIndicator ma120Indicator = new SMAIndicator(closePriceIndicator, 120);
+        SMAIndicator ma240Indicator = new SMAIndicator(closePriceIndicator, 240);
+
+        VolumeIndicator volumeIndicator = new VolumeIndicator(baseBarSeries);
+        SMAIndicator volMa5Indicator = new SMAIndicator(volumeIndicator, 5);
+        SMAIndicator volMa20Indicator = new SMAIndicator(volumeIndicator, 20);
+
+        final int SIZE = fully ? 500 : 30;
+
+        List<String> sqlsToExecute = new ArrayList<>(SIZE);
+        for (int n = bars.size() - 1; n >= 0; n--) {
+            LocalDate statDate = bars.get(n).getSystemZonedEndTime().toLocalDate();
+            Num ma5Val = ma5Indicator.getValue(n);
+            Num ma20Val = ma20Indicator.getValue(n);
+            Num ma30Val = ma30Indicator.getValue(n);
+            Num ma60Val = ma60Indicator.getValue(n);
+            Num ma120Val = ma120Indicator.getValue(n);
+            Num ma240Val = ma240Indicator.getValue(n);
+
+            Num ma5VolVal = volMa5Indicator.getValue(n);
+            Num ma20VolVal = volMa20Indicator.getValue(n);
+
+            log.info("#n={}, date={} ma5Val={}, ma20Val={}, ma30Val={}, ma60Val={}, ma120Val={}, ma240Val={}, ma5VolVal={}, ma20VolVal={}",
+                n, statDate, ma5Val, ma20Val, ma30Val, ma60Val, ma120Val, ma240Val, ma5VolVal, ma20VolVal);
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("code", code);
+            params.put("stat_date", bars.get(n).getSystemZonedEndTime().format(DateUtils.DEFAULT_DATE_FORMATTER));
+            params.put("ma5", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma5Val.getDelegate().doubleValue())));
+            params.put("ma20", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma20Val.getDelegate().doubleValue())));
+            params.put("ma30", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma30Val.getDelegate().doubleValue())));
+            params.put("ma60", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma60Val.getDelegate().doubleValue())));
+            params.put("ma120", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma120Val.getDelegate().doubleValue())));
+            params.put("ma240", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma240Val.getDelegate().doubleValue())));
+            params.put("ma5Volume", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma5VolVal.getDelegate().doubleValue())));
+            params.put("ma20Volume", PriceUtilsEx.fixPrice(BigDecimal.valueOf(ma20VolVal.getDelegate().doubleValue())));
+
+            sqlsToExecute.add(buildUpdateSqlForMa(params));
+            if (sqlsToExecute.size() >= SIZE) {
+                sqlService.saveBySqls(sqlsToExecute);
+                sqlsToExecute.clear();
+                // 不是更新全部，就只更新30条
+                if (!fully) {
+                    return;
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(sqlsToExecute)) {
+            sqlService.saveBySqls(sqlsToExecute);
+        }
+    }
+
+    private String buildUpdateSqlForMa(Map<String, Object> params) {
+        String sql = """
+            update f_stock_daily_indicator
+            set ma5 = ?ma5?, ma20 = ?ma20?, ma30 = ?ma30?, ma60=?ma60?, ma120=?ma120?, ma240=?ma240?,
+            ma5_volume=?ma5Volume?, ma20_volume=?ma20Volume?
+            where code = '?code?' and stat_date = '?stat_date?';
+        """;
+
+        for (Map.Entry<String, Object> stringObjectEntry : params.entrySet()) {
+            sql = StringUtils.replace(sql, "?" + stringObjectEntry.getKey() + "?", String.valueOf(stringObjectEntry.getValue()));
         }
         return sql;
     }

@@ -214,6 +214,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
         // 要异步
         stockDailyIndicatorService.computeCci(stockInfoPersist.getCode(), true);
         stockDailyIndicatorService.computeKdj(stockInfoPersist.getCode(), true);
+        stockDailyIndicatorService.computeMa(stockInfoPersist.getCode(), true);
         // 要通知
         // 要处理重复点击问题
         return 1L;
@@ -223,6 +224,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     public void computeLatest30DaysCci(String code) throws SQLException {
         stockDailyIndicatorService.computeCci(code, false);
         stockDailyIndicatorService.computeKdj(code, false);
+        stockDailyIndicatorService.computeMa(code, false);
     }
 
 }

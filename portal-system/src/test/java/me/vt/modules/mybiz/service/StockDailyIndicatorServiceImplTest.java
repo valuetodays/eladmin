@@ -23,4 +23,9 @@ public class StockDailyIndicatorServiceImplTest {
     public void testStockDailyIndicatorRealtimeService() throws SQLException {
         stockDailyIndicatorService.computeKdj("159901", false);
     }
+
+    @Test
+    public void testMa() throws SQLException {
+        stockDailyIndicatorService.computeMa("513300", true);
+    }
 }

@@ -39,6 +39,38 @@ public class StockDailyIndicator implements Serializable {
     @Schema(description = "kdj_j")
     private BigDecimal kdjJ;
 
+    @Column(name = "ma5")
+    @Schema(description = "ma5")
+    private BigDecimal ma5;
+
+    @Column(name = "ma20")
+    @Schema(description = "ma20")
+    private BigDecimal ma20;
+
+    @Column(name = "ma30")
+    @Schema(description = "ma30")
+    private BigDecimal ma30;
+
+    @Column(name = "ma60")
+    @Schema(description = "ma60")
+    private BigDecimal ma60;
+
+    @Column(name = "ma120")
+    @Schema(description = "ma120")
+    private BigDecimal ma120;
+
+    @Column(name = "ma240")
+    @Schema(description = "ma240")
+    private BigDecimal ma240;
+
+    @Column(name = "ma5_volume")
+    @Schema(description = "ma5 volume")
+    private BigDecimal ma5Volume;
+
+    @Column(name = "ma20_volume")
+    @Schema(description = "ma20 volume")
+    private BigDecimal ma20Volume;
+
     public void copy(StockDailyIndicator source) {
         BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
