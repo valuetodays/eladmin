@@ -207,7 +207,7 @@ public class StockDailyQuoteServiceImpl extends RunAsync {
     }
 
     @Transactional
-    public Long computeAllCciById(IndexInfo req) throws SQLException {
+    public Long computeAllCciById(StockInfoPersist req) throws SQLException {
         Long stockInfoId = req.getId();
         StockInfoPersist stockInfoPersist = stockInfoRepository.findById(stockInfoId);
         AssertUtils.assertNotNull(stockInfoPersist);

@@ -14,6 +14,7 @@ import me.vt.common.base.BaseController;
 import me.vt.modules.mybiz.api.dto.StockDailyQuoteDto;
 import me.vt.modules.mybiz.api.dto.StockInfoDto;
 import me.vt.modules.mybiz.domain.IndexInfo;
+import me.vt.modules.mybiz.domain.StockInfoPersist;
 import me.vt.modules.mybiz.service.StockDailyQuoteServiceImpl;
 import me.vt.modules.mybiz.service.StockInfoServiceImpl;
 import me.vt.modules.mybiz.service.dto.StockDailyQuoteQueryCriteria;
@@ -97,7 +98,7 @@ public class StockDailyQuoteController extends BaseController {
     @Log("计算指定股票的所有cci值&kdj值") // fixme rename
     @Operation(summary = "计算指定股票的所有cci值&kdj值")
     @PreAuthorize("@el.check('stockDailyQuote:computeAllCciById')")
-    public Long computeAllCciById(IndexInfo req) throws SQLException {
+    public Long computeAllCciById(StockInfoPersist req) throws SQLException {
         Long l = stockDailyQuoteService.computeAllCciById(req);
         super.executeAsync(() -> {
             vtNatsClient.publishApplicationMessage("计算cci14完成：" + req.getId());
