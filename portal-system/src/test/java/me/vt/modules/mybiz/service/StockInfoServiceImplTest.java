@@ -1,29 +1,34 @@
 package me.vt.modules.mybiz.service;
 
 import cn.vt.util.JsonUtils;
+import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
+import me.vt.modules.mybiz.api.dto.StockInfoDto;
+import me.vt.modules.mybiz.domain.StockInfoPersist;
+import me.vt.modules.mybiz.service.dto.StockInfoQueryCriteria;
+import me.vt.modules.mybiz.service.mapstruct.StockInfoConverter;
+import me.vt.utils.PageResult;
+import org.apache.commons.collections4.CollectionUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import lombok.extern.slf4j.Slf4j;
-import me.vt.modules.mybiz.api.dto.StockInfoDto;
-import me.vt.modules.mybiz.domain.StockInfoPersist;
-import me.vt.modules.mybiz.service.mapstruct.StockInfoConverter;
-import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
-import org.redisson.api.RMap;
-import org.redisson.api.RedissonClient;
 
 /**
-
-* Tests for {@link StockInfoServiceImpl}.
-* @author lei.liu
-* @since 2026-02-10
-*/
+ * Tests for {@link StockInfoServiceImpl}.
+ *
+ * @author lei.liu
+ * @since 2026-02-10
+ */
 @QuarkusTest
 @Slf4j
 public class StockInfoServiceImplTest {
@@ -36,6 +41,24 @@ public class StockInfoServiceImplTest {
     StockDailyQuoteServiceImpl stockDailyQuoteService;
     @Inject
     StockInfoConverter stockInfoConverter;
+
+    @Test
+    void updateEtfInfo() {
+        int pageNumber = 0;
+        while (true) {
+            Page pageReq = Page.of(pageNumber, 50);
+            StockInfoQueryCriteria stockInfoQueryCriteria = new StockInfoQueryCriteria();
+            PageResult<StockInfoDto> stockInfoDtoPageResult = stockInfoService.queryAll(stockInfoQueryCriteria, pageReq);
+            List<StockInfoDto> content = stockInfoDtoPageResult.getContent();
+            if (CollectionUtils.isEmpty(content)) {
+                break;
+            }
+            for (StockInfoDto stockInfoDto : content) {
+                stockInfoService.updateStockInfo(stockInfoDto.getId());
+            }
+            pageNumber++;
+        }
+    }
 
     @Test
     void save() {

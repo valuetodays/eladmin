@@ -3,11 +3,12 @@ package me.vt.modules.mybiz.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import ll.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.math.BigDecimal;
 
 /**
 * @author valutodays
@@ -43,6 +44,10 @@ public class StockInfoPersist extends JpaCrudLongIdBasePersist {
     private BigDecimal totalShares;
     @Column(name = "fenhong")
     private String fenhong;
+    @Column(name = "fenhong_times")
+    private Integer fenhongTimes;
+    @Column(name = "fenhong_total_amt_per_share")
+    private BigDecimal fenhongTotalAmtPerShare;
     @Column(name = "manage_radio")
     private BigDecimal manageRadio;
     @Column(name = "holder_radio")

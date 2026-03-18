@@ -2,14 +2,13 @@ package me.vt.utils;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-import lombok.extern.slf4j.Slf4j;
-import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
-import net.dreamlu.mica.ip2region.core.IpInfo;
 
 /**
  * @author Zheng Jie
@@ -20,12 +19,6 @@ public class StringExUtils {
 
     private static final char SEPARATOR = '_';
 
-
-    /**
-     * 注入bean
-     */
-    // fixme:
-    private final static Ip2regionSearcher IP_SEARCHER = null;// SpringBeanHolder.getBean(Ip2regionSearcher.class);
 
     /**
      * 驼峰命名法工具
@@ -112,16 +105,6 @@ public class StringExUtils {
         return sb.toString();
     }
 
-    /**
-     * 根据ip获取详细地址
-     */
-    public static String getCityInfo(String ip) {
-        IpInfo ipInfo = IP_SEARCHER.memorySearch(ip);
-        if (ipInfo != null) {
-            return ipInfo.getAddress();
-        }
-        return null;
-    }
 
     /**
      * 获取浏览器

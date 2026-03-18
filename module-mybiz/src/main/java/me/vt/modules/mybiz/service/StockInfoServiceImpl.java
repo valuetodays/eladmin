@@ -1,15 +1,14 @@
 package me.vt.modules.mybiz.service;
 
 import cn.vt.exception.AssertUtils;
+import cn.vt.rest.third.eastmoney.EastMoneyEtfInfoUtils;
+import cn.vt.rest.third.eastmoney.vo.EtfInfoResp;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import ll.vt.quarkus.commons.QueryPart;
 import ll.vt.quarkus.commons.base.QuerySearch;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,11 @@ import me.vt.utils.PageResult;
 import me.vt.utils.PageUtil;
 import me.vt.utils.ValidationUtil;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author valutodays
@@ -111,4 +115,26 @@ public class StockInfoServiceImpl {
         }
         stockDailyQuoteService.getAndSaveToDb(indexInfo, false);
     }
+
+    @Transactional
+    public void updateStockInfo(Long id) {
+        StockInfoPersist stockInfoPersist = stockInfoRepository.findById(id);
+        AssertUtils.assertNotNull(stockInfoPersist);
+        if ("-".equals(stockInfoPersist.getShortName())) {
+            return;
+        }
+        EtfInfoResp etfInfoResp = EastMoneyEtfInfoUtils.getInfo(stockInfoPersist.getCode());
+        stockInfoPersist.setReleaseDate(etfInfoResp.getReleaseDate());
+        stockInfoPersist.setScale(etfInfoResp.getScale());
+        stockInfoPersist.setTotalShares(etfInfoResp.getTotalShares());
+        stockInfoPersist.setFenhong(etfInfoResp.getFenhong());
+        stockInfoPersist.setManageRadio(etfInfoResp.getManageRadio());
+        stockInfoPersist.setHolderRadio(etfInfoResp.getHolderRadio());
+        stockInfoPersist.setSellRadio(etfInfoResp.getSellRadio());
+        stockInfoPersist.setBusiCompareBase(etfInfoResp.getBusiCompareBase());
+        stockInfoPersist.setFollowIndex(etfInfoResp.getFollowIndex());
+        stockInfoPersist.setUpdateTime(LocalDateTime.now());
+        stockInfoRepository.update(stockInfoPersist);
+    }
+
 }
