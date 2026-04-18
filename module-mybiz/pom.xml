@@ -29,17 +29,17 @@
         </dependency>
 
         <dependency>
-            <groupId>ll.vt.api2</groupId>
+            <groupId>com.vt.api2</groupId>
             <artifactId>module-stock-trade</artifactId>
             <version>${vt.api2.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>api2-client</artifactId>
-                    <groupId>ll.vt.api2</groupId>
+                    <groupId>com.vt.api2</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>common-web</artifactId>
-                    <groupId>ll.vt.commons</groupId>
+                    <groupId>com.vt.commons</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

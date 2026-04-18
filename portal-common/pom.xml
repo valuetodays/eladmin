@@ -25,7 +25,7 @@
             <version>${hutool.version}</version>
         </dependency>
         <dependency>
-            <groupId>ll.vt.quarkus</groupId>
+            <groupId>com.vt.quarkus</groupId>
             <artifactId>quarkus-common-0</artifactId>
             <version>${valuetodays.quarkus-commons.version}</version>
             <exclusions>
@@ -36,7 +36,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>ll.vt.quarkus</groupId>
+            <groupId>com.vt.quarkus</groupId>
             <artifactId>quarkus-common-nats</artifactId>
             <version>${valuetodays.quarkus-commons.version}</version>
             <exclusions>

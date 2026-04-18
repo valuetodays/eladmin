@@ -1,14 +1,15 @@
 package me.vt.modules.security.req;
 
-import java.util.ArrayList;
-import java.util.List;
-import ll.vt.quarkus.commons.base.Operator;
-import ll.vt.quarkus.commons.base.PageIO;
-import ll.vt.quarkus.commons.base.QuerySearch;
+import com.vt.quarkus.commons.base.Operator;
+import com.vt.quarkus.commons.base.PageIO;
+import com.vt.quarkus.commons.base.QuerySearch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.QuerySearchable;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * .

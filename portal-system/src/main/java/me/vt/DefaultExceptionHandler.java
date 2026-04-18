@@ -1,10 +1,10 @@
 package me.vt;
 
 import cn.vt.R;
+import com.vt.quarkus.commons.base.RunAsync;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import ll.vt.quarkus.commons.base.RunAsync;
 import lombok.extern.slf4j.Slf4j;
 
 @Provider

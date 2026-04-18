@@ -1,8 +1,7 @@
 package me.vt.modules.system.task;
 
-import io.quarkus.scheduler.Scheduled;
+import com.vt.quarkus.commons.base.RunAsync;
 import jakarta.enterprise.context.ApplicationScoped;
-import ll.vt.quarkus.commons.base.RunAsync;
 import lombok.extern.slf4j.Slf4j;
 
 /**

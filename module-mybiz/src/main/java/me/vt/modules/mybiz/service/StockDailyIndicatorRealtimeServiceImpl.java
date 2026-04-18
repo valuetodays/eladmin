@@ -1,23 +1,12 @@
 package me.vt.modules.mybiz.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import cn.vt.rest.third.utils.StockCodeUtils;
 import cn.vt.trade.api.HaitongApi;
 import cn.vt.trade.vo.FullTickVo;
 import cn.vt.util.DateUtils;
+import com.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import ll.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import lombok.extern.slf4j.Slf4j;
 import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorRealtimeCciReq;
 import me.vt.modules.mybiz.api.reqresp.StockDailyIndicatorRealtimeCciResp;
@@ -32,6 +21,17 @@ import org.redisson.api.RedissonClient;
 import org.ta4j.core.Bar;
 import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.num.Num;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * .

@@ -8,22 +8,17 @@
     <version>v2025-12-01</version>
 
     <parent>
-        <groupId>ll.vt.quarkus</groupId>
+        <groupId>com.vt.quarkus</groupId>
         <artifactId>valuetodays-quarkus-commons</artifactId>
-        <version>quarkus3.27.0-2025.10.07</version>
+        <version>quarkus3.33.1-2026.04.13</version>
     </parent>
 
     <properties>
-        <valuetodays.quarkus-commons.version>quarkus3.27.0-2025.10.07</valuetodays.quarkus-commons.version>
-        <vt-simple-common-modules.version>boot322-2025.09.29</vt-simple-common-modules.version>
-        <vt.api2.version>1.0.1-SNAPSHOT</vt.api2.version>
+        <valuetodays.quarkus-commons.version>quarkus3.33.1-2026.04.13</valuetodays.quarkus-commons.version>
+        <vt-simple-common-modules.version>boot322-2026.04.13</vt-simple-common-modules.version>
+        <vt.api2.version>1.0.2-SNAPSHOT</vt.api2.version>
 
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
 
     <modules>
@@ -43,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
+            <artifactId>quarkus-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -99,52 +94,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
         </dependency>
-
-        <!--mapStruct依赖-->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.34</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <!-- 打包时跳过测试 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

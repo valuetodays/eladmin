@@ -1,16 +1,17 @@
 package me.vt.modules.system.service.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-import ll.vt.quarkus.commons.base.Operator;
-import ll.vt.quarkus.commons.base.PageIO;
-import ll.vt.quarkus.commons.base.QuerySearch;
+import com.vt.quarkus.commons.base.Operator;
+import com.vt.quarkus.commons.base.PageIO;
+import com.vt.quarkus.commons.base.QuerySearch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.vt.common.QuerySearchable;
 import me.vt.common.annotation.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Zheng Jie

@@ -2,17 +2,18 @@ package me.vt.modules.mybiz.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import ll.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * @author vt
