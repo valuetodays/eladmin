@@ -16,7 +16,7 @@ clone:
 
 steps:
   - name: compile code
-    image: eclipse-temurin:21-jdk
+    image: eclipse-temurin:25-jdk
     environment:
       KEY_A: value_a
     volumes:
