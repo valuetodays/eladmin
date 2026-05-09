@@ -50,8 +50,26 @@ steps:
       - curl --version
       - |
         echo begin to notify
-        curl -X POST "http://go.sisiruyi.fun/api/public/notify/anon/cdci.do" -H 'Content-Type: application/json; charset=utf-8' -d '{"content": "valuetodays-api2-by-quarkus was restarted just now.", "repo": "valuetodays-api2-by-quarkus"}'
-      - echo end
+        MSG_ID=$(cat /proc/sys/kernel/random/uuid)
+
+        curl -X POST "https://msg.valuetodays.xyz/api/message/push" \
+        -H 'Content-Type: application/json; charset=utf-8' \
+        -d "{
+          \"msgId\":\"$MSG_ID\",
+          \"bizId\":\"aaa\",
+          \"sourceAppName\":\"app-demo\",
+          \"sourceAppIp\":\"127.0.0.1\",
+          \"category\":\"BARK\",
+          \"type\":\"DEFAULT\",
+          \"retryTimes\":0,
+          \"timestamp\":\"$(date +%s)\",
+          \"priority\":0,
+          \"tags\":[\"prod\"],
+          \"env\":\"test\",
+          \"region\":\"hangzhou\",
+          \"data\":{\"toTarget\":\"liulei\",\"title\":\"cdci\",\"rawMsg\":\"portal was restarted just now.\",\"params\":{}},
+          \"metadata\":{}
+        }"
   - name: restart application by docker-compose
     image: docker:26.1.4-cli
     volumes:
