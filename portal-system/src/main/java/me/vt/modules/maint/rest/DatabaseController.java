@@ -1,6 +1,7 @@
 package me.vt.modules.maint.rest;
 
 import cn.vt.exception.AssertUtils;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -55,7 +56,7 @@ public class DatabaseController extends BaseController {
     @Path("query")
     @PreAuthorize("@el.check('database:list')")
     public PageResult<DatabaseDto> queryDatabase(DatabaseQueryCriteria criteria) {
-        return databaseService.queryAll(criteria, criteria.toPageRequest());
+        return databaseService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增数据库")

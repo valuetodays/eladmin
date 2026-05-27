@@ -1,6 +1,7 @@
 package me.vt.modules.mybiz.rest;
 
 import com.vt.quarkus.commons.msg.IVtNatsClient;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -57,7 +58,7 @@ public class IndexInfoController extends BaseController {
     @Operation(summary = "查询dd")
     @PreAuthorize("@el.check('indexInfo:list')")
     public PageResult<IndexInfoDto> query(IndexInfoQueryCriteria criteria) {
-        return indexInfoService.queryAll(criteria, criteria.toPageRequest());
+        return indexInfoService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

@@ -1,6 +1,7 @@
 package me.vt.modules.mybiz.rest;
 
 import cn.vt.auth.AuthUser;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -53,7 +54,7 @@ public class StockController extends BaseController {
     @Operation(summary = "查询股票信息")
     @PreAuthorize("@el.check('stock:list')")
     public PageResult<StockDto> query(StockQueryCriteria criteria) {
-        return stockService.queryAll(criteria, criteria.toPageRequest());
+        return stockService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

@@ -1,6 +1,7 @@
 package me.vt.modules.mybiz.rest;
 
 import cn.vt.auth.AuthUser;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -50,7 +51,7 @@ public class NationCodeController extends BaseController {
     @Operation(summary = "查询国家编码")
     @PreAuthorize("@el.check('nationCode:list')")
     public PageResult<NationCodeDto> queryNationCode(NationCodeQueryCriteria criteria) {
-        return nationCodeService.queryAll(criteria, criteria.toPageRequest());
+        return nationCodeService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

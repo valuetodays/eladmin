@@ -1,5 +1,6 @@
 package me.vt.modules.maint.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -49,7 +50,7 @@ public class DeployHistoryController extends BaseController {
     @Path("query")
     @PreAuthorize("@el.check('deployHistory:list')")
     public PageResult<DeployHistoryDto> queryDeployHistory(DeployHistoryQueryCriteria criteria) {
-        return deployhistoryService.queryAll(criteria, criteria.toPageRequest());
+        return deployhistoryService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("删除DeployHistory")

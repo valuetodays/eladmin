@@ -26,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>com.vt.quarkus</groupId>
-            <artifactId>quarkus-common-0</artifactId>
+            <artifactId>quarkus-common-jpa</artifactId>
             <version>${valuetodays.quarkus-commons.version}</version>
             <exclusions>
                 <exclusion>

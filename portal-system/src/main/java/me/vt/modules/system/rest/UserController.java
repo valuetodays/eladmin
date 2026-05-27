@@ -1,6 +1,7 @@
 package me.vt.modules.system.rest;
 
 import cn.vt.encrypt.BCryptUtils;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -94,12 +95,12 @@ public class UserController extends BaseController {
             // 取交集
             criteria.getDeptIds().retainAll(dataScopes);
             if (CollectionUtils.isNotEmpty(criteria.getDeptIds())) {
-                return userService.queryWithDetail(criteria, criteria.toPageRequest());
+                return userService.queryWithDetail(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
             }
         } else {
             // 否则取并集
             criteria.getDeptIds().addAll(dataScopes);
-            return userService.queryWithDetail(criteria, criteria.toPageRequest());
+            return userService.queryWithDetail(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
         }
         return PageUtil.noData();
     }

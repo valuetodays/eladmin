@@ -1,6 +1,6 @@
 package me.vt.modules.mybiz.domain;
 
-import com.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
+import com.vt.quarkus.commons.orm.jpa.AuditableLongIdPersist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @Table(name = "f_stock_info")
-public class StockInfoPersist extends JpaCrudLongIdBasePersist {
+public class StockInfoPersist extends AuditableLongIdPersist {
 
     @Column(name = "code", nullable = false)
     @Schema(description = "编号")

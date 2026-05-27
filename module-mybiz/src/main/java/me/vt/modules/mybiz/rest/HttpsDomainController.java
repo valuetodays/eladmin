@@ -1,5 +1,6 @@
 package me.vt.modules.mybiz.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -53,7 +54,7 @@ public class HttpsDomainController extends BaseController {
     @Operation(summary = "查询https域名管理")
     @PreAuthorize("@el.check('httpsDomain:list')")
     public PageResult<HttpsDomainDto> query(HttpsDomainQueryCriteria criteria) {
-        return httpsDomainService.queryAll(criteria, criteria.toPageRequest());
+        return httpsDomainService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

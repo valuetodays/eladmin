@@ -1,5 +1,6 @@
 package me.vt.modules.mybiz.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -60,7 +61,7 @@ public class MetricDockerStatsController extends BaseController {
     @Operation(summary = "查询docker容器占用")
     @PreAuthorize("@el.check('metricDockerStats:list')")
     public PageResult<MetricDockerStatsDto> query(MetricDockerStatsQueryCriteria criteria) {
-        return metricDockerStatsService.queryAll(criteria, criteria.toPageRequest());
+        return metricDockerStatsService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

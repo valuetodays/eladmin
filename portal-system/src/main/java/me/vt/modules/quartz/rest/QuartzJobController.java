@@ -1,5 +1,6 @@
 package me.vt.modules.quartz.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -47,7 +48,7 @@ public class QuartzJobController extends BaseController {
     @Path("/query")
     @PreAuthorize("@el.check('timing:list')")
     public PageResult<QuartzJob> queryQuartzJob(JobQueryCriteria criteria) {
-        return quartzJobService.queryAll(criteria, criteria.toPageRequest());
+        return quartzJobService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Operation(summary = "导出任务数据")
@@ -75,7 +76,7 @@ public class QuartzJobController extends BaseController {
     @Path(value = "/logs")
     @PreAuthorize("@el.check('timing:list')")
     public PageResult<QuartzLog> queryQuartzJobLog(JobQueryCriteria criteria) {
-        return quartzJobService.queryAllLog(criteria, criteria.toPageRequest());
+        return quartzJobService.queryAllLog(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增定时任务")

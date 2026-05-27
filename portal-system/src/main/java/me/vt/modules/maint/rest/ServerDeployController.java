@@ -1,5 +1,6 @@
 package me.vt.modules.maint.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -51,7 +52,7 @@ public class ServerDeployController extends BaseController {
     @Path("")
     @PreAuthorize("@el.check('serverDeploy:list')")
     public PageResult<ServerDeployDto> queryServerDeploy(ServerDeployQueryCriteria criteria) {
-        return serverDeployService.queryAll(criteria, criteria.toPageRequest());
+        return serverDeployService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增服务器")

@@ -1,6 +1,7 @@
 package me.vt.modules.mybiz.rest;
 
 import com.vt.quarkus.commons.msg.IVtNatsClient;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -59,7 +60,7 @@ public class StockDailyQuoteController extends BaseController {
     @Operation(summary = "查询cc")
     @PreAuthorize("@el.check('stockDailyQuote:list')")
     public PageResult<StockDailyQuoteDto> query(StockDailyQuoteQueryCriteria criteria) {
-        return stockDailyQuoteService.queryAll(criteria, criteria.toPageRequest());
+        return stockDailyQuoteService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     //    @POST

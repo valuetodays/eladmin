@@ -10,11 +10,11 @@
     <parent>
         <groupId>com.vt.quarkus</groupId>
         <artifactId>valuetodays-quarkus-commons</artifactId>
-        <version>quarkus3.33.1-2026.04.13</version>
+        <version>quarkus3.33.1-2026.05.21</version>
     </parent>
 
     <properties>
-        <valuetodays.quarkus-commons.version>quarkus3.33.1-2026.04.13</valuetodays.quarkus-commons.version>
+        <valuetodays.quarkus-commons.version>quarkus3.33.1-2026.05.21</valuetodays.quarkus-commons.version>
         <vt-simple-common-modules.version>boot322-2026.04.13</vt-simple-common-modules.version>
         <vt.api2.version>1.0.2-SNAPSHOT</vt.api2.version>
 

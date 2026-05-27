@@ -1,6 +1,7 @@
 package me.vt.modules.security.rest;
 
 import com.vt.quarkus.commons.base.PageIO;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -42,7 +43,7 @@ public class OnlineController extends BaseController {
     @PreAuthorize("@el.check()")
     // fixme
     public PageResult<OnlineUserDto> queryOnlineUser(OnlineUserQueryReq req) {
-        return onlineUserService.getAll(req.getUsername(), new PageIO().toPageRequest());
+        return onlineUserService.getAll(req.getUsername(), Page.of(0, 10000));
     }
 
     @Operation(summary = "导出数据")

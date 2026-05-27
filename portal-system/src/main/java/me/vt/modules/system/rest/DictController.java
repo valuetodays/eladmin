@@ -1,5 +1,6 @@
 package me.vt.modules.system.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -64,8 +65,8 @@ public class DictController extends BaseController {
     @POST
     @Path("query")
     @PreAuthorize("@el.check('dict:list')")
-    public PageResult<DictDto> queryDict(DictQueryCriteria resources) {
-        return dictService.queryAll(resources, resources.toPageRequest());
+    public PageResult<DictDto> queryDict(DictQueryCriteria criteria) {
+        return dictService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增字典")

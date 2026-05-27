@@ -1,6 +1,7 @@
 package me.vt.modules.system.rest;
 
 import cn.hutool.core.lang.Dict;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -78,7 +79,7 @@ public class RoleController extends BaseController {
     @Path("query")
     @PreAuthorize("@el.check('roles:list')")
     public PageResult<RoleDto> queryRole(RoleQueryCriteria criteria) {
-        return roleService.queryAll(criteria, criteria.toPageRequest());
+        return roleService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Operation(summary = "获取用户级别")

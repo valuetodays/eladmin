@@ -1,5 +1,6 @@
 package me.vt.modules.system.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -52,7 +53,7 @@ public class JobController extends BaseController {
     @Path("queryJob")
     @PreAuthorize("@el.check('job:list','user:list')")
     public PageResult<JobDto> queryJob(JobQueryCriteria criteria) {
-        return jobService.queryAll(criteria, criteria.toPageRequest());
+        return jobService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增岗位")

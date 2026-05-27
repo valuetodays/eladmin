@@ -2,6 +2,7 @@ package me.vt.modules.mybiz.rest;
 
 import cn.vt.exception.AssertUtils;
 import com.vt.quarkus.commons.msg.IVtNatsClient;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -59,7 +60,7 @@ public class StockInfoController extends BaseController {
     @Operation(summary = "查询dd")
     @PreAuthorize("@el.check('stockInfo:list')")
     public PageResult<StockInfoDto> query(StockInfoQueryCriteria criteria) {
-        return stockInfoService.queryAll(criteria, criteria.toPageRequest());
+        return stockInfoService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

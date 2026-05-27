@@ -56,7 +56,7 @@ public class ${className}Controller extends BaseController {
     @Operation(summary = "查询${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:list')")
     public PageResult<${className}Dto> query(${className}QueryCriteria criteria) {
-        return ${changeClassName}Service.queryAll(criteria, criteria.toPageRequest());
+        return ${changeClassName}Service.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

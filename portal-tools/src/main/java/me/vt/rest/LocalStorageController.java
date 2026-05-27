@@ -1,5 +1,6 @@
 package me.vt.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -8,8 +9,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import me.vt.annotation.Log;
 import me.vt.common.base.BaseController;
@@ -22,10 +21,13 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
-* @author Zheng Jie
+ * @author Zheng Jie
  * @since 2019-09-05
-*/
+ */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class LocalStorageController extends BaseController {
     @Operation(summary = "查询文件")
     @PreAuthorize("@el.check('storage:list')")
     public PageResult<LocalStorageDto> queryFile(LocalStorageQueryCriteria criteria) {
-        return localStorageService.queryAll(criteria, criteria.toPageRequest());
+        return localStorageService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Operation(summary = "导出数据")

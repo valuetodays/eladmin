@@ -1,6 +1,7 @@
 package me.vt.modules.maint.rest;
 
 import cn.vt.exception.AssertUtils;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -55,7 +56,7 @@ public class DeployController {
     @Path("query")
     @PreAuthorize("@el.check('deploy:list')")
     public PageResult<DeployDto> queryDeployData(DeployQueryCriteria criteria) {
-        return deployService.queryAll(criteria, criteria.toPageRequest());
+        return deployService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增部署")

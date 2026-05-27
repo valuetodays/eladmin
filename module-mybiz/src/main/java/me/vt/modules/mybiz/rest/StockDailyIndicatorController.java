@@ -1,6 +1,7 @@
 package me.vt.modules.mybiz.rest;
 
 import cn.vt.exception.AssertUtils;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -59,7 +60,7 @@ public class StockDailyIndicatorController extends BaseController {
     @Operation(summary = "查询股票每日指标")
     @PreAuthorize("@el.check('stockDailyIndicator:list')")
     public PageResult<StockDailyIndicatorDto> query(StockDailyIndicatorQueryCriteria criteria) {
-        return stockDailyIndicatorService.queryAll(criteria, criteria.toPageRequest());
+        return stockDailyIndicatorService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

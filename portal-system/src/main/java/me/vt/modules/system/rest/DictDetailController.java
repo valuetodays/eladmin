@@ -1,5 +1,6 @@
 package me.vt.modules.system.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -41,7 +42,7 @@ public class DictDetailController {
     @POST
     @Path("/query")
     public PageResult<DictDetailDto> queryDictDetail(DictDetailQueryCriteria criteria) {
-        return dictDetailService.queryAll(criteria, criteria.toPageRequest());
+        return dictDetailService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Operation(summary = "查询多个字典详情")

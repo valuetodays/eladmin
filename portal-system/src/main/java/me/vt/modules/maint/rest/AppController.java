@@ -1,5 +1,6 @@
 package me.vt.modules.maint.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -48,7 +49,7 @@ public class AppController extends BaseController {
     @Path("query")
     @PreAuthorize("@el.check('app:list')")
     public PageResult<AppDto> queryApp(AppQueryCriteria criteria) {
-        return appService.queryAll(criteria, criteria.toPageRequest());
+        return appService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @Log("新增应用")

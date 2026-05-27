@@ -2,7 +2,7 @@ package me.vt.modules.mybiz.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
+import com.vt.quarkus.commons.orm.jpa.AuditableLongIdPersist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "extra_metric_docker_stats")
-public class MetricDockerStats extends JpaCrudLongIdBasePersist {
+public class MetricDockerStats extends AuditableLongIdPersist {
 
     @Column(name = "stat_datetime", nullable = false)
     @NotNull
@@ -74,7 +74,8 @@ public class MetricDockerStats extends JpaCrudLongIdBasePersist {
     @Schema(description = "mem_usage")
     private BigDecimal memUsage2;
 
-    public MetricDockerStats() {}
+    public MetricDockerStats() {
+    }
 
     // 新增构造函数，必须与 select 字段顺序一致
     public MetricDockerStats(LocalDateTime statDatetime, BigDecimal memUsage2) {

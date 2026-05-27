@@ -2,6 +2,7 @@ package me.vt.rest;
 
 import cn.hutool.core.lang.Dict;
 import cn.vt.auth.AuthUser;
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -67,7 +68,7 @@ public class SysLogController extends BaseController {
     @PreAuthorize("@el.check()")
     public Object queryLog(SysLogQueryCriteria criteria) {
         criteria.setLogType("INFO");
-        return sysLogService.queryAll(criteria, criteria.toPageRequest());
+        return sysLogService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST
@@ -77,7 +78,7 @@ public class SysLogController extends BaseController {
         criteria.setLogType("INFO");
         AuthUser currentAccount = getCurrentAccount();
         criteria.setUsername(currentAccount.getEmail());
-        return sysLogService.queryAllByUser(criteria, criteria.toPageRequest());
+        return sysLogService.queryAllByUser(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST
@@ -86,7 +87,7 @@ public class SysLogController extends BaseController {
     @PreAuthorize("@el.check()")
     public Object queryErrorLog(SysLogQueryCriteria criteria) {
         criteria.setLogType("ERROR");
-        return sysLogService.queryAll(criteria, criteria.toPageRequest());
+        return sysLogService.queryAll(criteria, Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

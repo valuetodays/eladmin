@@ -1,5 +1,6 @@
 package me.vt.rest;
 
+import io.quarkus.panache.common.Page;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -60,7 +61,7 @@ public class S3StorageController extends BaseController {
     @Operation(summary = "查询文件")
     @PreAuthorize("@el.check('storage:list')")
     public PageResult<S3Storage> queryS3Storage(S3StorageQueryCriteria criteria) {
-        return s3StorageService.queryAll(criteria, criteria.toPageRequest());
+        return s3StorageService.queryAll(criteria,  Page.of(criteria.getPageIndex(), criteria.getPageSize()));
     }
 
     @POST

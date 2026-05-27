@@ -2,7 +2,7 @@ package me.vt.modules.mybiz.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.vt.quarkus.commons.base.jpa.JpaCrudLongIdBasePersist;
+import com.vt.quarkus.commons.orm.jpa.AuditableLongIdPersist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -19,7 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "fortune_stock")
-public class Stock extends JpaCrudLongIdBasePersist {
+public class Stock extends AuditableLongIdPersist {
 
     @Column(name = "code", nullable = false)
     @NotBlank
