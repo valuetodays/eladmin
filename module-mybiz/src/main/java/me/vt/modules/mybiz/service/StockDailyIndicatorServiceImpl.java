@@ -1,9 +1,9 @@
 package me.vt.modules.mybiz.service;
 
 import cn.vt.exception.AssertUtils;
+import cn.vt.moduled.fortune.utils.PriceUtilsEx;
 import cn.vt.util.DateUtils;
 import com.p6spy.engine.common.P6Util;
-import com.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import com.vt.quarkus.commons.QueryPart;
 import com.vt.quarkus.commons.base.QuerySearch;
 import com.vt.quarkus.commons.msg.IVtNatsClient;

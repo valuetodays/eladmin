@@ -1,10 +1,10 @@
 package me.vt.modules.mybiz.service;
 
+import cn.vt.moduled.fortune.utils.PriceUtilsEx;
 import cn.vt.rest.third.utils.StockCodeUtils;
 import cn.vt.trade.api.HaitongApi;
 import cn.vt.trade.vo.FullTickVo;
 import cn.vt.util.DateUtils;
-import com.vt.api2.module.fortune.client.util.PriceUtilsEx;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;

@@ -41,6 +41,10 @@
                     <artifactId>common-web</artifactId>
                     <groupId>com.vt.commons</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>module-fortune-client</artifactId>
+                    <groupId>com.vt.api2</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
