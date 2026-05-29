@@ -1,3 +1,7 @@
+## INFO
+
+> 重要说明，该项目不再维护，功能已迁移到valuetodays-api2-by-quarkus中。
+
 ## 修改
 
 - [x] 全部改为POST json请求
