@@ -52,7 +52,7 @@ steps:
         echo begin to notify
         MSG_ID=$(cat /proc/sys/kernel/random/uuid)
 
-        curl -X POST "https://msg.valuetodays.xyz/api/message/push" \
+        curl -X POST "https://new.example.com/api/message/push" \
         -H 'Content-Type: application/json; charset=utf-8' \
         -d "{
           \"msgId\":\"$MSG_ID\",
